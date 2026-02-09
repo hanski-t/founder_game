@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import { GameProvider, useGame } from './context/GameContext';
 import { SceneProvider } from './context/SceneContext';
+import { VarietyProvider } from './context/VarietyContext';
 import { StartScreen } from './screens/StartScreen';
 import { GothicGameScreen } from './screens/GothicGameScreen';
 import { EndScreen } from './screens/EndScreen';
@@ -26,7 +27,9 @@ function App() {
   return (
     <GameProvider>
       <SceneProvider>
-        <GameRouter />
+        <VarietyProvider>
+          <GameRouter />
+        </VarietyProvider>
       </SceneProvider>
       <Analytics />
     </GameProvider>

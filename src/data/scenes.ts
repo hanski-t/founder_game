@@ -55,6 +55,11 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'ts-coin-1', visual: 'coin', x: 28, label: '+$500', resourceBonus: { money: 500 } },
+      { id: 'ts-coin-2', visual: 'coin', x: 42, label: '+$200', resourceBonus: { money: 200 } },
+      { id: 'ts-scroll-1', visual: 'scroll', x: 78, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
+    ],
   },
 
   'town-clubs': {
@@ -84,6 +89,10 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'tc-coffee-1', visual: 'coffee', x: 30, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      { id: 'tc-doc-1', visual: 'document', x: 75, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
+    ],
   },
 
   'dark-castle-interior': {
@@ -112,6 +121,25 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'dci-gem-1', visual: 'gem', x: 22, label: '+$1000', resourceBonus: { money: 1000 } },
+    ],
+    challenge: {
+      id: 'qte-social-gathering',
+      type: 'quick-time',
+      title: 'Social Reflexes',
+      description: 'Quick! Match the prompts to make a good first impression.',
+      successThreshold: 2,
+      gateX: 35,
+      quickTimeConfig: {
+        prompts: [
+          { key: 'd', displayKey: 'D' },
+          { key: 'a', displayKey: 'A' },
+          { key: ' ', displayKey: 'SPACE' },
+        ],
+        timePerPrompt: 1500,
+      },
+    },
   },
 
   'castle-gate': {
@@ -141,6 +169,10 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'cg-doc-1', visual: 'document', x: 25, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
+      { id: 'cg-doc-2', visual: 'document', x: 80, label: '+1 Network', resourceBonus: { network: 1 } },
+    ],
   },
 
   'swamp-garage': {
@@ -169,6 +201,10 @@ export const scenes: Record<string, SceneDefinition> = {
         proximityRange: 10,
         interactionType: 'decision',
       },
+    ],
+    collectibles: [
+      { id: 'sg-usb-1', visual: 'usb', x: 25, label: '+1 Network', resourceBonus: { network: 1 } },
+      { id: 'sg-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
   },
 
@@ -201,6 +237,31 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'sd-coin-1', visual: 'coin', x: 22, label: '+$300', resourceBonus: { money: 300 } },
+    ],
+    challenge: {
+      id: 'falling-market-noise',
+      type: 'falling-catch',
+      title: 'Navigate the Market Noise',
+      description: 'Catch business plans and dodge spam! Move left/right to catch the green items.',
+      successThreshold: 4,
+      gateX: 38,
+      fallingCatchConfig: {
+        duration: 12000,
+        spawnInterval: 900,
+        goodItems: [
+          { visual: '\u{1F4C4}', label: 'Business Plan' },
+          { visual: '\u{1F4B0}', label: 'Revenue' },
+          { visual: '\u{1F4CA}', label: 'Growth Chart' },
+        ],
+        badItems: [
+          { visual: '\u{1F4E7}', label: 'Spam Email' },
+          { visual: '\u{1F41B}', label: 'Bug Report' },
+        ],
+        fallDuration: 2500,
+      },
+    },
   },
 
   'church-meeting': {
@@ -228,6 +289,11 @@ export const scenes: Record<string, SceneDefinition> = {
         proximityRange: 10,
         interactionType: 'decision',
       },
+    ],
+    collectibles: [
+      { id: 'cm-coin-1', visual: 'coin', x: 25, label: '+$500', resourceBonus: { money: 500 } },
+      { id: 'cm-coin-2', visual: 'coin', x: 80, label: '+$300', resourceBonus: { money: 300 } },
+      { id: 'cm-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
   },
 
@@ -258,6 +324,28 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'ch-gem-1', visual: 'gem', x: 22, label: '+$1500', resourceBonus: { money: 1500 } },
+      { id: 'ch-doc-1', visual: 'document', x: 75, label: 'Term Sheet', flavorText: '"Pre-money valuation: $2M"' },
+    ],
+    challenge: {
+      id: 'qte-investor-pitch',
+      type: 'quick-time',
+      title: 'Impress the Investor',
+      description: 'React quickly to show your confidence! 5 prompts, faster timing.',
+      successThreshold: 3,
+      gateX: 35,
+      quickTimeConfig: {
+        prompts: [
+          { key: 'd', displayKey: 'D' },
+          { key: ' ', displayKey: 'SPACE' },
+          { key: 'a', displayKey: 'A' },
+          { key: 'd', displayKey: 'D' },
+          { key: ' ', displayKey: 'SPACE' },
+        ],
+        timePerPrompt: 1200,
+      },
+    },
   },
 
   'cemetery-launch': {
@@ -287,6 +375,10 @@ export const scenes: Record<string, SceneDefinition> = {
         interactionType: 'decision',
       },
     ],
+    collectibles: [
+      { id: 'cl-scroll-1', visual: 'scroll', x: 30, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
+      { id: 'cl-usb-1', visual: 'usb', x: 80, label: '+2 Network', resourceBonus: { network: 2 } },
+    ],
   },
 
   'castle-throne': {
@@ -315,6 +407,11 @@ export const scenes: Record<string, SceneDefinition> = {
         proximityRange: 10,
         interactionType: 'decision',
       },
+    ],
+    collectibles: [
+      { id: 'ct-gem-1', visual: 'gem', x: 25, label: '+$2000', resourceBonus: { money: 2000 } },
+      { id: 'ct-gem-2', visual: 'gem', x: 65, label: '+$2000', resourceBonus: { money: 2000 } },
+      { id: 'ct-gem-3', visual: 'gem', x: 85, label: '+$2000', resourceBonus: { money: 2000 } },
     ],
   },
 };

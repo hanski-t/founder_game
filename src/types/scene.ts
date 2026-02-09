@@ -1,4 +1,5 @@
 import type { GamePhase } from './game';
+import type { CollectibleDefinition, ChallengeDefinition } from './variety';
 
 export interface SpriteConfig {
   frameWidth: number;
@@ -39,6 +40,8 @@ export interface SceneDefinition {
   playerStartX: number; // percentage of scene width
   interactables: SceneInteractable[];
   ambientColor?: string;
+  collectibles?: CollectibleDefinition[];
+  challenge?: ChallengeDefinition;
 }
 
 export interface SceneState {

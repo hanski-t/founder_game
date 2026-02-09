@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { useScene } from '../context/SceneContext';
+import { useVariety } from '../context/VarietyContext';
 import { useCharacterMovement } from '../hooks/useCharacterMovement';
 import { useKeyboardMovement } from '../hooks/useKeyboardMovement';
 import { SceneRenderer } from '../components/scene/SceneRenderer';
@@ -10,6 +11,7 @@ import { ResourceHUD } from '../components/hud/ResourceHUD';
 import { SceneTransition } from '../components/transitions/SceneTransition';
 import { PhaseTitle } from '../components/transitions/PhaseTitle';
 import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
+import { ChallengeOverlay } from '../components/challenges/ChallengeOverlay';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, scenes } from '../data/scenes';
 import type { SceneInteractable } from '../types/scene';
@@ -20,6 +22,7 @@ import { PHASES } from '../types/game';
 export function GothicGameScreen() {
   const { state, makeChoice, startMiniGame, continueFromOutcome } = useGame();
   const { sceneState, sceneDispatch } = useScene();
+  const { varietyState, isChallengeCompleted, startChallenge } = useVariety();
   const prevNodeIdRef = useRef(state.currentNodeId);
   const prevPhaseRef = useRef<GamePhase>(state.currentPhase);
 
@@ -83,10 +86,25 @@ export function GothicGameScreen() {
     }
   }, [state.screen]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Challenge gating: trigger challenge when player passes the gate position
+  const challengeActive = varietyState.challengePhase !== 'not-started';
+  useEffect(() => {
+    if (!currentScene?.challenge) return;
+    if (challengeActive) return;
+    if (isChallengeCompleted(currentScene.challenge.id)) return;
+    if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
+
+    if (sceneState.playerX >= currentScene.challenge.gateX) {
+      startChallenge(currentScene.challenge.successThreshold);
+    }
+  }, [sceneState.playerX, currentScene, challengeActive, isChallengeCompleted, startChallenge, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning]);
+
   // Auto-proximity detection: trigger interaction when walking near ANY interactable
   useEffect(() => {
     if (!currentScene) return;
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
+    // Block NPC interaction while a challenge is active
+    if (challengeActive) return;
 
     for (const interactable of currentScene.interactables) {
       const distance = Math.abs(sceneState.playerX - interactable.x);
@@ -100,7 +118,7 @@ export function GothicGameScreen() {
         return;
       }
     }
-  }, [sceneState.playerX, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sceneState.playerX, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, challengeActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle interactable click: walk to it first
   const handleInteract = useCallback((interactable: SceneInteractable) => {
@@ -215,6 +233,11 @@ export function GothicGameScreen() {
           outcomeText={state.pendingOutcome}
           onContinue={handleContinue}
         />
+      )}
+
+      {/* Mini-challenge */}
+      {challengeActive && currentScene.challenge && (
+        <ChallengeOverlay challenge={currentScene.challenge} />
       )}
 
       {/* Mini-game */}

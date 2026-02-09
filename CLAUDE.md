@@ -22,11 +22,26 @@ Gothic point-and-click adventure game. TypeScript + Vite + Vercel.
   the patterns change.
 
 ## Asset Management
-[Your existing asset rules about src/assets/used/
-and src/assets/game/ go here]
+- Tracked assets: `src/assets/used/` (path alias `@assets`)
+- Unused assets: `src/assets/game/` (gitignored)
 
 ## Gotchas
 - CRLF warnings from Git are normal on Windows, ignore them
+- Stale closures in RAF loops: always use `useRef` for values read inside `requestAnimationFrame` callbacks
 
 ## Architecture Decisions
-[Grows organically as you build]
+
+### State Management (3 contexts)
+- **GameContext** (`src/context/GameContext.tsx`) — game logic, resources, decisions. Has `APPLY_BONUS` action for collectible resource changes.
+- **SceneContext** (`src/context/SceneContext.tsx`) — visual state, player position, UI panels.
+- **VarietyContext** (`src/context/VarietyContext.tsx`) — collectibles (collected IDs, pickup animation) and mini-challenges (phase, score, completed IDs).
+
+### Preserved Files
+- `GameContext.tsx` core logic, `decisions.ts`, `types/game.ts` — don't modify these without good reason.
+
+### Variety System (collectibles + mini-challenges)
+- **Collectibles**: defined in `scenes.ts` as `collectibles` array on each scene. Rendered by `CollectibleLayer.tsx`. Proximity-triggered (5% range). CSS emoji icons with bob animation.
+- **Mini-challenges**: defined in `scenes.ts` as optional `challenge` on a scene. Types: `quick-time` (QTE key press) and `falling-catch` (catch falling items). Gated by X position (`gateX`). Managed by `ChallengeOverlay.tsx`.
+- Challenge gating in `GothicGameScreen.tsx` blocks NPC proximity while a challenge is active.
+- Challenges are non-punishing: both success and failure let the player proceed.
+- Types in `src/types/variety.ts`. Components in `src/components/collectibles/` and `src/components/challenges/`.

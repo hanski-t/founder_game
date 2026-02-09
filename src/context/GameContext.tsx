@@ -23,7 +23,8 @@ type GameAction =
   | { type: 'TRIGGER_RANDOM_EVENT'; eventId: string }
   | { type: 'END_GAME'; reason: 'time' | 'money' | 'success' }
   | { type: 'RESTART_GAME' }
-  | { type: 'ADD_EVENT_LOG'; message: string };
+  | { type: 'ADD_EVENT_LOG'; message: string }
+  | { type: 'APPLY_BONUS'; resourceChanges: ResourceChange };
 
 const initialState: GameState = {
   screen: 'start',
@@ -215,6 +216,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         eventLog: [...state.eventLog, action.message].slice(-10),
       };
+
+    case 'APPLY_BONUS': {
+      const bonusResources = applyResourceChanges(state.resources, action.resourceChanges);
+      return { ...state, resources: bonusResources };
+    }
 
     default:
       return state;

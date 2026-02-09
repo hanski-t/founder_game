@@ -3,6 +3,7 @@ import type { SceneDefinition, SceneInteractable } from '../../types/scene';
 import { ParallaxBackground } from './ParallaxBackground';
 import { PlayerCharacter } from '../character/PlayerCharacter';
 import { Interactable } from '../interactables/Interactable';
+import { CollectibleLayer } from '../collectibles/CollectibleLayer';
 import { useScene } from '../../context/SceneContext';
 
 interface SceneRendererProps {
@@ -60,6 +61,10 @@ export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
           onInteract={onInteract}
         />
       ))}
+
+      {scene.collectibles && scene.collectibles.length > 0 && (
+        <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
+      )}
 
       <PlayerCharacter groundY={scene.groundY} />
 
