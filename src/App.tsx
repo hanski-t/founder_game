@@ -1,7 +1,8 @@
 import { Analytics } from '@vercel/analytics/react';
 import { GameProvider, useGame } from './context/GameContext';
+import { SceneProvider } from './context/SceneContext';
 import { StartScreen } from './screens/StartScreen';
-import { GameScreen } from './screens/GameScreen';
+import { GothicGameScreen } from './screens/GothicGameScreen';
 import { EndScreen } from './screens/EndScreen';
 
 function GameRouter() {
@@ -13,7 +14,7 @@ function GameRouter() {
     case 'game':
     case 'outcome':
     case 'minigame':
-      return <GameScreen />;
+      return <GothicGameScreen />;
     case 'end':
       return <EndScreen />;
     default:
@@ -24,7 +25,9 @@ function GameRouter() {
 function App() {
   return (
     <GameProvider>
-      <GameRouter />
+      <SceneProvider>
+        <GameRouter />
+      </SceneProvider>
       <Analytics />
     </GameProvider>
   );

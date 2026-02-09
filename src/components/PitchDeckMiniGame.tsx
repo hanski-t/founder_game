@@ -27,6 +27,13 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+const goldColor = '#d4a853';
+const textColor = '#e8d5b5';
+const borderColor = '#5a3030';
+const panelBg = 'rgba(26, 15, 16, 0.8)';
+const successColor = '#4ade80';
+const failColor = '#f87171';
+
 export function PitchDeckMiniGame() {
   const { completeMiniGame } = useGame();
   const [slides, setSlides] = useState(() => shuffleArray(SLIDES));
@@ -42,7 +49,6 @@ export function PitchDeckMiniGame() {
     } else if (selectedIndex === index) {
       setSelectedIndex(null);
     } else {
-      // Swap slides
       const newSlides = [...slides];
       [newSlides[selectedIndex], newSlides[index]] = [newSlides[index], newSlides[selectedIndex]];
       setSlides(newSlides);
@@ -67,7 +73,7 @@ export function PitchDeckMiniGame() {
   }, [calculateScore]);
 
   const handleComplete = useCallback(() => {
-    const success = score >= 5; // 5 out of 7 for success
+    const success = score >= 5;
 
     if (success) {
       completeMiniGame(
@@ -113,74 +119,147 @@ Back to the drawing board...
   }, [score, completeMiniGame]);
 
   return (
-    <div className="space-y-6">
+    <div style={{ padding: '8px 0' }}>
       {/* Header */}
-      <div className="border-b border-terminal-border pb-3">
-        <h2 className="text-xl font-bold text-neon-yellow glow-yellow">
-          MINI-GAME: Pitch Deck Builder
+      <div style={{
+        borderBottom: `1px solid ${borderColor}`,
+        paddingBottom: '12px',
+        marginBottom: '16px',
+      }}>
+        <h2 style={{
+          fontFamily: "'Cinzel', Georgia, serif",
+          fontSize: '1.3rem',
+          fontWeight: 600,
+          color: goldColor,
+          margin: 0,
+          textShadow: '0 0 15px rgba(212, 168, 83, 0.3)',
+        }}>
+          Pitch Deck Builder
         </h2>
-        <p className="text-text-dim text-sm mt-1">
+        <p style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: '0.8rem',
+          color: textColor,
+          opacity: 0.6,
+          margin: '4px 0 0',
+        }}>
           Arrange the slides in the optimal order for your pitch
         </p>
       </div>
 
       {/* Instructions */}
       {!isSubmitted && (
-        <div className="bg-terminal-bg/50 p-3 rounded border border-terminal-border">
-          <div className="text-neon-blue text-sm">
-            <span className="font-bold">&gt; INSTRUCTIONS:</span>
-            <br />
+        <div style={{
+          padding: '10px 14px',
+          background: 'rgba(0, 0, 0, 0.3)',
+          borderLeft: `3px solid ${borderColor}`,
+          marginBottom: '16px',
+        }}>
+          <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.78rem',
+            color: textColor,
+            lineHeight: 1.6,
+          }}>
             Click a slide to select it, then click another to swap positions.
             <br />
             Arrange all 7 slides in the order that tells the best story.
             <br />
-            <span className="text-text-dim">Hint: Start with the problem, end with the ask.</span>
+            <span style={{ opacity: 0.5 }}>Hint: Start with the problem, end with the ask.</span>
           </div>
         </div>
       )}
 
       {/* Slides */}
-      <div className="space-y-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {slides.map((slide, index) => {
           const isSelected = selectedIndex === index;
           const isCorrect = isSubmitted && slide.correctPosition === index;
           const isWrong = isSubmitted && slide.correctPosition !== index;
+
+          let cardBorder = borderColor;
+          let cardBg = panelBg;
+          let numColor = goldColor;
+
+          if (isSelected) {
+            cardBorder = goldColor;
+            cardBg = 'rgba(212, 168, 83, 0.15)';
+            numColor = goldColor;
+          } else if (isCorrect) {
+            cardBorder = successColor;
+            cardBg = 'rgba(74, 222, 128, 0.1)';
+            numColor = successColor;
+          } else if (isWrong) {
+            cardBorder = failColor;
+            cardBg = 'rgba(248, 113, 113, 0.1)';
+            numColor = failColor;
+          }
 
           return (
             <button
               key={slide.id}
               onClick={() => handleSlideClick(index)}
               disabled={isSubmitted}
-              className={`w-full text-left p-3 rounded border transition-all ${
-                isSelected
-                  ? 'border-neon-yellow bg-neon-yellow/20'
-                  : isCorrect
-                  ? 'border-neon-green bg-neon-green/20'
-                  : isWrong
-                  ? 'border-neon-red bg-neon-red/20'
-                  : 'border-terminal-border bg-terminal-dark hover:border-neon-blue'
-              } ${!isSubmitted && 'cursor-pointer'}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                width: '100%',
+                textAlign: 'left',
+                padding: '10px 14px',
+                background: cardBg,
+                border: `1px solid ${cardBorder}`,
+                cursor: isSubmitted ? 'default' : 'pointer',
+                transition: 'all 0.2s ease',
+                color: textColor,
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitted && !isSelected) {
+                  e.currentTarget.style.borderColor = goldColor;
+                  e.currentTarget.style.boxShadow = '0 0 10px rgba(212, 168, 83, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSubmitted && !isSelected) {
+                  e.currentTarget.style.borderColor = borderColor;
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
             >
-              <div className="flex items-center gap-3">
-                <span className={`text-lg font-bold ${
-                  isSelected ? 'text-neon-yellow' : isCorrect ? 'text-neon-green' : isWrong ? 'text-neon-red' : 'text-neon-blue'
-                }`}>
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <div className="flex-1">
-                  <div className={`font-bold ${
-                    isSelected ? 'text-neon-yellow' : isCorrect ? 'text-neon-green' : isWrong ? 'text-neon-red' : 'text-text-primary'
-                  }`}>
-                    {slide.name}
-                  </div>
-                  <div className="text-text-dim text-xs">{slide.description}</div>
+              <span style={{
+                fontSize: '1rem',
+                fontWeight: 700,
+                color: numColor,
+                minWidth: '24px',
+              }}>
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontWeight: 600,
+                  fontSize: '0.88rem',
+                  color: isSelected ? goldColor : isCorrect ? successColor : isWrong ? failColor : textColor,
+                }}>
+                  {slide.name}
                 </div>
-                {isSubmitted && (
-                  <span className={`text-sm ${isCorrect ? 'text-neon-green' : 'text-neon-red'}`}>
-                    {isCorrect ? '✓' : `→ ${slide.correctPosition + 1}`}
-                  </span>
-                )}
+                <div style={{
+                  fontSize: '0.72rem',
+                  opacity: 0.5,
+                  marginTop: '2px',
+                }}>
+                  {slide.description}
+                </div>
               </div>
+              {isSubmitted && (
+                <span style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: isCorrect ? successColor : failColor,
+                }}>
+                  {isCorrect ? '\u2713' : `\u2192 ${slide.correctPosition + 1}`}
+                </span>
+              )}
             </button>
           );
         })}
@@ -188,39 +267,62 @@ Back to the drawing board...
 
       {/* Score Display */}
       {isSubmitted && (
-        <div className={`text-center p-4 rounded border ${
-          score >= 5 ? 'border-neon-green bg-neon-green/10' : 'border-neon-red bg-neon-red/10'
-        }`}>
-          <div className={`text-2xl font-bold ${score >= 5 ? 'text-neon-green glow-green' : 'text-neon-red glow-red'}`}>
+        <div style={{
+          textAlign: 'center',
+          padding: '16px',
+          marginTop: '16px',
+          background: score >= 5 ? 'rgba(74, 222, 128, 0.08)' : 'rgba(248, 113, 113, 0.08)',
+          border: `1px solid ${score >= 5 ? successColor : failColor}`,
+        }}>
+          <div style={{
+            fontFamily: "'Cinzel', Georgia, serif",
+            fontSize: '1.5rem',
+            fontWeight: 700,
+            color: score >= 5 ? successColor : failColor,
+            textShadow: `0 0 15px ${score >= 5 ? 'rgba(74, 222, 128, 0.3)' : 'rgba(248, 113, 113, 0.3)'}`,
+          }}>
             Score: {score}/7
           </div>
-          <div className="text-text-dim text-sm mt-1">
-            {score >= 5 ? 'SUCCESS! Your pitch is compelling.' : 'The pitch needs work...'}
+          <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.78rem',
+            color: textColor,
+            opacity: 0.6,
+            marginTop: '4px',
+          }}>
+            {score >= 5 ? 'Your pitch is compelling.' : 'The pitch needs work...'}
           </div>
         </div>
       )}
 
       {/* Action Button */}
-      {!isSubmitted ? (
-        <button
-          onClick={handleSubmit}
-          className="w-full choice-button group flex items-center justify-center gap-2"
-        >
-          <span className="text-neon-green group-hover:text-white transition-colors">
-            [SUBMIT PITCH DECK]
-          </span>
-        </button>
-      ) : (
-        <button
-          onClick={handleComplete}
-          className="w-full choice-button group flex items-center justify-center gap-2"
-        >
-          <span className="text-neon-green group-hover:text-white transition-colors">
-            [CONTINUE]
-          </span>
-          <span className="text-neon-green blink">▶</span>
-        </button>
-      )}
+      <button
+        onClick={isSubmitted ? handleComplete : handleSubmit}
+        style={{
+          width: '100%',
+          marginTop: '16px',
+          padding: '12px',
+          background: 'linear-gradient(180deg, rgba(90, 48, 48, 0.6) 0%, rgba(26, 15, 16, 0.8) 100%)',
+          border: `2px solid ${borderColor}`,
+          color: goldColor,
+          fontFamily: "'Cinzel', Georgia, serif",
+          fontSize: '0.95rem',
+          fontWeight: 600,
+          letterSpacing: '0.1em',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = goldColor;
+          e.currentTarget.style.boxShadow = '0 0 15px rgba(212, 168, 83, 0.25)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = borderColor;
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+      >
+        {isSubmitted ? 'CONTINUE' : 'SUBMIT PITCH DECK'}
+      </button>
     </div>
   );
 }
