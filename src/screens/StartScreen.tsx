@@ -1,101 +1,261 @@
+import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { TerminalWindow } from '../components/TerminalWindow';
+import townBg from '@assets/backgrounds/town/background.png';
+import townMid from '@assets/backgrounds/town/middleground.png';
 
 export function StartScreen() {
   const { startGame } = useGame();
+  const [showContent, setShowContent] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setShowContent(true), 400);
+    const t2 = setTimeout(() => setShowButton(true), 1200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
-      <TerminalWindow title="FOUNDER.EXE v1.0" className="max-w-2xl w-full">
-        {/* ASCII Art Title */}
-        <div className="text-center mb-6">
-          <pre className="text-neon-green glow-green text-xs sm:text-sm font-mono leading-tight">
-{`
- ███████╗ ██████╗ ██╗   ██╗███╗   ██╗██████╗ ███████╗██████╗
- ██╔════╝██╔═══██╗██║   ██║████╗  ██║██╔══██╗██╔════╝██╔══██╗
- █████╗  ██║   ██║██║   ██║██╔██╗ ██║██║  ██║█████╗  ██████╔╝
- ██╔══╝  ██║   ██║██║   ██║██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗
- ██║     ╚██████╔╝╚██████╔╝██║ ╚████║██████╔╝███████╗██║  ██║
- ╚═╝      ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-`}
-          </pre>
-          <div className="text-neon-blue text-lg tracking-widest mt-2">
-            A STARTUP SIMULATOR
-          </div>
-          <div className="text-text-dim text-xs mt-1">
-            v1.0 PROTOTYPE
+    <div
+      style={{
+        position: 'relative',
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        background: '#0a0607',
+      }}
+    >
+      {/* Background layers */}
+      <img
+        src={townBg}
+        alt=""
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          imageRendering: 'pixelated',
+          opacity: 0.4,
+        }}
+      />
+      <img
+        src={townMid}
+        alt=""
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          imageRendering: 'pixelated',
+          opacity: 0.3,
+        }}
+      />
+
+      {/* Dark overlay gradient */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(10,6,7,0.85) 0%, rgba(10,6,7,0.5) 40%, rgba(10,6,7,0.7) 70%, rgba(10,6,7,0.95) 100%)',
+        }}
+      />
+
+      {/* Content */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          padding: '2rem',
+        }}
+      >
+        {/* Title */}
+        <div
+          style={{
+            textAlign: 'center',
+            opacity: showContent ? 1 : 0,
+            transform: showContent ? 'translateY(0)' : 'translateY(-20px)',
+            transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+              fontWeight: 700,
+              color: '#d4a853',
+              textShadow: '0 0 30px rgba(212, 168, 83, 0.4), 0 0 60px rgba(212, 168, 83, 0.2)',
+              letterSpacing: '0.15em',
+              margin: 0,
+              lineHeight: 1.2,
+            }}
+          >
+            FOUNDER'S JOURNEY
+          </h1>
+          <div
+            style={{
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontSize: 'clamp(0.75rem, 1.5vw, 1rem)',
+              color: '#e8d5b5',
+              letterSpacing: '0.3em',
+              marginTop: '0.5rem',
+              opacity: 0.7,
+            }}
+          >
+            A GOTHIC STARTUP ADVENTURE
           </div>
         </div>
 
-        {/* Boot Sequence */}
-        <div className="bg-terminal-bg/50 p-4 rounded border border-terminal-border mb-6">
-          <pre className="text-neon-green text-xs font-mono leading-relaxed">
-{`> SYSTEM CHECK...
-> Memory: OK
-> Ambition levels: DANGEROUSLY HIGH
-> Risk tolerance: CALCULATING...
-> Coffee reserves: LOW (refill recommended)
-> Student loans: [REDACTED]
->
-> BOOT SEQUENCE COMPLETE
->
-> Welcome, aspiring founder.
->
-> You are a university student with a dream:
-> to build something that matters.
->
-> The path ahead is uncertain.
-> Your resources are limited.
-> Failure is likely.
->
-> But that's never stopped a founder before.
->
-> Your journey begins now.`}
-          </pre>
+        {/* Divider */}
+        <div
+          style={{
+            width: '200px',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, #5a3030, #d4a853, #5a3030, transparent)',
+            margin: '2rem 0',
+            opacity: showContent ? 1 : 0,
+            transition: 'opacity 1s ease-out 0.3s',
+          }}
+        />
+
+        {/* Description */}
+        <div
+          style={{
+            maxWidth: '500px',
+            textAlign: 'center',
+            opacity: showContent ? 1 : 0,
+            transform: showContent ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.85rem',
+              color: '#e8d5b5',
+              lineHeight: 1.8,
+              margin: 0,
+              opacity: 0.8,
+            }}
+          >
+            You are a university student with a dream:
+            to build something that matters.
+            The path ahead is uncertain. Your resources are limited.
+            Failure is likely.
+          </p>
+          <p
+            style={{
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontSize: '0.9rem',
+              color: '#d4a853',
+              marginTop: '1rem',
+              opacity: 0.9,
+            }}
+          >
+            But that has never stopped a founder before.
+          </p>
         </div>
 
-        {/* Resource Preview */}
-        <div className="border border-terminal-border rounded p-3 mb-6">
-          <div className="text-text-dim text-xs uppercase tracking-wider mb-2">
-            Starting Resources:
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex items-center gap-2">
-              <span>⏰</span>
-              <span className="text-neon-blue">20 weeks</span>
+        {/* Starting Resources */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, auto)',
+            gap: '1.5rem',
+            marginTop: '2rem',
+            opacity: showContent ? 1 : 0,
+            transition: 'opacity 0.8s ease-out 0.6s',
+          }}
+        >
+          {[
+            { label: 'Time', value: '20 weeks', color: '#60a5fa', desc: 'Every choice costs weeks' },
+            { label: 'Money', value: '$10,000', color: '#4ade80', desc: 'Runs out — game over' },
+            { label: 'Energy', value: '100%', color: '#d4a853', desc: 'Burnout ends your journey' },
+            { label: 'Network', value: '2', color: '#c084fc', desc: 'Contacts unlock new paths' },
+          ].map((res) => (
+            <div key={res.label} style={{ textAlign: 'center' }}>
+              <div style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '1rem',
+                fontWeight: 600,
+                color: res.color,
+              }}>
+                {res.value}
+              </div>
+              <div style={{
+                fontFamily: "'Cinzel', Georgia, serif",
+                fontSize: '0.65rem',
+                color: '#e8d5b5',
+                opacity: 0.6,
+                letterSpacing: '0.1em',
+                marginTop: '2px',
+              }}>
+                {res.label}
+              </div>
+              <div style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.55rem',
+                color: '#e8d5b5',
+                opacity: 0.35,
+                marginTop: '4px',
+                lineHeight: 1.3,
+              }}>
+                {res.desc}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span>💰</span>
-              <span className="text-neon-green">$10,000</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>🔋</span>
-              <span className="text-neon-yellow">100% energy</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>🤝</span>
-              <span className="text-neon-blue">2 connections</span>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Start Button */}
         <button
           onClick={startGame}
-          className="w-full choice-button group flex items-center justify-center gap-2 py-4"
+          style={{
+            marginTop: '2.5rem',
+            padding: '14px 48px',
+            background: 'linear-gradient(180deg, rgba(90, 48, 48, 0.6) 0%, rgba(26, 15, 16, 0.8) 100%)',
+            border: '2px solid #5a3030',
+            color: '#d4a853',
+            fontFamily: "'Cinzel', Georgia, serif",
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            letterSpacing: '0.15em',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            opacity: showButton ? 1 : 0,
+            transform: showButton ? 'translateY(0)' : 'translateY(10px)',
+            textShadow: '0 0 15px rgba(212, 168, 83, 0.3)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#d4a853';
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(212, 168, 83, 0.3), inset 0 0 20px rgba(212, 168, 83, 0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#5a3030';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
         >
-          <span className="text-neon-green glow-green text-lg group-hover:text-white transition-colors">
-            [ START YOUR JOURNEY ]
-          </span>
-          <span className="text-neon-green blink">▶</span>
+          BEGIN YOUR QUEST
         </button>
 
-        {/* Footer */}
-        <div className="text-center mt-4 text-text-dim text-xs">
-          <div>Press START to begin | Use mouse to make choices</div>
-          <div className="mt-1">Every playthrough is different</div>
+        {/* Footer hint */}
+        <div
+          style={{
+            marginTop: '1.5rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.7rem',
+            color: '#e8d5b5',
+            opacity: showButton ? 0.4 : 0,
+            transition: 'opacity 0.5s ease-out 0.3s',
+          }}
+        >
+          Click to move &middot; Walk to characters to interact
         </div>
-      </TerminalWindow>
+      </div>
     </div>
   );
 }
