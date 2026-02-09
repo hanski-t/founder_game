@@ -23,10 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# AI assistant instructions (local tooling, not needed for app)
-CLAUDE.md
-CLAUDE.project.md
-
 # Unused assets (full collection + legacy source files)
 src/assets/game/
 src/assets/Legacy Collection/
