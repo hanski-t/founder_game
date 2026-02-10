@@ -1,15 +1,15 @@
 export interface Resources {
-  time: number;      // Weeks remaining
-  money: number;     // Dollars
-  energy: number;    // 0-100 percentage
-  network: number;   // Connection count
+  momentum: number;   // 0-100 percentage, startup speed
+  money: number;      // Dollars
+  energy: number;     // 0-100 percentage
+  reputation: number; // Social capital / credibility
 }
 
 export interface ResourceChange {
-  time?: number;
+  momentum?: number;
   money?: number;
   energy?: number;
-  network?: number;
+  reputation?: number;
 }
 
 export interface Choice {
@@ -64,21 +64,21 @@ export interface GameState {
   decisionHistory: DecisionHistoryEntry[];
   pendingOutcome: string | null;
   miniGameResult: 'success' | 'failure' | null;
-  endReason: 'time' | 'money' | 'success' | null;
+  endReason: 'momentum' | 'money' | 'success' | null;
   eventLog: string[];
   returnToNodeId: string | null; // For returning after random events
 }
 
 export const INITIAL_RESOURCES: Resources = {
-  time: 20,
+  momentum: 70,
   money: 10000,
   energy: 100,
-  network: 2,
+  reputation: 0,
 };
 
 export const RESOURCE_LIMITS = {
-  time: { min: 0, max: 52 },
+  momentum: { min: 0, max: 100 },
   money: { min: 0, max: 1000000 },
   energy: { min: 0, max: 100 },
-  network: { min: 0, max: 100 },
+  reputation: { min: 0, max: 500 },
 };

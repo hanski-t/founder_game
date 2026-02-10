@@ -79,7 +79,7 @@ export function PitchDeckMiniGame() {
     if (success) {
       completeMiniGame(
         true,
-        { money: -500, time: -1, network: 2 },
+        { money: -500, momentum: -5, reputation: 20 },
         `[PITCH DECK: EXCELLENT]
 
 Your deck scored ${score}/7 slides in optimal order!
@@ -91,15 +91,15 @@ to solution to market opportunity. The ask at the end feels earned.
 
 You get invited to pitch at Demo Day.
 
-+$0 (but saved from wasting money on bad pitch)
--1 week (prep time)
-+2 Network (investor interest)`,
+-$500 (prep costs)
+-5% Momentum
++20 Rep (investor credibility)`,
         'startup_competitor'
       );
     } else {
       completeMiniGame(
         false,
-        { money: -1500, time: -2, energy: -15 },
+        { money: -1500, momentum: -10, energy: -15 },
         `[PITCH DECK: NEEDS WORK]
 
 Your deck scored ${score}/7 slides in optimal order.
@@ -112,7 +112,7 @@ the problem. The market size comes after the ask. Investors tune out.
 Back to the drawing board...
 
 -$1,500 (wasted on pitch prep)
--2 weeks (rebuilding deck)
+-10% Momentum (setback)
 -15% Energy (demoralized)`,
         'startup_competitor'
       );

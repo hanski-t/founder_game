@@ -97,11 +97,11 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
       }}>
         <ResourceItem
           icon={<HourglassIcon color="#60a5fa" />}
-          label="TIME"
-          value={resources.time}
-          maxValue={RESOURCE_LIMITS.time.max}
+          label="MOMENTUM"
+          value={resources.momentum}
+          maxValue={RESOURCE_LIMITS.momentum.max}
           color="#60a5fa"
-          format={(v) => `${v}w`}
+          format={(v) => `${v}%`}
         />
         <ResourceItem
           icon={<CoinIcon color="#4ade80" />}
@@ -109,7 +109,13 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
           value={resources.money}
           maxValue={RESOURCE_LIMITS.money.max}
           color="#4ade80"
-          format={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
+          format={(v) => {
+            if (v >= 1000) {
+              const k = v / 1000;
+              return `$${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
+            }
+            return `$${v}`;
+          }}
         />
         <ResourceItem
           icon={<FlameIcon color={energyColor} />}
@@ -121,11 +127,11 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
         />
         <ResourceItem
           icon={<PeopleIcon color="#a78bfa" />}
-          label="NETWORK"
-          value={resources.network}
-          maxValue={RESOURCE_LIMITS.network.max}
+          label="REPUTATION"
+          value={resources.reputation}
+          maxValue={RESOURCE_LIMITS.reputation.max}
           color="#a78bfa"
-          format={(v) => String(v)}
+          format={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)}
         />
 
         {/* Phase indicator */}

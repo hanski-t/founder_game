@@ -173,7 +173,7 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     collectibles: [
       { id: 'cg-doc-1', visual: 'document', x: 25, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
-      { id: 'cg-doc-2', visual: 'document', x: 80, label: '+1 Network', resourceBonus: { network: 1 } },
+      { id: 'cg-doc-2', visual: 'document', x: 80, label: '+10 Rep', resourceBonus: { reputation: 10 } },
     ],
   },
 
@@ -205,7 +205,7 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sg-usb-1', visual: 'usb', x: 25, label: '+1 Network', resourceBonus: { network: 1 } },
+      { id: 'sg-usb-1', visual: 'usb', x: 25, label: '+10 Rep', resourceBonus: { reputation: 10 } },
       { id: 'sg-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
   },
@@ -246,7 +246,7 @@ export const scenes: Record<string, SceneDefinition> = {
       id: 'falling-market-noise',
       type: 'falling-catch',
       title: 'Navigate the Market Noise',
-      description: 'Catch customers and dodge distractions! Move left/right to catch the green items.',
+      description: 'Catch customers and dodge disreputations! Move left/right to catch the green items.',
       successThreshold: 4,
       gateX: 38,
       fallingCatchConfig: {
@@ -383,7 +383,7 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     collectibles: [
       { id: 'cl-scroll-1', visual: 'scroll', x: 30, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
-      { id: 'cl-usb-1', visual: 'usb', x: 80, label: '+2 Network', resourceBonus: { network: 2 } },
+      { id: 'cl-usb-1', visual: 'usb', x: 80, label: '+20 Rep', resourceBonus: { reputation: 20 } },
     ],
   },
 

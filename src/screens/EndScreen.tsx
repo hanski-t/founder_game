@@ -20,7 +20,7 @@ export function EndScreen() {
   }, [restartGame]);
 
   const isSuccess = state.endReason === 'success';
-  const isTimeOut = state.endReason === 'time';
+  const isMomentumOut = state.endReason === 'momentum';
   const isMoneyOut = state.endReason === 'money';
 
   const bgImage = isSuccess ? townBg : cemeteryBg;
@@ -28,7 +28,7 @@ export function EndScreen() {
 
   const getEndingTitle = () => {
     if (isSuccess) return 'QUEST COMPLETE';
-    if (isTimeOut) return 'TIME HAS EXPIRED';
+    if (isMomentumOut) return 'MOMENTUM LOST';
     if (isMoneyOut) return 'FUNDS DEPLETED';
     return 'JOURNEY ENDED';
   };
@@ -37,8 +37,8 @@ export function EndScreen() {
     if (isSuccess) {
       return `Against all odds, you have completed the first two phases of your founder journey. From university student to startup survivor, you have proven you have what it takes.\n\nThis is just the beginning. The real challenges lie ahead: scaling, funding rounds, hiring, product-market fit...\n\nBut that is a story for another day.`;
     }
-    if (isTimeOut) {
-      return `You spent too long deliberating, preparing, perfecting. While you were planning, others were shipping.\n\nThe startup world moves fast. Sometimes good enough today beats perfect tomorrow.\n\nLesson learned: Move faster next time.`;
+    if (isMomentumOut) {
+      return `Your startup stalled. Too many pivots, too much deliberation, not enough shipping.\n\nMomentum is everything in the early days. While you were overthinking, competitors were launching.\n\nLesson learned: Keep moving. Ship fast, learn faster.`;
     }
     if (isMoneyOut) {
       return `Your runway hit zero. The bank account is empty. The dream is not dead — just this iteration of it.\n\nMany successful founders failed first. They learned from it, got back up, and tried again with hard-won wisdom.\n\nWill you?`;
@@ -48,10 +48,10 @@ export function EndScreen() {
 
   const stats = [
     { label: 'Decisions Made', value: state.decisionHistory.length },
-    { label: 'Final Week', value: state.resources.time },
+    { label: 'Final Momentum', value: `${state.resources.momentum}%` },
     { label: 'Final Balance', value: `$${state.resources.money.toLocaleString()}` },
     { label: 'Final Energy', value: `${state.resources.energy}%` },
-    { label: 'Network Size', value: state.resources.network },
+    { label: 'Reputation', value: state.resources.reputation },
     { label: 'Phase Reached', value: state.currentPhase === 'university' ? 'University' : 'First Startup' },
   ];
 

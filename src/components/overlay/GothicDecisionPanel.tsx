@@ -22,10 +22,10 @@ function ResourceChangeChip({ resource, value }: { resource: string; value: numb
 
   // Human-readable labels with units
   const labels: Record<string, { pos: string; neg: string }> = {
-    time: { pos: `+${value} weeks`, neg: `${value} weeks` },
+    momentum: { pos: `+${value}% momentum`, neg: `${value}% momentum` },
     money: { pos: `+$${Math.abs(value).toLocaleString()}`, neg: `-$${Math.abs(value).toLocaleString()}` },
     energy: { pos: `+${value}% stamina`, neg: `${value}% stamina` },
-    network: { pos: `+${value} contacts`, neg: `${value} contacts` },
+    reputation: { pos: `+${value} rep`, neg: `${value} rep` },
   };
 
   const label = isPositive ? labels[resource]?.pos : labels[resource]?.neg;
@@ -52,14 +52,14 @@ function ResourceChangeChip({ resource, value }: { resource: string; value: numb
 function choiceSummary(changes: ResourceChange): string {
   const parts: string[] = [];
 
-  if (changes.time && changes.time < 0) parts.push(`takes ${Math.abs(changes.time)} weeks`);
+  if (changes.momentum && changes.momentum < 0) parts.push(`loses ${Math.abs(changes.momentum)}% momentum`);
   if (changes.money && changes.money < 0) parts.push(`costs $${Math.abs(changes.money).toLocaleString()}`);
   if (changes.energy && changes.energy < 0) parts.push(`drains ${Math.abs(changes.energy)}% stamina`);
   if (changes.money && changes.money > 0) parts.push(`earns $${changes.money.toLocaleString()}`);
   if (changes.energy && changes.energy > 0) parts.push(`restores ${changes.energy}% stamina`);
-  if (changes.network && changes.network > 0) parts.push(`gains ${changes.network} contacts`);
-  if (changes.network && changes.network < 0) parts.push(`loses ${Math.abs(changes.network)} contacts`);
-  if (changes.time && changes.time > 0) parts.push(`saves ${changes.time} weeks`);
+  if (changes.reputation && changes.reputation > 0) parts.push(`gains ${changes.reputation} rep`);
+  if (changes.reputation && changes.reputation < 0) parts.push(`loses ${Math.abs(changes.reputation)} rep`);
+  if (changes.momentum && changes.momentum > 0) parts.push(`gains ${changes.momentum}% momentum`);
 
   if (parts.length === 0) return '';
   // Capitalize first letter
@@ -131,13 +131,13 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
             color: 'var(--color-gothic-text)',
             flexWrap: 'wrap',
           }}>
-            {(['time', 'money', 'energy', 'network'] as const).map((key) => {
+            {(['momentum', 'money', 'energy', 'reputation'] as const).map((key) => {
               const { Icon, color } = RESOURCE_ICON_MAP[key];
               const hint = {
-                time: '0 = game over',
+                momentum: '0% = game over',
                 money: '$0 = game over',
                 energy: '0% = burnout',
-                network: 'more = more options',
+                reputation: 'your score',
               }[key];
               return (
                 <span key={key} style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
@@ -202,8 +202,8 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
                     marginTop: 8,
                     flexWrap: 'wrap',
                   }}>
-                    {choice.resourceChanges.time && (
-                      <ResourceChangeChip resource="time" value={choice.resourceChanges.time} />
+                    {choice.resourceChanges.momentum && (
+                      <ResourceChangeChip resource="momentum" value={choice.resourceChanges.momentum} />
                     )}
                     {choice.resourceChanges.money && (
                       <ResourceChangeChip resource="money" value={choice.resourceChanges.money} />
@@ -211,8 +211,8 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
                     {choice.resourceChanges.energy && (
                       <ResourceChangeChip resource="energy" value={choice.resourceChanges.energy} />
                     )}
-                    {choice.resourceChanges.network && (
-                      <ResourceChangeChip resource="network" value={choice.resourceChanges.network} />
+                    {choice.resourceChanges.reputation && (
+                      <ResourceChangeChip resource="reputation" value={choice.resourceChanges.reputation} />
                     )}
                   </div>
 

@@ -18,7 +18,7 @@ What will you study?`,
       {
         id: 'cs',
         text: 'Computer Science',
-        resourceChanges: { time: -2, energy: -10 },
+        resourceChanges: { momentum: -10, energy: -10 },
         outcome: `[SELECTED: Computer Science]
 
 You dive deep into algorithms, data structures, and software engineering.
@@ -31,7 +31,7 @@ every founder needs. You can now build your own MVPs.
       {
         id: 'business',
         text: 'Business Administration',
-        resourceChanges: { network: 3, money: -500 },
+        resourceChanges: { reputation: 30, money: -500 },
         outcome: `[SELECTED: Business Administration]
 
 You learn the language of startups: P&L statements, market analysis,
@@ -39,13 +39,13 @@ and go-to-market strategies. More importantly, you're surrounded by
 ambitious peers who might become future co-founders or investors.
 
 +SKILL UNLOCKED: Business Fundamentals
-+3 Network connections added`,
++30 Reputation (business network)`,
         nextNodeId: 'uni_clubs',
       },
       {
         id: 'engineering',
         text: 'Engineering',
-        resourceChanges: { time: -3, energy: -15 },
+        resourceChanges: { momentum: -15, energy: -15 },
         outcome: `[SELECTED: Engineering]
 
 The workload is brutal, but you're learning to solve hard problems
@@ -73,7 +73,7 @@ Which club will you join?`,
       {
         id: 'entrepreneur_club',
         text: 'Entrepreneurship Society',
-        resourceChanges: { network: 3, money: -200 },
+        resourceChanges: { reputation: 30, money: -200 },
         outcome: `[JOINED: Entrepreneurship Society]
 
 Weekly pitch nights, guest speakers from local startups, and a Discord
@@ -82,13 +82,13 @@ dreams, and Marcus, who's already sold two small businesses.
 
 The membership fee hurts, but these connections are priceless.
 
-+3 Network connections (including potential co-founders)`,
++30 Reputation (campus credibility)`,
         nextNodeId: 'uni_event_cofounder',
       },
       {
         id: 'hackathon_team',
         text: 'Hackathon Team',
-        resourceChanges: { energy: -20, time: -1 },
+        resourceChanges: { energy: -20, momentum: 5 },
         outcome: `[JOINED: Hackathon Team]
 
 48-hour coding sprints, energy drinks, and shipping products under
@@ -97,7 +97,8 @@ matching app - actually gets users.
 
 You learn that "done" beats "perfect" every time.
 
-+SKILL UNLOCKED: Rapid Prototyping`,
++SKILL UNLOCKED: Rapid Prototyping
++5% Momentum (you shipped something!)`,
         nextNodeId: 'uni_event_cofounder',
       },
       {
@@ -136,22 +137,22 @@ How do you respond?`,
       {
         id: 'exchange_info',
         text: 'Exchange contact info',
-        resourceChanges: { network: 2 },
+        resourceChanges: { reputation: 20 },
         outcome: `[CONNECTION ESTABLISHED]
 
 You swap numbers and follow each other on LinkedIn. Alex (that's their
 name) seems genuinely talented. Even if this particular idea doesn't
-work out, you've expanded your network with a potential future collaborator.
+work out, you've expanded your reach with a potential future collaborator.
 
 "Let's grab coffee next week," they say.
 
-+2 Network (potential co-founder contact)`,
++20 Reputation (strong connection)`,
         nextNodeId: 'uni_final',
       },
       {
         id: 'deep_dive',
         text: 'Spend the night discussing the idea',
-        resourceChanges: { network: 3, energy: -15 },
+        resourceChanges: { reputation: 30, energy: -15 },
         outcome: `[DEEP DIVE MODE: ENGAGED]
 
 You end up at a 24-hour diner until 4 AM, sketching wireframes on napkins.
@@ -160,7 +161,7 @@ early validation data.
 
 You're exhausted, but excited. This could be something.
 
-+3 Network (strong co-founder candidate)
++30 Reputation (strong co-founder candidate)
 -15% Energy`,
         nextNodeId: 'uni_final',
       },
@@ -195,7 +196,7 @@ How do you spend your last months as a student?`,
       {
         id: 'grades',
         text: 'Focus on grades (secure backup options)',
-        resourceChanges: { time: -2 },
+        resourceChanges: { momentum: -10 },
         outcome: `[PRIORITY: ACADEMIC EXCELLENCE]
 
 You grind out a perfect final semester. The job offers multiply -
@@ -210,7 +211,7 @@ PHASE 1 COMPLETE: Solid foundation established`,
       {
         id: 'side_project',
         text: 'Work on a side project',
-        resourceChanges: { time: -3, energy: -20, money: -1000 },
+        resourceChanges: { momentum: 10, energy: -20, money: -1000 },
         outcome: `[INITIATING: SIDE_PROJECT.exe]
 
 Screw the grades. You spend every spare moment building a prototype
@@ -219,13 +220,14 @@ but it works. You even get 50 beta users.
 
 Your GPA suffers, but you have something to show for it.
 
-PHASE 1 COMPLETE: MVP experience gained`,
+PHASE 1 COMPLETE: MVP experience gained
++10% Momentum (you shipped!)`,
         nextNodeId: 'startup_idea',
       },
       {
         id: 'alumni_network',
         text: 'Network aggressively with alumni',
-        resourceChanges: { time: -2, network: 5, money: -500 },
+        resourceChanges: { momentum: -10, reputation: 50, money: -500 },
         outcome: `[NETWORK EXPANSION: MAXIMUM]
 
 You attend every alumni event, send cold LinkedIn messages to founders
@@ -235,7 +237,8 @@ with local VCs.
 One alum, now a successful founder, gives you advice that sticks:
 "The best time to start is when you have nothing to lose."
 
-PHASE 1 COMPLETE: Strong network established`,
+PHASE 1 COMPLETE: Strong network established
++50 Reputation (alumni network)`,
         nextNodeId: 'startup_idea',
       },
     ],
@@ -261,7 +264,7 @@ How do you validate this idea?`,
       {
         id: 'build_mvp',
         text: 'Build MVP immediately',
-        resourceChanges: { money: -2000, time: -4, energy: -25 },
+        resourceChanges: { money: -2000, momentum: 15, energy: -25 },
         outcome: `[EXECUTING: BUILD_FIRST_MODE]
 
 "Move fast and break things," right? You lock yourself in your apartment
@@ -271,7 +274,7 @@ functional - basic team check-ins with async video messages.
 You launch to... crickets. But those 12 users who do sign up? They LOVE it.
 
 -$2,000 (hosting, tools, way too much coffee)
--4 weeks
++15% Momentum (you shipped an MVP!)
 -25% Energy
 +Working MVP`,
         nextNodeId: 'startup_competitor',
@@ -279,7 +282,7 @@ You launch to... crickets. But those 12 users who do sign up? They LOVE it.
       {
         id: 'customer_discovery',
         text: 'Talk to 50 customers first',
-        resourceChanges: { time: -2, network: 2 },
+        resourceChanges: { momentum: -10, reputation: 20 },
         outcome: `[EXECUTING: LEAN_STARTUP_PROTOCOL]
 
 Before writing a single line of code, you talk to 50 remote workers.
@@ -288,9 +291,9 @@ Cold emails, LinkedIn DMs, Twitter threads asking for feedback.
 What you learn changes everything: the pain point isn't staying
 connected - it's maintaining company culture. You pivot your concept.
 
--2 weeks
+-10% Momentum (research takes time)
 +Critical market insights
-+2 Network (future beta users)`,
++20 Reputation (market credibility)`,
         nextNodeId: 'startup_competitor',
       },
       {
@@ -324,7 +327,7 @@ How do you respond?`,
       {
         id: 'double_down',
         text: 'Double down on speed',
-        resourceChanges: { energy: -30, time: -2 },
+        resourceChanges: { energy: -30, momentum: 10 },
         outcome: `[RESPONSE: AGGRESSIVE_ITERATION]
 
 Sleep is cancelled. You ship three major features in two weeks,
@@ -334,23 +337,23 @@ message), and focus on a niche they're ignoring.
 The sprint nearly kills you, but you're still in the game.
 
 -30% Energy (burnout warning!)
--2 weeks
++10% Momentum (shipped fast!)
 +Competitive differentiation`,
         nextNodeId: 'startup_cofounder',
       },
       {
         id: 'pivot',
         text: 'Pivot to adjacent market',
-        resourceChanges: { time: -3, energy: -10 },
+        resourceChanges: { momentum: -15, energy: -10 },
         outcome: `[RESPONSE: STRATEGIC_PIVOT]
 
 You can't out-fund them, but you can out-maneuver them. You pivot to
 focus specifically on creative agencies - a niche they're not targeting.
 
-The pivot costs time, but you find a market that's underserved and
+The pivot costs momentum, but you find a market that's underserved and
 eager for a solution built just for them.
 
--3 weeks
+-15% Momentum (pivoting slows you down)
 -10% Energy
 +Clear market positioning`,
         nextNodeId: 'startup_cofounder',
@@ -391,7 +394,7 @@ What do you tell them?`,
       {
         id: 'full_time',
         text: 'Yes - join full time',
-        resourceChanges: { money: -3000, network: 3, time: -1 },
+        resourceChanges: { money: -3000, reputation: 30, momentum: 10 },
         outcome: `[CO-FOUNDER: ACTIVATED]
 
 Alex quits their job and moves into your cramped office (your apartment).
@@ -402,24 +405,25 @@ much as you do? Priceless.
 
 -$3,000/month runway burn
 +Full-time co-founder
-+3 Network (their connections)`,
++10% Momentum (team velocity!)
++30 Reputation (co-founder's network)`,
         nextNodeId: 'startup_funding',
       },
       {
         id: 'part_time',
         text: 'Part-time for now',
-        resourceChanges: { network: 1, time: -2 },
+        resourceChanges: { reputation: 10, momentum: -10 },
         outcome: `[CO-FOUNDER: PARTIALLY_ACTIVATED]
 
 Alex agrees to nights and weekends. Progress is slower, but you're
-not betting everything on unproven traction.
+not betting everything on unproven ground.
 
 They're frustrated with the pace, but understand the reasoning.
 For now.
 
 +Part-time help
-+1 Network
-Communication overhead: -2 weeks`,
++10 Reputation (their credibility helps)
+-10% Momentum (split attention slows things down)`,
         nextNodeId: 'startup_funding',
       },
       {
@@ -428,7 +432,7 @@ Communication overhead: -2 weeks`,
         resourceChanges: { energy: -10 },
         outcome: `[SOLO_FOUNDER_MODE: CONTINUING]
 
-You turn Alex down gently. "Let's revisit when we have more traction."
+You turn Alex down gently. "Let's revisit when we're further along."
 
 They're disappointed but respect the decision. You continue grinding
 alone, questioning the choice at 2 AM debug sessions.
@@ -457,7 +461,7 @@ How do you proceed?`,
       {
         id: 'bootstrap',
         text: 'Bootstrap (freelance on the side)',
-        resourceChanges: { money: 5000, time: -4, energy: -20 },
+        resourceChanges: { money: 5000, momentum: -20, energy: -20 },
         outcome: `[FUNDING: BOOTSTRAP_MODE]
 
 You pick up freelance work to extend the runway. It's brutal - coding
@@ -467,14 +471,14 @@ and answer to no one.
 "Ramen profitable" becomes your new favorite phrase.
 
 +$5,000 (freelance income)
--4 weeks (split focus)
+-20% Momentum (split focus kills velocity)
 -20% Energy`,
         nextNodeId: 'startup_final',
       },
       {
         id: 'raise',
         text: 'Raise a pre-seed round',
-        resourceChanges: { money: 100000, time: -6, network: 5 },
+        resourceChanges: { money: 100000, momentum: -15, reputation: 50 },
         outcome: `[FUNDING: VENTURE_CAPITAL_ROUTE]
 
 You spend six weeks pitching - demo days, angel meetings, VC office
@@ -484,27 +488,27 @@ fund bites. $100k on a SAFE, and they open their network to you.
 You're no longer completely in control, but you have firepower.
 
 +$100,000
--6 weeks
-+5 Network (investor connections)
+-15% Momentum (fundraising is slow)
++50 Reputation (investor credibility)
 -Equity dilution`,
         nextNodeId: 'startup_final',
       },
       {
         id: 'accelerator',
         text: 'Apply to an accelerator',
-        resourceChanges: { money: 25000, time: -3, network: 10, energy: -15 },
+        resourceChanges: { money: 25000, momentum: -10, reputation: 100, energy: -15 },
         outcome: `[FUNDING: ACCELERATOR_PROGRAM]
 
 You get into a top accelerator. For three months, you're immersed in
 startup boot camp - weekly mentor sessions, peer founders, and a
 demo day with 200 investors watching.
 
-The program takes 7% equity, but the network and credibility are
-worth it.
+The program takes 7% equity, but the credibility and introductions
+are worth it.
 
 +$25,000
--3 weeks (application process)
-+10 Network (cohort + mentors)
+-10% Momentum (application process)
++100 Reputation (accelerator credibility)
 -15% Energy (intense program)`,
         nextNodeId: 'startup_final',
       },
@@ -530,7 +534,7 @@ before leveling up?`,
       {
         id: 'launch_public',
         text: 'Launch publicly (Product Hunt)',
-        resourceChanges: { time: -2, energy: -20, network: 3 },
+        resourceChanges: { momentum: 15, energy: -20, reputation: 50 },
         outcome: `[LAUNCHING: PRODUCT_HUNT_CAMPAIGN]
 
 You prepare for weeks - GIFs, copy, coordinating upvotes (ethically!).
@@ -540,13 +544,15 @@ Result: #4 Product of the Day. 500 new signups. One investor DM.
 
 "We're doing this. We're actually doing this."
 
++15% Momentum (launched!)
++50 Reputation (public launch buzz)
 PHASE 2 COMPLETE: Launched and validated`,
         nextNodeId: 'game_success',
       },
       {
         id: 'enterprise_pivot',
         text: 'Pivot to enterprise sales',
-        resourceChanges: { time: -3, money: 15000, network: 2 },
+        resourceChanges: { momentum: -10, money: 15000, reputation: 20 },
         outcome: `[EXECUTING: B2B_PIVOT]
 
 Consumer is a grind. You pivot to selling to businesses - higher
@@ -557,13 +563,15 @@ It takes forever to close, but when it does? Validation.
 
 "This is a real business now."
 
+-10% Momentum (pivoting slows you down)
++20 Reputation (enterprise credibility)
 PHASE 2 COMPLETE: Revenue achieved`,
         nextNodeId: 'game_success',
       },
       {
         id: 'growth_experiment',
         text: 'Run a growth experiment',
-        resourceChanges: { money: -2000, time: -2 },
+        resourceChanges: { money: -2000, momentum: 5, reputation: 30 },
         outcome: `[EXECUTING: GROWTH_HACK_PROTOCOL]
 
 You blow $2k on ads, influencer partnerships, and a referral program.
@@ -574,6 +582,8 @@ The CAC is still too high, but you're learning.
 
 "Growth is a skill. And I'm getting better."
 
++5% Momentum
++30 Reputation (growth proof)
 PHASE 2 COMPLETE: Growth engine started`,
         nextNodeId: 'game_success',
       },
@@ -636,24 +646,24 @@ Quick - how do you handle this?`,
       {
         id: 'fix_bug',
         text: 'Drop everything and fix the bug',
-        resourceChanges: { energy: -15, network: 5 },
+        resourceChanges: { energy: -15, reputation: 80 },
         outcome: `You ship a fix in 2 hours and post about it in the thread.
 The community loves the responsiveness. Several users sign up just
 because of how you handled it.
 
-+5 Network (new users)
++80 Reputation (viral moment!)
 -15% Energy`,
         nextNodeId: 'RETURN_TO_STORY',
       },
       {
         id: 'scale_servers',
         text: 'Scale servers first',
-        resourceChanges: { money: -500 },
+        resourceChanges: { money: -500, reputation: 30 },
         outcome: `You throw money at the problem - bigger servers, CDN,
 the works. The site stays up, but the bug complaints continue.
 
 -$500
-Site stable, reputation mixed`,
++30 Reputation (stayed online under pressure)`,
         nextNodeId: 'RETURN_TO_STORY',
       },
     ],
@@ -676,12 +686,12 @@ But the meeting would be across town during your busiest week.`,
       {
         id: 'take_meeting',
         text: 'Take the meeting',
-        resourceChanges: { time: -1, network: 4, energy: -10 },
+        resourceChanges: { momentum: -5, reputation: 40, energy: -10 },
         outcome: `The meeting runs 3 hours. They share hard-won wisdom about
 your market, offer to make intros, and hint at potential angel investment.
 
--1 week
-+4 Network
+-5% Momentum
++40 Reputation (mentor endorsement)
 -10% Energy
 +Invaluable advice`,
         nextNodeId: 'RETURN_TO_STORY',
@@ -689,11 +699,11 @@ your market, offer to make intros, and hint at potential angel investment.
       {
         id: 'reschedule',
         text: 'Ask to reschedule',
-        resourceChanges: { network: 1 },
+        resourceChanges: { reputation: 10 },
         outcome: `They understand - founders are busy. You schedule for next
 month, but momentum is lost. The follow-up meeting never quite happens.
 
-+1 Network (stayed on radar)
++10 Reputation (stayed on their radar)
 Opportunity partially missed`,
         nextNodeId: 'RETURN_TO_STORY',
       },

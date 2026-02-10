@@ -79,8 +79,8 @@ export function PeopleIcon({ color, size = 14 }: IconProps) {
 
 // Map resource keys to their icon component and color
 export const RESOURCE_ICON_MAP = {
-  time: { Icon: HourglassIcon, color: '#60a5fa' },
+  momentum: { Icon: HourglassIcon, color: '#60a5fa' },
   money: { Icon: CoinIcon, color: '#4ade80' },
   energy: { Icon: FlameIcon, color: '#fbbf24' },
-  network: { Icon: PeopleIcon, color: '#a78bfa' },
+  reputation: { Icon: PeopleIcon, color: '#a78bfa' },
 } as const;

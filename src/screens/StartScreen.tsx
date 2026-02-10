@@ -186,10 +186,10 @@ export function StartScreen() {
           }}
         >
           {[
-            { label: 'Time', value: '20 weeks', color: '#60a5fa', desc: 'Every choice costs weeks' },
+            { label: 'Momentum', value: '70%', color: '#60a5fa', desc: 'Stall and it\'s game over' },
             { label: 'Money', value: '$10,000', color: '#4ade80', desc: 'Runs out — game over' },
             { label: 'Energy', value: '100%', color: '#d4a853', desc: 'Burnout ends your journey' },
-            { label: 'Network', value: '2', color: '#c084fc', desc: 'Contacts unlock new paths' },
+            { label: 'Reputation', value: '0', color: '#c084fc', desc: 'Your credibility and social proof' },
           ].map((res) => (
             <div key={res.label} style={{ textAlign: 'center' }}>
               <div style={{

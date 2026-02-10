@@ -21,7 +21,7 @@ type GameAction =
   | { type: 'START_MINIGAME' }
   | { type: 'COMPLETE_MINIGAME'; success: boolean; resourceChanges: ResourceChange; outcome: string; nextNodeId?: string }
   | { type: 'TRIGGER_RANDOM_EVENT'; eventId: string }
-  | { type: 'END_GAME'; reason: 'time' | 'money' | 'success' }
+  | { type: 'END_GAME'; reason: 'momentum' | 'money' | 'success' }
   | { type: 'RESTART_GAME' }
   | { type: 'ADD_EVENT_LOG'; message: string }
   | { type: 'APPLY_BONUS'; resourceChanges: ResourceChange };
@@ -46,15 +46,15 @@ function clampResource(value: number, resource: keyof Resources): number {
 
 function applyResourceChanges(resources: Resources, changes: ResourceChange): Resources {
   return {
-    time: clampResource(resources.time + (changes.time || 0), 'time'),
+    momentum: clampResource(resources.momentum + (changes.momentum || 0), 'momentum'),
     money: clampResource(resources.money + (changes.money || 0), 'money'),
     energy: clampResource(resources.energy + (changes.energy || 0), 'energy'),
-    network: clampResource(resources.network + (changes.network || 0), 'network'),
+    reputation: clampResource(resources.reputation + (changes.reputation || 0), 'reputation'),
   };
 }
 
-function checkGameEnd(resources: Resources): 'time' | 'money' | null {
-  if (resources.time <= 0) return 'time';
+function checkGameEnd(resources: Resources): 'momentum' | 'money' | null {
+  if (resources.momentum <= 0) return 'momentum';
   if (resources.money <= 0) return 'money';
   return null;
 }
@@ -93,7 +93,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           decisionHistory: [...state.decisionHistory, historyEntry],
           screen: 'end',
           endReason,
-          eventLog: [...state.eventLog, `> Choice made: ${action.choiceText}`, `> GAME OVER: ${endReason === 'time' ? 'Out of time!' : 'Out of money!'}`],
+          eventLog: [...state.eventLog, `> Choice made: ${action.choiceText}`, `> GAME OVER: ${endReason === 'momentum' ? 'Lost all momentum!' : 'Out of money!'}`],
         };
       }
 
@@ -183,7 +183,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           miniGameResult: action.success ? 'success' : 'failure',
           eventLog: [...state.eventLog,
             `> Mini-game ${action.success ? 'SUCCESS' : 'FAILURE'}`,
-            `> GAME OVER: ${endReason === 'time' ? 'Out of time!' : 'Out of money!'}`
+            `> GAME OVER: ${endReason === 'momentum' ? 'Lost all momentum!' : 'Out of money!'}`
           ],
         };
       }
