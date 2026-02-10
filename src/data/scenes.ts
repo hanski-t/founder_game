@@ -100,6 +100,9 @@ export const scenes: Record<string, SceneDefinition> = {
     obstacles: [
       { id: 'tc-rock-1', type: 'rock', x: 38, width: 5, height: 5 },
     ],
+    enemies: [
+      { id: 'tc-bat-1', type: 'bat', visual: '\u{1F987}', patrolStart: 42, patrolEnd: 52, y: 68, speed: 10, width: 4, height: 4 },
+    ],
   },
 
   'dark-castle-interior': {
@@ -223,6 +226,9 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'sg-barrel-1', type: 'barrel', x: 33, width: 4, height: 6 },
       { id: 'sg-crate-1', type: 'crate', x: 45, width: 4, height: 5 },
     ],
+    enemies: [
+      { id: 'sg-rat-1', type: 'rat', visual: '\u{1F400}', patrolStart: 28, patrolEnd: 42, y: 78, speed: 14, width: 3, height: 3 },
+    ],
   },
 
   'swamp-deep': {
@@ -318,6 +324,9 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cm-crate-1', type: 'crate', x: 35, width: 4, height: 6 },
       { id: 'cm-rock-1', type: 'rock', x: 48, width: 5, height: 5 },
     ],
+    enemies: [
+      { id: 'cm-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 30, patrolEnd: 50, y: 72, speed: 8, width: 4, height: 5 },
+    ],
   },
 
   'castle-hall': {
@@ -408,6 +417,10 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cl-grave-1', type: 'grave', x: 25, width: 4, height: 6 },
       { id: 'cl-grave-2', type: 'grave', x: 40, width: 4, height: 6 },
       { id: 'cl-rock-1', type: 'rock', x: 52, width: 5, height: 5 },
+    ],
+    enemies: [
+      { id: 'cl-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 30, patrolEnd: 55, y: 78, speed: 10, width: 4, height: 7 },
+      { id: 'cl-bat-1', type: 'bat', visual: '\u{1F987}', patrolStart: 45, patrolEnd: 58, y: 65, speed: 12, width: 3, height: 3 },
     ],
   },
 
