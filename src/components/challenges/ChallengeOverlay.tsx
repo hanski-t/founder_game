@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ChallengeDefinition } from '../../types/variety';
 import { useVariety } from '../../context/VarietyContext';
 import { QuickTimeChallenge } from './QuickTimeChallenge';
@@ -10,7 +10,7 @@ interface ChallengeOverlayProps {
 
 export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
   const { varietyState, setChallengePhase, completeChallenge } = useVariety();
-  const { challengePhase, challengeScore } = varietyState;
+  const { challengePhase, challengeScore, challengeTotal } = varietyState;
 
   const handleStart = useCallback(() => {
     setChallengePhase('active');
@@ -23,6 +23,21 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
   const handleDismiss = useCallback(() => {
     completeChallenge(challenge.id);
   }, [completeChallenge, challenge.id]);
+
+  // Enter key for intro/result screens
+  useEffect(() => {
+    if (challengePhase !== 'intro' && challengePhase !== 'result') return;
+
+    const handler = challengePhase === 'intro' ? handleStart : handleDismiss;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handler();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [challengePhase, handleStart, handleDismiss]);
 
   const succeeded = challengeScore >= challenge.successThreshold;
 
@@ -52,20 +67,21 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
             fontFamily: 'var(--font-mono)',
             color: 'var(--color-gothic-text)',
             fontSize: '0.85rem',
-            marginBottom: 20,
             lineHeight: 1.6,
           }}>
             {challenge.description}
           </p>
-          <div style={{
-            fontFamily: 'var(--font-gothic)',
-            color: 'var(--color-gothic-gold)',
-            fontSize: '0.9rem',
-            opacity: 0.7,
-            animation: 'collectible-bob 2s ease-in-out infinite',
-          }}>
-            Click to begin
-          </div>
+        </div>
+        <div style={{
+          fontFamily: 'var(--font-gothic)',
+          color: 'var(--color-gothic-gold)',
+          fontSize: '1.2rem',
+          marginTop: 24,
+          textAlign: 'center',
+          textShadow: '0 0 12px rgba(212, 168, 83, 0.4)',
+          animation: 'collectible-bob 2s ease-in-out infinite',
+        }}>
+          Press Enter to begin
         </div>
       </div>
     );
@@ -118,27 +134,29 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
             fontSize: '0.85rem',
             marginBottom: 8,
           }}>
-            Score: {challengeScore} / {challenge.successThreshold}
+            Score: {challengeScore} / {challengeTotal}
           </p>
           <p style={{
             fontFamily: 'var(--font-mono)',
             color: 'var(--color-gothic-text)',
             fontSize: '0.8rem',
             opacity: 0.7,
-            marginBottom: 20,
           }}>
             {succeeded
               ? 'You proved your mettle. Onward!'
               : 'The journey continues regardless.'}
           </p>
-          <div style={{
-            fontFamily: 'var(--font-gothic)',
-            color: 'var(--color-gothic-gold)',
-            fontSize: '0.9rem',
-            opacity: 0.7,
-          }}>
-            Click to continue
-          </div>
+        </div>
+        <div style={{
+          fontFamily: 'var(--font-gothic)',
+          color: 'var(--color-gothic-gold)',
+          fontSize: '1.2rem',
+          marginTop: 24,
+          textAlign: 'center',
+          textShadow: '0 0 12px rgba(212, 168, 83, 0.4)',
+          animation: 'collectible-bob 2s ease-in-out infinite',
+        }}>
+          Press Enter to continue
         </div>
       </div>
     );

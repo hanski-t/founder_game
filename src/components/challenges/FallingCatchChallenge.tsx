@@ -71,6 +71,11 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
         const pool = isGood ? config.goodItems : config.badItems;
         const item = pool[Math.floor(Math.random() * pool.length)];
 
+        // Track total good items spawned as the possible score
+        if (isGood) {
+          varietyDispatchRef.current({ type: 'INCREMENT_TOTAL' });
+        }
+
         setItems(prev => [...prev, {
           id: nextIdRef.current++,
           x: 10 + Math.random() * 80,

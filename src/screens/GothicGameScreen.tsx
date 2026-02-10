@@ -224,6 +224,7 @@ export function GothicGameScreen() {
           resources={state.resources}
           onChoice={handleChoice}
           isFirstDecision={state.decisionHistory.length === 0}
+          miniGamePlayed={state.miniGameResult !== null}
         />
       )}
 

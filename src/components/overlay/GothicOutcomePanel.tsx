@@ -1,9 +1,22 @@
+import { useEffect } from 'react';
+
 interface GothicOutcomePanelProps {
   outcomeText: string;
   onContinue: () => void;
 }
 
 export function GothicOutcomePanel({ outcomeText, onContinue }: GothicOutcomePanelProps) {
+  // Enter key to continue
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onContinue();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onContinue]);
   return (
     <div className="gothic-overlay" onClick={(e) => e.stopPropagation()}>
       <div className="gothic-panel">
@@ -24,7 +37,7 @@ export function GothicOutcomePanel({ outcomeText, onContinue }: GothicOutcomePan
             fontFamily: 'var(--font-gothic)',
             color: 'var(--color-gothic-gold)',
           }}>
-            Continue your journey...
+            Continue your journey... <span style={{ fontSize: '0.7rem', opacity: 0.5 }}>[Enter]</span>
           </div>
         </div>
       </div>

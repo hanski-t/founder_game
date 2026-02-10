@@ -14,6 +14,19 @@ export function StartScreen() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
+  // Enter key to start game
+  useEffect(() => {
+    if (!showButton) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        startGame();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [showButton, startGame]);
+
   return (
     <div
       style={{
@@ -241,6 +254,18 @@ export function StartScreen() {
         >
           BEGIN YOUR QUEST
         </button>
+        <div
+          style={{
+            marginTop: '0.5rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.65rem',
+            color: '#e8d5b5',
+            opacity: showButton ? 0.35 : 0,
+            transition: 'opacity 0.5s ease-out 0.3s',
+          }}
+        >
+          press Enter
+        </div>
 
         {/* Footer hint */}
         <div
@@ -253,7 +278,19 @@ export function StartScreen() {
             transition: 'opacity 0.5s ease-out 0.3s',
           }}
         >
-          Click to move &middot; Walk to characters to interact
+          Use arrow keys to move &middot; Walk to characters to interact
+        </div>
+        <div
+          style={{
+            marginTop: '0.5rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.6rem',
+            color: '#e8d5b5',
+            opacity: showButton ? 0.3 : 0,
+            transition: 'opacity 0.5s ease-out 0.5s',
+          }}
+        >
+          Best played on desktop with a keyboard
         </div>
       </div>
     </div>

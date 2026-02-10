@@ -17,6 +17,11 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const completedRef = useRef(false);
 
+  // Set total possible score = number of prompts
+  useEffect(() => {
+    varietyDispatch({ type: 'SET_CHALLENGE_TOTAL', total: config.prompts.length });
+  }, [config.prompts.length, varietyDispatch]);
+
   const currentPrompt = config.prompts[currentIndex];
   const isLastPrompt = currentIndex >= config.prompts.length - 1;
 

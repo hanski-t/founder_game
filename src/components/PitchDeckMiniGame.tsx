@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 
 interface Slide {
@@ -38,6 +38,7 @@ export function PitchDeckMiniGame() {
   const { completeMiniGame } = useGame();
   const [slides, setSlides] = useState(() => shuffleArray(SLIDES));
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -118,6 +119,33 @@ Back to the drawing board...
     }
   }, [score, completeMiniGame]);
 
+  // Keyboard navigation for slides
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        setFocusedIndex(i => Math.max(0, i - 1));
+      } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        setFocusedIndex(i => Math.min(slides.length - 1, i + 1));
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (isSubmitted) {
+          handleComplete();
+        } else {
+          handleSlideClick(focusedIndex);
+        }
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        if (!isSubmitted) {
+          handleSubmit();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [focusedIndex, slides.length, isSubmitted, handleSlideClick, handleSubmit, handleComplete]);
+
   return (
     <div style={{ padding: '8px 0' }}>
       {/* Header */}
@@ -161,7 +189,7 @@ Back to the drawing board...
             color: textColor,
             lineHeight: 1.6,
           }}>
-            Click a slide to select it, then click another to swap positions.
+            &uarr;&darr; to navigate &middot; Enter to select/swap &middot; Tab to submit
             <br />
             Arrange all 7 slides in the order that tells the best story.
             <br />
@@ -209,6 +237,8 @@ Back to the drawing board...
                 padding: '10px 14px',
                 background: cardBg,
                 border: `1px solid ${cardBorder}`,
+                outline: index === focusedIndex && !isSubmitted ? `2px solid ${goldColor}` : 'none',
+                outlineOffset: '2px',
                 cursor: isSubmitted ? 'default' : 'pointer',
                 transition: 'all 0.2s ease',
                 color: textColor,
@@ -321,7 +351,8 @@ Back to the drawing board...
           e.currentTarget.style.boxShadow = 'none';
         }}
       >
-        {isSubmitted ? 'CONTINUE' : 'SUBMIT PITCH DECK'}
+        {isSubmitted ? 'CONTINUE' : 'SUBMIT PITCH DECK'}{' '}
+        <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>{isSubmitted ? '[Enter]' : '[Tab]'}</span>
       </button>
     </div>
   );

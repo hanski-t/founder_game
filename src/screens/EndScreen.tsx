@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import cemeteryBg from '@assets/backgrounds/cemetery/background.png';
 import cemeteryMountains from '@assets/backgrounds/cemetery/mountains.png';
@@ -5,6 +6,18 @@ import townBg from '@assets/backgrounds/town/background.png';
 
 export function EndScreen() {
   const { state, restartGame } = useGame();
+
+  // Enter key to restart
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        restartGame();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [restartGame]);
 
   const isSuccess = state.endReason === 'success';
   const isTimeOut = state.endReason === 'time';
@@ -309,6 +322,17 @@ export function EndScreen() {
         >
           TRY AGAIN?
         </button>
+        <div
+          style={{
+            marginTop: '0.4rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.65rem',
+            color: '#e8d5b5',
+            opacity: 0.35,
+          }}
+        >
+          press Enter
+        </div>
 
         <div
           style={{

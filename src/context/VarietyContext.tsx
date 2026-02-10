@@ -14,6 +14,7 @@ const initialState: VarietyState = {
   completedChallengeIds: [],
   challengePhase: 'not-started',
   challengeScore: 0,
+  challengeTotal: 0,
   challengeSuccessThreshold: 0,
 };
 
@@ -41,6 +42,7 @@ function varietyReducer(state: VarietyState, action: VarietyAction): VarietyStat
         ...state,
         challengePhase: 'intro',
         challengeScore: 0,
+        challengeTotal: 0,
         challengeSuccessThreshold: action.successThreshold,
       };
 
@@ -52,6 +54,12 @@ function varietyReducer(state: VarietyState, action: VarietyAction): VarietyStat
 
     case 'DECREMENT_SCORE':
       return { ...state, challengeScore: Math.max(0, state.challengeScore - 1) };
+
+    case 'SET_CHALLENGE_TOTAL':
+      return { ...state, challengeTotal: action.total };
+
+    case 'INCREMENT_TOTAL':
+      return { ...state, challengeTotal: state.challengeTotal + 1 };
 
     case 'COMPLETE_CHALLENGE':
       return {

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { DecisionNode, Choice, ResourceChange } from '../../types/game';
 import type { Resources } from '../../types/game';
 import { RESOURCE_ICON_MAP } from '../hud/ResourceIcons';
@@ -8,6 +9,7 @@ interface GothicDecisionPanelProps {
   onChoice: (choice: Choice) => void;
   onClose?: () => void;
   isFirstDecision?: boolean;
+  miniGamePlayed?: boolean;
 }
 
 function ResourceChangeChip({ resource, value }: { resource: string; value: number }) {
@@ -65,7 +67,42 @@ function choiceSummary(changes: ResourceChange): string {
   return sentence.charAt(0).toUpperCase() + sentence.slice(1);
 }
 
-export function GothicDecisionPanel({ node, onChoice, isFirstDecision }: GothicDecisionPanelProps) {
+export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGamePlayed }: GothicDecisionPanelProps) {
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+  // Filter out mini-game choices if already played
+  const visibleChoices = miniGamePlayed
+    ? node.choices.filter(c => !c.triggersMiniGame)
+    : node.choices;
+
+  // Keyboard navigation for choices
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      const choiceCount = visibleChoices.length;
+
+      if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        setHighlightedIndex(i => (i + 1) % choiceCount);
+      } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        setHighlightedIndex(i => (i - 1 + choiceCount) % choiceCount);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        onChoice(visibleChoices[highlightedIndex]);
+      } else {
+        // A/B/C direct selection
+        const letterIndex = e.key.toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2
+        if (letterIndex >= 0 && letterIndex < choiceCount) {
+          e.preventDefault();
+          onChoice(visibleChoices[letterIndex]);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [visibleChoices, highlightedIndex, onChoice]);
+
   return (
     <div className="gothic-overlay" onClick={(e) => e.stopPropagation()}>
       <div className="gothic-panel">
@@ -113,7 +150,18 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision }: GothicD
         )}
 
         {/* Choices */}
-        {node.choices.map((choice, index) => {
+        <div style={{
+          marginBottom: 10,
+          fontSize: '0.65rem',
+          fontFamily: 'var(--font-mono)',
+          color: 'var(--color-gothic-text)',
+          opacity: 0.35,
+          textAlign: 'center',
+        }}>
+          &uarr;&darr; to browse &middot; Enter to select &middot; or press A/B/C
+        </div>
+
+        {visibleChoices.map((choice, index) => {
           const summary = choiceSummary(choice.resourceChanges);
           const hasChanges = Object.values(choice.resourceChanges).some(v => v !== undefined && v !== 0);
 
@@ -122,6 +170,11 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision }: GothicD
               key={choice.id}
               className="gothic-choice-card"
               onClick={() => onChoice(choice)}
+              style={index === highlightedIndex ? {
+                borderColor: 'var(--color-gothic-gold)',
+                boxShadow: '0 0 15px rgba(212, 168, 83, 0.2), inset 0 0 20px rgba(212, 168, 83, 0.05)',
+                background: 'rgba(40, 25, 26, 0.9)',
+              } : undefined}
             >
               <div className="gothic-choice-text">
                 <span style={{ color: 'var(--color-gothic-gold)', marginRight: 8 }}>

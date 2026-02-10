@@ -60,6 +60,7 @@ export interface VarietyState {
   completedChallengeIds: string[];
   challengePhase: ChallengePhase;
   challengeScore: number;
+  challengeTotal: number;
   challengeSuccessThreshold: number;
 }
 
@@ -70,5 +71,7 @@ export type VarietyAction =
   | { type: 'SET_CHALLENGE_PHASE'; phase: ChallengePhase }
   | { type: 'INCREMENT_SCORE' }
   | { type: 'DECREMENT_SCORE' }
+  | { type: 'SET_CHALLENGE_TOTAL'; total: number }
+  | { type: 'INCREMENT_TOTAL' }
   | { type: 'COMPLETE_CHALLENGE'; challengeId: string }
   | { type: 'RESET_VARIETY' };

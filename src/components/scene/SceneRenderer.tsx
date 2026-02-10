@@ -24,15 +24,13 @@ export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
     return () => clearTimeout(timer);
   }, [isFirstScene]);
 
-  const handleSceneClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (sceneState.showDecisionPanel || sceneState.showOutcomePanel) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = ((e.clientX - rect.left) / rect.width) * 100;
-    sceneDispatch({ type: 'SET_PENDING_INTERACTABLE', id: null });
-    sceneDispatch({ type: 'SET_PLAYER_TARGET', x: Math.max(2, Math.min(98, clickX)) });
-    setShowHint(false);
-  };
+  // Dismiss hint on first keypress
+  useEffect(() => {
+    if (!showHint) return;
+    const dismissOnKey = () => setShowHint(false);
+    window.addEventListener('keydown', dismissOnKey);
+    return () => window.removeEventListener('keydown', dismissOnKey);
+  }, [showHint]);
 
   // Find the first interactable to point the hint toward
   const firstNpc = scene.interactables[0];
@@ -42,7 +40,6 @@ export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
   return (
     <div
       className={`scene-container ${sceneState.screenShake ? 'screen-shake' : ''}`}
-      onClick={handleSceneClick}
       onAnimationEnd={() => {
         if (sceneState.screenShake) {
           sceneDispatch({ type: 'STOP_SCREEN_SHAKE' });
@@ -87,7 +84,7 @@ export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
             pointerEvents: 'none',
           }}
         >
-          Walk towards {firstNpc.label} {hintArrow}
+          Use arrow keys to walk towards {firstNpc.label} {hintArrow}
         </div>
       )}
     </div>
