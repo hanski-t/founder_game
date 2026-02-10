@@ -4,6 +4,7 @@ import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
 import { useCharacterMovement } from '../hooks/useCharacterMovement';
 import { useKeyboardMovement } from '../hooks/useKeyboardMovement';
+import { useJumpPhysics } from '../hooks/useJumpPhysics';
 import { SceneRenderer } from '../components/scene/SceneRenderer';
 import { GothicDecisionPanel } from '../components/overlay/GothicDecisionPanel';
 import { GothicOutcomePanel } from '../components/overlay/GothicOutcomePanel';
@@ -27,12 +28,13 @@ export function GothicGameScreen() {
   const prevNodeIdRef = useRef(state.currentNodeId);
   const prevPhaseRef = useRef<GamePhase>(state.currentPhase);
 
+  // Get current scene
+  const currentScene = getSceneById(sceneState.currentSceneId);
+
   // Activate movement hooks
   useCharacterMovement();
   useKeyboardMovement();
-
-  // Get current scene
-  const currentScene = getSceneById(sceneState.currentSceneId);
+  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78);
 
   // Watch for node changes -> trigger scene transitions
   useEffect(() => {
@@ -185,6 +187,7 @@ export function GothicGameScreen() {
           type: 'RESET_SCENE',
           sceneId: sceneState.transitionTargetSceneId,
           playerStartX: targetScene.playerStartX,
+          groundY: targetScene.groundY,
         });
       }
     }
@@ -213,7 +216,7 @@ export function GothicGameScreen() {
   return (
     <>
       {/* Scene */}
-      <SceneRenderer scene={currentScene} onInteract={handleInteract} />
+      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={triggerKnockback} />
 
       {/* Resource HUD */}
       <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />

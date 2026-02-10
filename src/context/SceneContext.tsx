@@ -4,9 +4,12 @@ import type { SceneState, SceneAction } from '../types/scene';
 
 const initialSceneState: SceneState = {
   playerX: 20,
+  playerY: 78,
   playerTargetX: null,
   playerFacing: 'right',
   playerAnimation: 'idle',
+  isGrounded: true,
+  knockbackActive: false,
   currentSceneId: 'town-square',
   isTransitioning: false,
   transitionTargetSceneId: null,
@@ -73,14 +76,29 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
     case 'HIDE_PHASE_TITLE':
       return { ...state, phaseTitle: null };
 
+    case 'UPDATE_PLAYER_Y':
+      return { ...state, playerY: action.y };
+
+    case 'SET_GROUNDED':
+      return { ...state, isGrounded: action.grounded };
+
+    case 'TRIGGER_KNOCKBACK':
+      return { ...state, knockbackActive: true };
+
+    case 'CLEAR_KNOCKBACK':
+      return { ...state, knockbackActive: false };
+
     case 'RESET_SCENE':
       return {
         ...state,
         currentSceneId: action.sceneId,
         playerX: action.playerStartX,
+        playerY: action.groundY,
         playerTargetX: null,
         playerAnimation: 'idle',
         playerFacing: 'right',
+        isGrounded: true,
+        knockbackActive: false,
         pendingInteractableId: null,
         hoveredInteractableId: null,
         showDecisionPanel: false,

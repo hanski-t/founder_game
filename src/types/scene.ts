@@ -1,5 +1,6 @@
 import type { GamePhase } from './game';
 import type { CollectibleDefinition, ChallengeDefinition } from './variety';
+import type { ObstacleDefinition } from './platformer';
 
 export interface SpriteConfig {
   frameWidth: number;
@@ -42,13 +43,17 @@ export interface SceneDefinition {
   ambientColor?: string;
   collectibles?: CollectibleDefinition[];
   challenge?: ChallengeDefinition;
+  obstacles?: ObstacleDefinition[];
 }
 
 export interface SceneState {
   playerX: number; // percentage of scene width (0-100)
+  playerY: number; // percentage from top (78 = ground)
   playerTargetX: number | null;
   playerFacing: 'left' | 'right';
-  playerAnimation: 'idle' | 'walk';
+  playerAnimation: 'idle' | 'walk' | 'jump';
+  isGrounded: boolean;
+  knockbackActive: boolean;
   currentSceneId: string;
   isTransitioning: boolean;
   transitionTargetSceneId: string | null;
@@ -63,7 +68,7 @@ export interface SceneState {
 export type SceneAction =
   | { type: 'SET_PLAYER_TARGET'; x: number }
   | { type: 'UPDATE_PLAYER_POSITION'; x: number }
-  | { type: 'SET_PLAYER_ANIMATION'; animation: 'idle' | 'walk' }
+  | { type: 'SET_PLAYER_ANIMATION'; animation: 'idle' | 'walk' | 'jump' }
   | { type: 'SET_PLAYER_FACING'; facing: 'left' | 'right' }
   | { type: 'HOVER_INTERACTABLE'; id: string | null }
   | { type: 'SET_PENDING_INTERACTABLE'; id: string | null }
@@ -77,4 +82,8 @@ export type SceneAction =
   | { type: 'STOP_SCREEN_SHAKE' }
   | { type: 'SHOW_PHASE_TITLE'; title: string }
   | { type: 'HIDE_PHASE_TITLE' }
-  | { type: 'RESET_SCENE'; sceneId: string; playerStartX: number };
+  | { type: 'UPDATE_PLAYER_Y'; y: number }
+  | { type: 'SET_GROUNDED'; grounded: boolean }
+  | { type: 'TRIGGER_KNOCKBACK'; velocityX: number }
+  | { type: 'CLEAR_KNOCKBACK' }
+  | { type: 'RESET_SCENE'; sceneId: string; playerStartX: number; groundY: number };

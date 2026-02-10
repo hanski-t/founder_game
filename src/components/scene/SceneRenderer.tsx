@@ -4,14 +4,16 @@ import { ParallaxBackground } from './ParallaxBackground';
 import { PlayerCharacter } from '../character/PlayerCharacter';
 import { Interactable } from '../interactables/Interactable';
 import { CollectibleLayer } from '../collectibles/CollectibleLayer';
+import { ObstacleLayer } from '../obstacles/ObstacleLayer';
 import { useScene } from '../../context/SceneContext';
 
 interface SceneRendererProps {
   scene: SceneDefinition;
   onInteract: (interactable: SceneInteractable) => void;
+  onObstacleCollision?: (direction: 'left' | 'right') => void;
 }
 
-export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
+export function SceneRenderer({ scene, onInteract, onObstacleCollision }: SceneRendererProps) {
   const { sceneDispatch, sceneState } = useScene();
   const isFirstScene = scene.id === 'town-square';
   const [showHint, setShowHint] = useState(isFirstScene);
@@ -63,7 +65,11 @@ export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
         <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
       )}
 
-      <PlayerCharacter groundY={scene.groundY} />
+      {scene.obstacles && scene.obstacles.length > 0 && onObstacleCollision && (
+        <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} onCollision={onObstacleCollision} />
+      )}
+
+      <PlayerCharacter />
 
       {/* Hint for new players */}
       {showHint && !sceneState.showDecisionPanel && !sceneState.showOutcomePanel && firstNpc && (
@@ -84,7 +90,7 @@ export function SceneRenderer({ scene, onInteract }: SceneRendererProps) {
             pointerEvents: 'none',
           }}
         >
-          Use arrow keys to walk towards {firstNpc.label} {hintArrow}
+          Arrow keys to move, Space to jump {hintArrow} towards {firstNpc.label}
         </div>
       )}
     </div>

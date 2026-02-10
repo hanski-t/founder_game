@@ -1,0 +1,146 @@
+import { useEffect, useRef, useCallback } from 'react';
+import { useScene } from '../context/SceneContext';
+
+// Physics constants (all in percentage units)
+const GRAVITY = 120; // % per second squared
+const JUMP_VELOCITY = -45; // % per second (negative = upward)
+const KNOCKBACK_IMPULSE = 25; // % per second horizontal push
+const KNOCKBACK_DECAY = 8; // exponential decay rate
+const KNOCKBACK_THRESHOLD = 0.5; // stop knockback when velocity below this
+const INVINCIBILITY_DURATION = 500; // ms after knockback before next hit
+
+export function useJumpPhysics(groundY: number) {
+  const { sceneState, sceneDispatch } = useScene();
+
+  // Refs to avoid stale closures in RAF loop
+  const playerYRef = useRef(sceneState.playerY);
+  const playerXRef = useRef(sceneState.playerX);
+  const velocityYRef = useRef(0);
+  const isGroundedRef = useRef(true);
+  const knockbackVXRef = useRef(0);
+  const invincibleUntilRef = useRef(0);
+  const animFrameRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const jumpRequestedRef = useRef(false);
+
+  // Keep refs in sync with state
+  playerYRef.current = sceneState.playerY;
+  playerXRef.current = sceneState.playerX;
+  isGroundedRef.current = sceneState.isGrounded;
+
+  // Jump input handler
+  useEffect(() => {
+    if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') {
+        // Only jump when grounded
+        if (isGroundedRef.current) {
+          e.preventDefault();
+          jumpRequestedRef.current = true;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning]);
+
+  // Physics RAF loop
+  useEffect(() => {
+    if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
+
+    lastTimeRef.current = 0;
+
+    const update = (timestamp: number) => {
+      if (!lastTimeRef.current) {
+        lastTimeRef.current = timestamp;
+        animFrameRef.current = requestAnimationFrame(update);
+        return;
+      }
+
+      const delta = Math.min((timestamp - lastTimeRef.current) / 1000, 0.05); // cap at 50ms
+      lastTimeRef.current = timestamp;
+
+      let yChanged = false;
+      let xChanged = false;
+
+      // Handle jump request
+      if (jumpRequestedRef.current && isGroundedRef.current) {
+        velocityYRef.current = JUMP_VELOCITY;
+        isGroundedRef.current = false;
+        sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
+        sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
+        jumpRequestedRef.current = false;
+      }
+
+      // Apply gravity when airborne
+      if (!isGroundedRef.current) {
+        velocityYRef.current += GRAVITY * delta;
+        const newY = playerYRef.current + velocityYRef.current * delta;
+
+        if (newY >= groundY) {
+          // Land on ground
+          playerYRef.current = groundY;
+          velocityYRef.current = 0;
+          isGroundedRef.current = true;
+          sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
+          // Restore walk/idle animation
+          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
+        } else {
+          playerYRef.current = newY;
+        }
+        yChanged = true;
+      }
+
+      // Apply knockback
+      if (Math.abs(knockbackVXRef.current) > KNOCKBACK_THRESHOLD) {
+        const newX = playerXRef.current + knockbackVXRef.current * delta;
+        playerXRef.current = Math.max(2, Math.min(98, newX));
+        knockbackVXRef.current *= Math.exp(-KNOCKBACK_DECAY * delta);
+        xChanged = true;
+
+        if (Math.abs(knockbackVXRef.current) <= KNOCKBACK_THRESHOLD) {
+          knockbackVXRef.current = 0;
+          sceneDispatch({ type: 'CLEAR_KNOCKBACK' });
+        }
+      }
+
+      // Dispatch position updates
+      if (yChanged) {
+        sceneDispatch({ type: 'UPDATE_PLAYER_Y', y: playerYRef.current });
+      }
+      if (xChanged) {
+        sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: playerXRef.current });
+      }
+
+      animFrameRef.current = requestAnimationFrame(update);
+    };
+
+    animFrameRef.current = requestAnimationFrame(update);
+
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, [groundY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]);
+
+  // Trigger knockback from obstacle/enemy collision
+  const triggerKnockback = useCallback((direction: 'left' | 'right') => {
+    const now = performance.now();
+    if (now < invincibleUntilRef.current) return; // still invincible
+
+    invincibleUntilRef.current = now + INVINCIBILITY_DURATION;
+    knockbackVXRef.current = direction === 'right' ? KNOCKBACK_IMPULSE : -KNOCKBACK_IMPULSE;
+    sceneDispatch({ type: 'TRIGGER_KNOCKBACK', velocityX: knockbackVXRef.current });
+    sceneDispatch({ type: 'TRIGGER_SCREEN_SHAKE' });
+
+    // Auto-clear screen shake
+    setTimeout(() => {
+      sceneDispatch({ type: 'STOP_SCREEN_SHAKE' });
+    }, 200);
+  }, [sceneDispatch]);
+
+  return { triggerKnockback, invincibleUntilRef };
+}

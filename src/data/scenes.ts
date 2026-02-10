@@ -60,6 +60,10 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'ts-coin-2', visual: 'coin', x: 42, label: '+$200', resourceBonus: { money: 200 } },
       { id: 'ts-scroll-1', visual: 'scroll', x: 78, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
     ],
+    obstacles: [
+      { id: 'ts-bush-1', type: 'bush', x: 35, width: 4, height: 5 },
+      { id: 'ts-crate-1', type: 'crate', x: 50, width: 4, height: 6 },
+    ],
   },
 
   'town-clubs': {
@@ -92,6 +96,9 @@ export const scenes: Record<string, SceneDefinition> = {
     collectibles: [
       { id: 'tc-coffee-1', visual: 'coffee', x: 30, label: '+5 Energy', resourceBonus: { energy: 5 } },
       { id: 'tc-doc-1', visual: 'document', x: 75, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
+    ],
+    obstacles: [
+      { id: 'tc-rock-1', type: 'rock', x: 38, width: 5, height: 5 },
     ],
   },
 
@@ -175,6 +182,10 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cg-doc-1', visual: 'document', x: 25, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
       { id: 'cg-doc-2', visual: 'document', x: 80, label: '+10 Rep', resourceBonus: { reputation: 10 } },
     ],
+    obstacles: [
+      { id: 'cg-grave-1', type: 'grave', x: 32, width: 4, height: 6 },
+      { id: 'cg-rock-1', type: 'rock', x: 45, width: 5, height: 5 },
+    ],
   },
 
   'swamp-garage': {
@@ -207,6 +218,10 @@ export const scenes: Record<string, SceneDefinition> = {
     collectibles: [
       { id: 'sg-usb-1', visual: 'usb', x: 25, label: '+10 Rep', resourceBonus: { reputation: 10 } },
       { id: 'sg-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
+    ],
+    obstacles: [
+      { id: 'sg-barrel-1', type: 'barrel', x: 33, width: 4, height: 6 },
+      { id: 'sg-crate-1', type: 'crate', x: 45, width: 4, height: 5 },
     ],
   },
 
@@ -299,6 +314,10 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cm-coin-2', visual: 'coin', x: 80, label: '+$300', resourceBonus: { money: 300 } },
       { id: 'cm-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
+    obstacles: [
+      { id: 'cm-crate-1', type: 'crate', x: 35, width: 4, height: 6 },
+      { id: 'cm-rock-1', type: 'rock', x: 48, width: 5, height: 5 },
+    ],
   },
 
   'castle-hall': {
@@ -384,6 +403,11 @@ export const scenes: Record<string, SceneDefinition> = {
     collectibles: [
       { id: 'cl-scroll-1', visual: 'scroll', x: 30, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
       { id: 'cl-usb-1', visual: 'usb', x: 80, label: '+20 Rep', resourceBonus: { reputation: 20 } },
+    ],
+    obstacles: [
+      { id: 'cl-grave-1', type: 'grave', x: 25, width: 4, height: 6 },
+      { id: 'cl-grave-2', type: 'grave', x: 40, width: 4, height: 6 },
+      { id: 'cl-rock-1', type: 'rock', x: 52, width: 5, height: 5 },
     ],
   },
 

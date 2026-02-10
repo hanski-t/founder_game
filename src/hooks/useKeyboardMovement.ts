@@ -8,6 +8,8 @@ export function useKeyboardMovement() {
   const { sceneState, sceneDispatch } = useScene();
   const keysRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<number>(0);
+  const isGroundedRef = useRef(sceneState.isGrounded);
+  isGroundedRef.current = sceneState.isGrounded;
 
   const updatePosition = useCallback(() => {
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel) return;
@@ -19,11 +21,14 @@ export function useKeyboardMovement() {
     if (dx !== 0) {
       const newX = Math.max(2, Math.min(98, sceneState.playerX + dx));
       sceneDispatch({ type: 'SET_PLAYER_FACING', facing: dx > 0 ? 'right' : 'left' });
-      sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'walk' });
+      // Don't override jump animation while airborne
+      if (sceneState.isGrounded) {
+        sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'walk' });
+      }
       sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: newX });
       sceneDispatch({ type: 'SET_PLAYER_TARGET', x: newX });
     }
-  }, [sceneState.playerX, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneDispatch]);
+  }, [sceneState.playerX, sceneState.isGrounded, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneDispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -46,7 +51,10 @@ export function useKeyboardMovement() {
           clearInterval(intervalRef.current);
           intervalRef.current = 0;
         }
-        sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
+        // Don't override jump animation while airborne
+        if (isGroundedRef.current) {
+          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
+        }
       }
     };
 
