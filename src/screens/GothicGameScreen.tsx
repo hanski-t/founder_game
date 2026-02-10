@@ -8,6 +8,7 @@ import { SceneRenderer } from '../components/scene/SceneRenderer';
 import { GothicDecisionPanel } from '../components/overlay/GothicDecisionPanel';
 import { GothicOutcomePanel } from '../components/overlay/GothicOutcomePanel';
 import { ResourceHUD } from '../components/hud/ResourceHUD';
+import { CollectionSidebar } from '../components/hud/CollectionSidebar';
 import { SceneTransition } from '../components/transitions/SceneTransition';
 import { PhaseTitle } from '../components/transitions/PhaseTitle';
 import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
@@ -216,6 +217,9 @@ export function GothicGameScreen() {
 
       {/* Resource HUD */}
       <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />
+
+      {/* Collection Sidebar */}
+      <CollectionSidebar />
 
       {/* Decision Panel */}
       {sceneState.showDecisionPanel && currentNode && state.screen === 'game' && (
