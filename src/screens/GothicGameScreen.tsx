@@ -34,7 +34,7 @@ export function GothicGameScreen() {
   // Activate movement hooks
   useCharacterMovement();
   useKeyboardMovement();
-  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78);
+  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, currentScene?.platforms);
 
   // Watch for node changes -> trigger scene transitions
   useEffect(() => {

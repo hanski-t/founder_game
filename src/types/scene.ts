@@ -1,6 +1,6 @@
 import type { GamePhase } from './game';
 import type { CollectibleDefinition, ChallengeDefinition } from './variety';
-import type { ObstacleDefinition, EnemyDefinition } from './platformer';
+import type { ObstacleDefinition, EnemyDefinition, PlatformDefinition } from './platformer';
 
 export interface SpriteConfig {
   frameWidth: number;
@@ -45,6 +45,7 @@ export interface SceneDefinition {
   challenge?: ChallengeDefinition;
   obstacles?: ObstacleDefinition[];
   enemies?: EnemyDefinition[];
+  platforms?: PlatformDefinition[];
 }
 
 export interface SceneState {

@@ -22,13 +22,16 @@ export function CollectibleLayer({ collectibles, groundY }: CollectibleLayerProp
 
     for (const item of collectibles) {
       if (isCollected(item.id)) continue;
-      const distance = Math.abs(sceneState.playerX - item.x);
-      if (distance < PICKUP_RANGE) {
+      const distanceX = Math.abs(sceneState.playerX - item.x);
+      // For elevated collectibles, also check Y proximity
+      const itemY = item.y ?? groundY;
+      const distanceY = Math.abs(sceneState.playerY - itemY);
+      if (distanceX < PICKUP_RANGE && distanceY < PICKUP_RANGE) {
         collectItem(item);
         return; // collect one at a time
       }
     }
-  }, [sceneState.playerX, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, collectibles, isCollected, collectItem]);
+  }, [sceneState.playerX, sceneState.playerY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, collectibles, groundY, isCollected, collectItem]);
 
   const handlePickupComplete = useCallback(() => {
     varietyDispatch({ type: 'CLEAR_PICKUP' });

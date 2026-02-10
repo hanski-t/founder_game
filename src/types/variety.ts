@@ -8,6 +8,7 @@ export interface CollectibleDefinition {
   id: string;
   visual: CollectibleVisual;
   x: number; // percentage position (0-100)
+  y?: number; // percentage from top (defaults to groundY if omitted)
   label: string; // floating text when collected ("+$500", "Startup Tip")
   resourceBonus?: ResourceChange;
   flavorText?: string; // optional lore/tip shown briefly

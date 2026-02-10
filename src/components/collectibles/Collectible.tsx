@@ -22,7 +22,7 @@ export function Collectible({ collectible, groundY }: CollectibleProps) {
       className="collectible"
       style={{
         left: `${collectible.x}%`,
-        top: `${groundY}%`,
+        top: `${collectible.y ?? groundY}%`,
       }}
     >
       <div

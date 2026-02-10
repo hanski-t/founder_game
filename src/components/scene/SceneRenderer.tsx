@@ -6,6 +6,7 @@ import { Interactable } from '../interactables/Interactable';
 import { CollectibleLayer } from '../collectibles/CollectibleLayer';
 import { ObstacleLayer } from '../obstacles/ObstacleLayer';
 import { EnemyLayer } from '../enemies/EnemyLayer';
+import { PlatformLayer } from '../platforms/PlatformLayer';
 import { useScene } from '../../context/SceneContext';
 
 interface SceneRendererProps {
@@ -64,6 +65,10 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision }: SceneR
 
       {scene.collectibles && scene.collectibles.length > 0 && (
         <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
+      )}
+
+      {scene.platforms && scene.platforms.length > 0 && (
+        <PlatformLayer platforms={scene.platforms} />
       )}
 
       {scene.obstacles && scene.obstacles.length > 0 && onObstacleCollision && (

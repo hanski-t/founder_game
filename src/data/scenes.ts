@@ -59,10 +59,14 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'ts-coin-1', visual: 'coin', x: 28, label: '+$500', resourceBonus: { money: 500 } },
       { id: 'ts-coin-2', visual: 'coin', x: 42, label: '+$200', resourceBonus: { money: 200 } },
       { id: 'ts-scroll-1', visual: 'scroll', x: 78, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
+      { id: 'ts-gem-plat', visual: 'gem', x: 45, y: 60, label: '+$800', resourceBonus: { money: 800 } },
     ],
     obstacles: [
       { id: 'ts-bush-1', type: 'bush', x: 35, width: 4, height: 5 },
       { id: 'ts-crate-1', type: 'crate', x: 50, width: 4, height: 6 },
+    ],
+    platforms: [
+      { id: 'ts-plat-1', x: 38, y: 65, width: 15, visual: 'wood' },
     ],
   },
 
@@ -184,10 +188,15 @@ export const scenes: Record<string, SceneDefinition> = {
     collectibles: [
       { id: 'cg-doc-1', visual: 'document', x: 25, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
       { id: 'cg-doc-2', visual: 'document', x: 80, label: '+10 Rep', resourceBonus: { reputation: 10 } },
+      { id: 'cg-gem-plat', visual: 'gem', x: 60, y: 55, label: '+$1000', resourceBonus: { money: 1000 } },
     ],
     obstacles: [
       { id: 'cg-grave-1', type: 'grave', x: 32, width: 4, height: 6 },
       { id: 'cg-rock-1', type: 'rock', x: 45, width: 5, height: 5 },
+    ],
+    platforms: [
+      { id: 'cg-plat-1', x: 35, y: 65, width: 12, visual: 'stone' },
+      { id: 'cg-plat-2', x: 55, y: 58, width: 15, visual: 'stone' },
     ],
   },
 
@@ -326,6 +335,9 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     enemies: [
       { id: 'cm-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 30, patrolEnd: 50, y: 72, speed: 8, width: 4, height: 5 },
+    ],
+    platforms: [
+      { id: 'cm-plat-1', x: 30, y: 67, width: 14, visual: 'wood' },
     ],
   },
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useScene } from '../context/SceneContext';
+import type { PlatformDefinition } from '../types/platformer';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
@@ -9,7 +10,7 @@ const KNOCKBACK_DECAY = 8; // exponential decay rate
 const KNOCKBACK_THRESHOLD = 0.5; // stop knockback when velocity below this
 const INVINCIBILITY_DURATION = 500; // ms after knockback before next hit
 
-export function useJumpPhysics(groundY: number) {
+export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]) {
   const { sceneState, sceneDispatch } = useScene();
 
   // Refs to avoid stale closures in RAF loop
@@ -79,18 +80,53 @@ export function useJumpPhysics(groundY: number) {
         velocityYRef.current += GRAVITY * delta;
         const newY = playerYRef.current + velocityYRef.current * delta;
 
-        if (newY >= groundY) {
-          // Land on ground
-          playerYRef.current = groundY;
-          velocityYRef.current = 0;
-          isGroundedRef.current = true;
-          sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
-          // Restore walk/idle animation
-          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
-        } else {
-          playerYRef.current = newY;
+        // Check platform landings (only when falling)
+        let landed = false;
+        if (velocityYRef.current > 0 && platforms) {
+          for (const plat of platforms) {
+            // Player must be above platform and falling through it
+            const onPlatformX = playerXRef.current >= plat.x && playerXRef.current <= plat.x + plat.width;
+            const crossingPlatform = playerYRef.current <= plat.y && newY >= plat.y;
+            if (onPlatformX && crossingPlatform) {
+              playerYRef.current = plat.y;
+              velocityYRef.current = 0;
+              isGroundedRef.current = true;
+              sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
+              sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
+              landed = true;
+              break;
+            }
+          }
+        }
+
+        if (!landed) {
+          if (newY >= groundY) {
+            // Land on ground
+            playerYRef.current = groundY;
+            velocityYRef.current = 0;
+            isGroundedRef.current = true;
+            sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
+            sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
+          } else {
+            playerYRef.current = newY;
+          }
         }
         yChanged = true;
+      } else if (isGroundedRef.current && playerYRef.current < groundY && platforms) {
+        // Check if player walked off a platform edge
+        const onAnyPlatform = platforms.some(
+          (plat) =>
+            playerXRef.current >= plat.x &&
+            playerXRef.current <= plat.x + plat.width &&
+            Math.abs(playerYRef.current - plat.y) < 1,
+        );
+        if (!onAnyPlatform) {
+          // Walked off edge — start falling
+          isGroundedRef.current = false;
+          velocityYRef.current = 0;
+          sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
+          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
+        }
       }
 
       // Apply knockback
@@ -124,7 +160,7 @@ export function useJumpPhysics(groundY: number) {
         cancelAnimationFrame(animFrameRef.current);
       }
     };
-  }, [groundY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]);
+  }, [groundY, platforms, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]);
 
   // Trigger knockback from obstacle/enemy collision
   const triggerKnockback = useCallback((direction: 'left' | 'right') => {
