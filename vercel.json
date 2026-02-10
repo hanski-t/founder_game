@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/foundergame", "destination": "/index.html" },
+    { "source": "/foundergame/(.*)", "destination": "/$1" }
+  ]
+}
