@@ -90,11 +90,11 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
         e.preventDefault();
         onChoice(visibleChoices[highlightedIndex]);
       } else {
-        // A/B/C direct selection
+        // A/B/C highlight (not select) — Enter confirms
         const letterIndex = e.key.toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2
         if (letterIndex >= 0 && letterIndex < choiceCount) {
           e.preventDefault();
-          onChoice(visibleChoices[letterIndex]);
+          setHighlightedIndex(letterIndex);
         }
       }
     };
@@ -170,6 +170,7 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
               key={choice.id}
               className="gothic-choice-card"
               onClick={() => onChoice(choice)}
+              onMouseEnter={() => setHighlightedIndex(index)}
               style={index === highlightedIndex ? {
                 borderColor: 'var(--color-gothic-gold)',
                 boxShadow: '0 0 15px rgba(212, 168, 83, 0.2), inset 0 0 20px rgba(212, 168, 83, 0.05)',

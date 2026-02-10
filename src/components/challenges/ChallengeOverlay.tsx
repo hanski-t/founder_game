@@ -68,20 +68,21 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
             color: 'var(--color-gothic-text)',
             fontSize: '0.85rem',
             lineHeight: 1.6,
+            marginBottom: 24,
           }}>
             {challenge.description}
           </p>
-        </div>
-        <div style={{
-          fontFamily: 'var(--font-gothic)',
-          color: 'var(--color-gothic-gold)',
-          fontSize: '1.2rem',
-          marginTop: 24,
-          textAlign: 'center',
-          textShadow: '0 0 12px rgba(212, 168, 83, 0.4)',
-          animation: 'collectible-bob 2s ease-in-out infinite',
-        }}>
-          Press Enter to begin
+          <div style={{
+            borderTop: '1px solid var(--color-gothic-border)',
+            paddingTop: 20,
+            fontFamily: 'var(--font-gothic)',
+            color: 'var(--color-gothic-gold)',
+            fontSize: '1.2rem',
+            textShadow: '0 0 12px rgba(212, 168, 83, 0.4)',
+            animation: 'text-bob 2s ease-in-out infinite',
+          }}>
+            Press Enter to begin
+          </div>
         </div>
       </div>
     );
@@ -146,17 +147,18 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
               ? 'You proved your mettle. Onward!'
               : 'The journey continues regardless.'}
           </p>
-        </div>
-        <div style={{
-          fontFamily: 'var(--font-gothic)',
-          color: 'var(--color-gothic-gold)',
-          fontSize: '1.2rem',
-          marginTop: 24,
-          textAlign: 'center',
-          textShadow: '0 0 12px rgba(212, 168, 83, 0.4)',
-          animation: 'collectible-bob 2s ease-in-out infinite',
-        }}>
-          Press Enter to continue
+          <div style={{
+            borderTop: '1px solid var(--color-gothic-border)',
+            marginTop: 20,
+            paddingTop: 20,
+            fontFamily: 'var(--font-gothic)',
+            color: 'var(--color-gothic-gold)',
+            fontSize: '1.2rem',
+            textShadow: '0 0 12px rgba(212, 168, 83, 0.4)',
+            animation: 'text-bob 2s ease-in-out infinite',
+          }}>
+            Press Enter to continue
+          </div>
         </div>
       </div>
     );
