@@ -1,6 +1,6 @@
-// Player hitbox size in percentage coordinates (approximate sprite size)
-const PLAYER_HALF_W = 2.5; // half-width
-const PLAYER_H = 8; // full height
+// Player hitbox size in percentage coordinates (tighter for precise feel)
+const PLAYER_HALF_W = 1.8; // half-width
+const PLAYER_H = 7; // full height
 
 /**
  * Check if the player overlaps a rectangular target.

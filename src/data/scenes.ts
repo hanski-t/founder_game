@@ -38,12 +38,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'advisor-npc',
         type: 'npc',
-        x: 60,
+        x: 85,
         y: 78,
         width: 64,
         height: 64,
@@ -56,17 +56,20 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ts-coin-1', visual: 'coin', x: 28, label: '+$500', resourceBonus: { money: 500 } },
-      { id: 'ts-coin-2', visual: 'coin', x: 42, label: '+$200', resourceBonus: { money: 200 } },
-      { id: 'ts-scroll-1', visual: 'scroll', x: 78, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
+      // On the ground but behind an obstacle - player must navigate past it
+      { id: 'ts-coin-1', visual: 'coin', x: 25, label: '+$500', resourceBonus: { money: 500 } },
+      // On a platform - requires jumping to reach
       { id: 'ts-gem-plat', visual: 'gem', x: 45, y: 60, label: '+$800', resourceBonus: { money: 800 } },
+      // Past the NPC - player must go beyond the goal to collect
+      { id: 'ts-scroll-1', visual: 'scroll', x: 95, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
     ],
     obstacles: [
-      { id: 'ts-bush-1', type: 'bush', x: 35, width: 4, height: 5 },
-      { id: 'ts-crate-1', type: 'crate', x: 50, width: 4, height: 6 },
+      { id: 'ts-bush-1', type: 'bush', x: 32, width: 4, height: 5 },
+      { id: 'ts-crate-1', type: 'crate', x: 55, width: 4, height: 6 },
+      { id: 'ts-rock-1', type: 'rock', x: 72, width: 5, height: 5 },
     ],
     platforms: [
-      { id: 'ts-plat-1', x: 38, y: 65, width: 15, visual: 'wood' },
+      { id: 'ts-plat-1', x: 38, y: 63, width: 15, visual: 'wood' },
     ],
   },
 
@@ -80,12 +83,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'clubs-npc',
         type: 'npc',
-        x: 55,
+        x: 82,
         y: 78,
         width: 64,
         height: 64,
@@ -98,14 +101,20 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'tc-coffee-1', visual: 'coffee', x: 30, label: '+5 Energy', resourceBonus: { energy: 5 } },
-      { id: 'tc-doc-1', visual: 'document', x: 75, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
+      // On a high platform - requires jumping
+      { id: 'tc-coffee-1', visual: 'coffee', x: 50, y: 58, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      // Past the NPC
+      { id: 'tc-doc-1', visual: 'document', x: 95, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
     ],
     obstacles: [
       { id: 'tc-rock-1', type: 'rock', x: 38, width: 5, height: 5 },
+      { id: 'tc-crate-1', type: 'crate', x: 65, width: 4, height: 6 },
     ],
     enemies: [
-      { id: 'tc-bat-1', type: 'bat', visual: '\u{1F987}', patrolStart: 42, patrolEnd: 52, y: 68, speed: 10, width: 4, height: 4 },
+      { id: 'tc-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 42, patrolEnd: 60, y: 78, speed: 10, width: 4, height: 5 },
+    ],
+    platforms: [
+      { id: 'tc-plat-1', x: 43, y: 62, width: 14, visual: 'stone' },
     ],
   },
 
@@ -118,12 +127,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'cofounder-npc',
         type: 'npc',
-        x: 50,
+        x: 80,
         y: 78,
         width: 64,
         height: 64,
@@ -136,7 +145,15 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'dci-gem-1', visual: 'gem', x: 22, label: '+$1000', resourceBonus: { money: 1000 } },
+      // Up on platform - detour to collect
+      { id: 'dci-gem-1', visual: 'gem', x: 35, y: 58, label: '+$1000', resourceBonus: { money: 1000 } },
+    ],
+    platforms: [
+      { id: 'dci-plat-1', x: 28, y: 63, width: 15, visual: 'wood' },
+    ],
+    obstacles: [
+      { id: 'dci-barrel-1', type: 'barrel', x: 50, width: 4, height: 6 },
+      { id: 'dci-crate-1', type: 'crate', x: 68, width: 4, height: 5 },
     ],
     challenge: {
       id: 'qte-social-gathering',
@@ -144,7 +161,7 @@ export const scenes: Record<string, SceneDefinition> = {
       title: 'Social Reflexes',
       description: 'Quick! Match the prompts to make a good first impression.',
       successThreshold: 2,
-      gateX: 35,
+      gateX: 55,
       quickTimeConfig: {
         prompts: [
           { key: 'f', displayKey: 'F' },
@@ -168,12 +185,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'final-advisor-npc',
         type: 'npc',
-        x: 55,
+        x: 85,
         y: 78,
         width: 64,
         height: 64,
@@ -186,17 +203,23 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'cg-doc-1', visual: 'document', x: 25, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
-      { id: 'cg-doc-2', visual: 'document', x: 80, label: '+10 Rep', resourceBonus: { reputation: 10 } },
-      { id: 'cg-gem-plat', visual: 'gem', x: 60, y: 55, label: '+$1000', resourceBonus: { money: 1000 } },
+      // On ground early - easy pickup
+      { id: 'cg-doc-1', visual: 'document', x: 22, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
+      // On high platform - requires two jumps
+      { id: 'cg-gem-plat', visual: 'gem', x: 55, y: 53, label: '+$1000', resourceBonus: { money: 1000 } },
+      // Past the NPC - player must go beyond
+      { id: 'cg-doc-2', visual: 'document', x: 95, label: '+10 Rep', resourceBonus: { reputation: 10 } },
     ],
     obstacles: [
-      { id: 'cg-grave-1', type: 'grave', x: 32, width: 4, height: 6 },
-      { id: 'cg-rock-1', type: 'rock', x: 45, width: 5, height: 5 },
+      { id: 'cg-grave-1', type: 'grave', x: 35, width: 4, height: 6 },
+      { id: 'cg-rock-1', type: 'rock', x: 65, width: 5, height: 5 },
+    ],
+    enemies: [
+      { id: 'cg-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 40, patrolEnd: 60, y: 78, speed: 9, width: 4, height: 7 },
     ],
     platforms: [
-      { id: 'cg-plat-1', x: 35, y: 65, width: 12, visual: 'stone' },
-      { id: 'cg-plat-2', x: 55, y: 58, width: 15, visual: 'stone' },
+      { id: 'cg-plat-1', x: 38, y: 65, width: 12, visual: 'stone' },
+      { id: 'cg-plat-2', x: 50, y: 57, width: 12, visual: 'stone' },
     ],
   },
 
@@ -211,12 +234,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'idea-sign',
         type: 'object',
-        x: 55,
+        x: 82,
         y: 78,
         width: 48,
         height: 48,
@@ -228,15 +251,21 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sg-usb-1', visual: 'usb', x: 25, label: '+10 Rep', resourceBonus: { reputation: 10 } },
-      { id: 'sg-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      // On platform - requires jumping
+      { id: 'sg-usb-1', visual: 'usb', x: 48, y: 60, label: '+10 Rep', resourceBonus: { reputation: 10 } },
+      // Past the sign/NPC
+      { id: 'sg-coffee-1', visual: 'coffee', x: 93, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
     obstacles: [
-      { id: 'sg-barrel-1', type: 'barrel', x: 33, width: 4, height: 6 },
-      { id: 'sg-crate-1', type: 'crate', x: 45, width: 4, height: 5 },
+      { id: 'sg-barrel-1', type: 'barrel', x: 30, width: 4, height: 6 },
+      { id: 'sg-crate-1', type: 'crate', x: 55, width: 4, height: 5 },
+      { id: 'sg-rock-1', type: 'rock', x: 72, width: 5, height: 5 },
     ],
     enemies: [
-      { id: 'sg-rat-1', type: 'rat', visual: '\u{1F400}', patrolStart: 28, patrolEnd: 42, y: 78, speed: 14, width: 3, height: 3 },
+      { id: 'sg-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 35, patrolEnd: 50, y: 78, speed: 12, width: 4, height: 7 },
+    ],
+    platforms: [
+      { id: 'sg-plat-1', x: 40, y: 63, width: 16, visual: 'wood' },
     ],
   },
 
@@ -251,13 +280,13 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     ambientColor: 'sepia(0.2) brightness(0.8)',
     interactables: [
       {
         id: 'competitor-npc',
         type: 'npc',
-        x: 60,
+        x: 83,
         y: 78,
         width: 64,
         height: 64,
@@ -270,7 +299,17 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sd-coin-1', visual: 'coin', x: 22, label: '+$300', resourceBonus: { money: 300 } },
+      // On platform above the challenge gate
+      { id: 'sd-coin-1', visual: 'coin', x: 30, y: 58, label: '+$300', resourceBonus: { money: 300 } },
+      // Past the NPC
+      { id: 'sd-gem-1', visual: 'gem', x: 95, label: '+$500', resourceBonus: { money: 500 } },
+    ],
+    obstacles: [
+      { id: 'sd-bush-1', type: 'bush', x: 45, width: 4, height: 5 },
+      { id: 'sd-rock-1', type: 'rock', x: 68, width: 5, height: 5 },
+    ],
+    platforms: [
+      { id: 'sd-plat-1', x: 23, y: 63, width: 14, visual: 'wood' },
     ],
     challenge: {
       id: 'falling-market-noise',
@@ -278,7 +317,7 @@ export const scenes: Record<string, SceneDefinition> = {
       title: 'Navigate the Market Noise',
       description: 'Catch customers and dodge disreputations! Move left/right to catch the green items.',
       successThreshold: 4,
-      gateX: 38,
+      gateX: 50,
       fallingCatchConfig: {
         duration: 12000,
         spawnInterval: 900,
@@ -307,12 +346,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'alex-npc',
         type: 'npc',
-        x: 55,
+        x: 84,
         y: 78,
         width: 64,
         height: 64,
@@ -325,19 +364,24 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'cm-coin-1', visual: 'coin', x: 25, label: '+$500', resourceBonus: { money: 500 } },
-      { id: 'cm-coin-2', visual: 'coin', x: 80, label: '+$300', resourceBonus: { money: 300 } },
-      { id: 'cm-coffee-1', visual: 'coffee', x: 40, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      // On platform - requires a jump detour
+      { id: 'cm-coin-1', visual: 'coin', x: 38, y: 58, label: '+$500', resourceBonus: { money: 500 } },
+      // Behind the NPC at far right
+      { id: 'cm-coin-2', visual: 'coin', x: 95, label: '+$300', resourceBonus: { money: 300 } },
+      // On another platform further along
+      { id: 'cm-coffee-1', visual: 'coffee', x: 65, y: 60, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
     obstacles: [
-      { id: 'cm-crate-1', type: 'crate', x: 35, width: 4, height: 6 },
-      { id: 'cm-rock-1', type: 'rock', x: 48, width: 5, height: 5 },
+      { id: 'cm-crate-1', type: 'crate', x: 28, width: 4, height: 6 },
+      { id: 'cm-rock-1', type: 'rock', x: 52, width: 5, height: 5 },
+      { id: 'cm-barrel-1', type: 'barrel', x: 75, width: 4, height: 6 },
     ],
     enemies: [
-      { id: 'cm-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 30, patrolEnd: 50, y: 72, speed: 8, width: 4, height: 5 },
+      { id: 'cm-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 35, patrolEnd: 55, y: 78, speed: 8, width: 4, height: 5 },
     ],
     platforms: [
-      { id: 'cm-plat-1', x: 30, y: 67, width: 14, visual: 'wood' },
+      { id: 'cm-plat-1', x: 30, y: 63, width: 16, visual: 'wood' },
+      { id: 'cm-plat-2', x: 58, y: 64, width: 14, visual: 'stone' },
     ],
   },
 
@@ -351,12 +395,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'investor-npc',
         type: 'npc',
-        x: 50,
+        x: 82,
         y: 78,
         width: 64,
         height: 64,
@@ -369,8 +413,21 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ch-gem-1', visual: 'gem', x: 22, label: '+$1500', resourceBonus: { money: 1500 } },
-      { id: 'ch-doc-1', visual: 'document', x: 75, label: 'Term Sheet', flavorText: '"Pre-money valuation: $2M"' },
+      // High platform gem - big reward for skilled players
+      { id: 'ch-gem-1', visual: 'gem', x: 42, y: 55, label: '+$1500', resourceBonus: { money: 1500 } },
+      // Past the NPC
+      { id: 'ch-doc-1', visual: 'document', x: 95, label: 'Term Sheet', flavorText: '"Pre-money valuation: $2M"' },
+    ],
+    obstacles: [
+      { id: 'ch-rock-1', type: 'rock', x: 35, width: 5, height: 5 },
+      { id: 'ch-crate-1', type: 'crate', x: 60, width: 4, height: 6 },
+    ],
+    enemies: [
+      { id: 'ch-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 45, patrolEnd: 65, y: 78, speed: 10, width: 4, height: 5 },
+    ],
+    platforms: [
+      { id: 'ch-plat-1', x: 35, y: 65, width: 14, visual: 'stone' },
+      { id: 'ch-plat-2', x: 38, y: 57, width: 10, visual: 'metal' },
     ],
     challenge: {
       id: 'qte-investor-pitch',
@@ -378,7 +435,7 @@ export const scenes: Record<string, SceneDefinition> = {
       title: 'Impress the Investor',
       description: 'React quickly to show your confidence! 5 prompts, faster timing.',
       successThreshold: 3,
-      gateX: 35,
+      gateX: 55,
       quickTimeConfig: {
         prompts: [
           { key: 'r', displayKey: 'R' },
@@ -404,12 +461,12 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     groundY: 78,
     sceneWidth: 960,
-    playerStartX: 15,
+    playerStartX: 10,
     interactables: [
       {
         id: 'launch-npc',
         type: 'npc',
-        x: 60,
+        x: 85,
         y: 78,
         width: 64,
         height: 64,
@@ -422,17 +479,22 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'cl-scroll-1', visual: 'scroll', x: 30, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
-      { id: 'cl-usb-1', visual: 'usb', x: 80, label: '+20 Rep', resourceBonus: { reputation: 20 } },
+      // On a platform - detour above the obstacle course
+      { id: 'cl-scroll-1', visual: 'scroll', x: 35, y: 58, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
+      // Past the NPC at far right
+      { id: 'cl-usb-1', visual: 'usb', x: 95, label: '+20 Rep', resourceBonus: { reputation: 20 } },
     ],
     obstacles: [
-      { id: 'cl-grave-1', type: 'grave', x: 25, width: 4, height: 6 },
-      { id: 'cl-grave-2', type: 'grave', x: 40, width: 4, height: 6 },
-      { id: 'cl-rock-1', type: 'rock', x: 52, width: 5, height: 5 },
+      { id: 'cl-grave-1', type: 'grave', x: 28, width: 4, height: 6 },
+      { id: 'cl-grave-2', type: 'grave', x: 50, width: 4, height: 6 },
+      { id: 'cl-rock-1', type: 'rock', x: 70, width: 5, height: 5 },
     ],
     enemies: [
-      { id: 'cl-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 30, patrolEnd: 55, y: 78, speed: 10, width: 4, height: 7 },
-      { id: 'cl-bat-1', type: 'bat', visual: '\u{1F987}', patrolStart: 45, patrolEnd: 58, y: 65, speed: 12, width: 3, height: 3 },
+      { id: 'cl-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 35, patrolEnd: 60, y: 78, speed: 10, width: 4, height: 7 },
+      { id: 'cl-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 55, patrolEnd: 75, y: 78, speed: 12, width: 4, height: 5 },
+    ],
+    platforms: [
+      { id: 'cl-plat-1', x: 28, y: 63, width: 16, visual: 'stone' },
     ],
   },
 
@@ -451,7 +513,7 @@ export const scenes: Record<string, SceneDefinition> = {
       {
         id: 'success-npc',
         type: 'npc',
-        x: 50,
+        x: 80,
         y: 78,
         width: 64,
         height: 64,
@@ -464,9 +526,13 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ct-gem-1', visual: 'gem', x: 25, label: '+$2000', resourceBonus: { money: 2000 } },
-      { id: 'ct-gem-2', visual: 'gem', x: 65, label: '+$2000', resourceBonus: { money: 2000 } },
-      { id: 'ct-gem-3', visual: 'gem', x: 85, label: '+$2000', resourceBonus: { money: 2000 } },
+      // Victory rewards - on platforms and past NPC
+      { id: 'ct-gem-1', visual: 'gem', x: 55, y: 58, label: '+$2000', resourceBonus: { money: 2000 } },
+      { id: 'ct-gem-2', visual: 'gem', x: 90, label: '+$2000', resourceBonus: { money: 2000 } },
+      { id: 'ct-gem-3', visual: 'gem', x: 95, label: '+$2000', resourceBonus: { money: 2000 } },
+    ],
+    platforms: [
+      { id: 'ct-plat-1', x: 48, y: 62, width: 14, visual: 'metal' },
     ],
   },
 };

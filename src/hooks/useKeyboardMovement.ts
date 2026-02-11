@@ -1,34 +1,62 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useScene } from '../context/SceneContext';
+import { useVariety } from '../context/VarietyContext';
+import { getBlockedX } from '../utils/obstacleBlocker';
 
-const KEYBOARD_STEP = 3; // percentage per keypress update
+const GROUND_STEP = 3; // percentage per keypress update on ground
+const AIR_STEP = 1; // percentage per keypress update while airborne (much slower)
 const UPDATE_INTERVAL = 50; // ms between updates while key held
 
 export function useKeyboardMovement() {
   const { sceneState, sceneDispatch } = useScene();
+  const { varietyState } = useVariety();
   const keysRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<number>(0);
-  const isGroundedRef = useRef(sceneState.isGrounded);
-  isGroundedRef.current = sceneState.isGrounded;
 
+  // Use refs for values that change frequently during gameplay
+  // This prevents the callback from recreating and killing the interval mid-jump
+  const playerXRef = useRef(sceneState.playerX);
+  const playerYRef = useRef(sceneState.playerY);
+  const isGroundedRef = useRef(sceneState.isGrounded);
+  const showDecisionRef = useRef(sceneState.showDecisionPanel);
+  const showOutcomeRef = useRef(sceneState.showOutcomePanel);
+  const challengeActiveRef = useRef(varietyState.challengePhase !== 'not-started');
+
+  // Keep refs in sync with state every render
+  playerXRef.current = sceneState.playerX;
+  playerYRef.current = sceneState.playerY;
+  isGroundedRef.current = sceneState.isGrounded;
+  showDecisionRef.current = sceneState.showDecisionPanel;
+  showOutcomeRef.current = sceneState.showOutcomePanel;
+  challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
+
+  // Stable callback — only depends on sceneDispatch (which is stable from useReducer)
   const updatePosition = useCallback(() => {
-    if (sceneState.showDecisionPanel || sceneState.showOutcomePanel) return;
+    if (showDecisionRef.current || showOutcomeRef.current) return;
+    if (challengeActiveRef.current) return; // freeze during challenges
+
+    const step = isGroundedRef.current ? GROUND_STEP : AIR_STEP;
 
     let dx = 0;
-    if (keysRef.current.has('ArrowLeft') || keysRef.current.has('a')) dx -= KEYBOARD_STEP;
-    if (keysRef.current.has('ArrowRight') || keysRef.current.has('d')) dx += KEYBOARD_STEP;
+    if (keysRef.current.has('ArrowLeft') || keysRef.current.has('a')) dx -= step;
+    if (keysRef.current.has('ArrowRight') || keysRef.current.has('d')) dx += step;
 
     if (dx !== 0) {
-      const newX = Math.max(2, Math.min(98, sceneState.playerX + dx));
+      let newX = Math.max(2, Math.min(98, playerXRef.current + dx));
+      // Block movement into obstacles (only when at ground level)
+      newX = getBlockedX(newX, playerYRef.current);
+      newX = Math.max(2, Math.min(98, newX));
+
+      playerXRef.current = newX; // update ref immediately for next interval tick
       sceneDispatch({ type: 'SET_PLAYER_FACING', facing: dx > 0 ? 'right' : 'left' });
       // Don't override jump animation while airborne
-      if (sceneState.isGrounded) {
+      if (isGroundedRef.current) {
         sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'walk' });
       }
       sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: newX });
       sceneDispatch({ type: 'SET_PLAYER_TARGET', x: newX });
     }
-  }, [sceneState.playerX, sceneState.isGrounded, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneDispatch]);
+  }, [sceneDispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

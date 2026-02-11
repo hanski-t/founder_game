@@ -1,7 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { useScene } from '../../context/SceneContext';
 import { checkPlayerCollision } from '../../utils/collision';
+import { SpriteAnimator } from '../character/SpriteAnimator';
 import type { EnemyDefinition } from '../../types/platformer';
+
+import ghostSheet from '@assets/characters/enemies/ghost-spritesheet.png';
+import skeletonImg from '@assets/characters/enemies/skeleton.png';
+
+const ENEMY_SPRITE_CONFIG: Record<string, { sheet: string; config: { frameWidth: number; frameHeight: number; frameCount: number; frameDuration: number } }> = {
+  ghost: { sheet: ghostSheet, config: { frameWidth: 31, frameHeight: 44, frameCount: 4, frameDuration: 150 } },
+};
+
+const ENEMY_STATIC_IMG: Record<string, string> = {
+  skeleton: skeletonImg,
+};
 
 interface EnemyState {
   x: number;
@@ -144,6 +156,8 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
         const state = enemyStates[i];
         if (!state) return null;
         const isFlying = def.y < groundY - 3;
+        const spriteData = ENEMY_SPRITE_CONFIG[def.type];
+        const staticImg = ENEMY_STATIC_IMG[def.type];
 
         return (
           <div
@@ -154,14 +168,34 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
               left: `${state.x}%`,
               top: `${def.y}%`,
               transform: `translateX(-50%) translateY(-100%) ${state.direction === 'left' ? 'scaleX(-1)' : ''}`,
-              fontSize: `${Math.max(def.height * 0.5, 1.8)}rem`,
               zIndex: 5,
               userSelect: 'none',
               filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))',
               transition: 'left 0.05s linear',
             }}
           >
-            {def.visual}
+            {spriteData ? (
+              <SpriteAnimator
+                sheet={spriteData.sheet}
+                config={spriteData.config}
+                scale={2}
+              />
+            ) : staticImg ? (
+              <img
+                src={staticImg}
+                alt={def.type}
+                style={{
+                  width: 44 * 2,
+                  height: 52 * 2,
+                  imageRendering: 'pixelated',
+                }}
+                draggable={false}
+              />
+            ) : (
+              <span style={{ fontSize: `${Math.max(def.height * 0.5, 1.8)}rem` }}>
+                {def.visual}
+              </span>
+            )}
           </div>
         );
       })}

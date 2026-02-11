@@ -16,6 +16,7 @@ import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
 import { ChallengeOverlay } from '../components/challenges/ChallengeOverlay';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, scenes } from '../data/scenes';
+import { setCurrentObstacles } from '../utils/obstacleBlocker';
 import type { SceneInteractable } from '../types/scene';
 import type { Choice } from '../types/game';
 import type { GamePhase } from '../types/game';
@@ -30,6 +31,13 @@ export function GothicGameScreen() {
 
   // Get current scene
   const currentScene = getSceneById(sceneState.currentSceneId);
+
+  // Sync obstacle data for the movement blocker (module-level shared state)
+  useEffect(() => {
+    if (currentScene) {
+      setCurrentObstacles(currentScene.obstacles ?? [], currentScene.groundY);
+    }
+  }, [currentScene]);
 
   // Activate movement hooks
   useCharacterMovement();
@@ -102,7 +110,8 @@ export function GothicGameScreen() {
     }
   }, [sceneState.playerX, currentScene, challengeActive, isChallengeCompleted, startChallenge, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning]);
 
-  // Auto-proximity detection: trigger interaction when walking near ANY interactable
+  // Auto-proximity detection: trigger interaction when touching an interactable
+  // Checks both X and Y distance so player can jump over NPCs without triggering
   useEffect(() => {
     if (!currentScene) return;
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
@@ -110,8 +119,10 @@ export function GothicGameScreen() {
     if (challengeActive) return;
 
     for (const interactable of currentScene.interactables) {
-      const distance = Math.abs(sceneState.playerX - interactable.x);
-      if (distance < interactable.proximityRange) {
+      const distX = Math.abs(sceneState.playerX - interactable.x);
+      // Player must be near ground level (within 5% of NPC's Y) to trigger
+      const distY = Math.abs(sceneState.playerY - interactable.y);
+      if (distX < interactable.proximityRange && distY < 5) {
         sceneDispatch({ type: 'SET_PENDING_INTERACTABLE', id: null });
         if (interactable.interactionType === 'decision' && interactable.triggerNodeId) {
           sceneDispatch({ type: 'SHOW_DECISION_PANEL' });
@@ -121,7 +132,7 @@ export function GothicGameScreen() {
         return;
       }
     }
-  }, [sceneState.playerX, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, challengeActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sceneState.playerX, sceneState.playerY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, challengeActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle interactable click: walk to it first
   const handleInteract = useCallback((interactable: SceneInteractable) => {

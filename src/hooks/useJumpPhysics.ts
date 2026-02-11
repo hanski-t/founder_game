@@ -1,17 +1,20 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useScene } from '../context/SceneContext';
+import { useVariety } from '../context/VarietyContext';
 import type { PlatformDefinition } from '../types/platformer';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
-const JUMP_VELOCITY = -45; // % per second (negative = upward)
-const KNOCKBACK_IMPULSE = 25; // % per second horizontal push
+const JUMP_VELOCITY = -65; // % per second (negative = upward)
+const KNOCKBACK_IMPULSE = 35; // % per second horizontal push (stronger for clear separation)
 const KNOCKBACK_DECAY = 8; // exponential decay rate
 const KNOCKBACK_THRESHOLD = 0.5; // stop knockback when velocity below this
 const INVINCIBILITY_DURATION = 500; // ms after knockback before next hit
+const KNOCKBACK_TELEPORT = 5; // % instant displacement to clear obstacle on hit
 
 export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]) {
   const { sceneState, sceneDispatch } = useScene();
+  const { varietyState } = useVariety();
 
   // Refs to avoid stale closures in RAF loop
   const playerYRef = useRef(sceneState.playerY);
@@ -23,17 +26,22 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
   const animFrameRef = useRef(0);
   const lastTimeRef = useRef(0);
   const jumpRequestedRef = useRef(false);
+  const challengeActiveRef = useRef(varietyState.challengePhase !== 'not-started');
 
   // Keep refs in sync with state
   playerYRef.current = sceneState.playerY;
   playerXRef.current = sceneState.playerX;
   isGroundedRef.current = sceneState.isGrounded;
+  challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
 
   // Jump input handler
   useEffect(() => {
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Freeze jumping during challenges
+      if (challengeActiveRef.current) return;
+
       if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') {
         // Only jump when grounded
         if (isGroundedRef.current) {
@@ -66,8 +74,8 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
       let yChanged = false;
       let xChanged = false;
 
-      // Handle jump request
-      if (jumpRequestedRef.current && isGroundedRef.current) {
+      // Handle jump request (blocked during challenges)
+      if (jumpRequestedRef.current && isGroundedRef.current && !challengeActiveRef.current) {
         velocityYRef.current = JUMP_VELOCITY;
         isGroundedRef.current = false;
         sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
@@ -168,6 +176,13 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
     if (now < invincibleUntilRef.current) return; // still invincible
 
     invincibleUntilRef.current = now + INVINCIBILITY_DURATION;
+
+    // Instant teleport away from obstacle to prevent overlapping
+    const teleportDir = direction === 'left' ? -KNOCKBACK_TELEPORT : KNOCKBACK_TELEPORT;
+    playerXRef.current = Math.max(2, Math.min(98, playerXRef.current + teleportDir));
+    sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: playerXRef.current });
+
+    // Then apply velocity-based knockback on top
     knockbackVXRef.current = direction === 'right' ? KNOCKBACK_IMPULSE : -KNOCKBACK_IMPULSE;
     sceneDispatch({ type: 'TRIGGER_KNOCKBACK', velocityX: knockbackVXRef.current });
     sceneDispatch({ type: 'TRIGGER_SCREEN_SHAKE' });
