@@ -12,6 +12,7 @@ type PromptStatus = 'waiting' | 'success' | 'fail';
 export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengeProps) {
   const { varietyDispatch } = useVariety();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [comboStep, setComboStep] = useState(0); // which key in a combo sequence
   const [promptStatus, setPromptStatus] = useState<PromptStatus>('waiting');
   const [showFeedback, setShowFeedback] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -25,6 +26,13 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
   const currentPrompt = config.prompts[currentIndex];
   const isLastPrompt = currentIndex >= config.prompts.length - 1;
 
+  // Build the full key sequence for the current prompt
+  const keySequence = currentPrompt?.combo
+    ? [{ key: currentPrompt.key, displayKey: currentPrompt.displayKey }, ...currentPrompt.combo]
+    : [{ key: currentPrompt?.key, displayKey: currentPrompt?.displayKey }];
+
+  const isCombo = keySequence.length > 1;
+
   const advanceOrComplete = useCallback(() => {
     if (completedRef.current) return;
 
@@ -34,6 +42,7 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
     } else {
       setTimeout(() => {
         setCurrentIndex(i => i + 1);
+        setComboStep(0);
         setPromptStatus('waiting');
         setShowFeedback(false);
       }, 600);
@@ -63,24 +72,34 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
       e.preventDefault();
       e.stopPropagation();
 
-      if (timerRef.current) clearTimeout(timerRef.current);
-
       const pressedKey = e.key.toLowerCase();
-      const expectedKey = currentPrompt.key.toLowerCase();
+      const expectedKey = keySequence[comboStep]?.key.toLowerCase();
 
       if (pressedKey === expectedKey) {
-        varietyDispatch({ type: 'INCREMENT_SCORE' });
-        setPromptStatus('success');
+        // Correct key in sequence
+        if (comboStep >= keySequence.length - 1) {
+          // Completed the full sequence
+          if (timerRef.current) clearTimeout(timerRef.current);
+          varietyDispatch({ type: 'INCREMENT_SCORE' });
+          setPromptStatus('success');
+          setShowFeedback(true);
+          advanceOrComplete();
+        } else {
+          // Move to next key in combo
+          setComboStep(s => s + 1);
+        }
       } else {
+        // Wrong key — fail this prompt
+        if (timerRef.current) clearTimeout(timerRef.current);
         setPromptStatus('fail');
+        setShowFeedback(true);
+        advanceOrComplete();
       }
-      setShowFeedback(true);
-      advanceOrComplete();
     };
 
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [currentIndex, promptStatus, currentPrompt, varietyDispatch, advanceOrComplete]);
+  }, [currentIndex, promptStatus, comboStep, keySequence, varietyDispatch, advanceOrComplete]);
 
   if (!currentPrompt) return null;
 
@@ -89,7 +108,7 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
       {/* HUD */}
       <div className="challenge-hud">
         <div className="challenge-title">
-          Press the Key!
+          {isCombo ? 'Press the Combo!' : 'Press the Key!'}
         </div>
         <div className="challenge-score">
           {currentIndex + 1} / {config.prompts.length}
@@ -98,14 +117,40 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
 
       {/* Key prompt */}
       <div className="qte-prompt">
-        <div className={`qte-key ${showFeedback ? promptStatus : ''}`}>
-          {currentPrompt.displayKey}
-        </div>
+        {isCombo ? (
+          <div className="qte-combo" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {keySequence.map((k, i) => (
+              <div
+                key={i}
+                className={`qte-key ${
+                  showFeedback
+                    ? promptStatus
+                    : i < comboStep
+                      ? 'success'
+                      : i === comboStep
+                        ? 'active'
+                        : 'dim'
+                }`}
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  fontSize: '1.2rem',
+                }}
+              >
+                {k.displayKey}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={`qte-key ${showFeedback ? promptStatus : ''}`}>
+            {currentPrompt.displayKey}
+          </div>
+        )}
         {promptStatus === 'waiting' && (
           <div
             className="qte-ring"
             style={{ '--qte-duration': `${config.timePerPrompt}ms` } as React.CSSProperties}
-            key={currentIndex}
+            key={`${currentIndex}-${comboStep}`}
           />
         )}
       </div>

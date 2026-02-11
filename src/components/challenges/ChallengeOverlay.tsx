@@ -1,6 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import type { ChallengeDefinition } from '../../types/variety';
 import { useVariety } from '../../context/VarietyContext';
+import { useScene } from '../../context/SceneContext';
 import { QuickTimeChallenge } from './QuickTimeChallenge';
 import { FallingCatchChallenge } from './FallingCatchChallenge';
 
@@ -10,19 +11,28 @@ interface ChallengeOverlayProps {
 
 export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
   const { varietyState, setChallengePhase, completeChallenge } = useVariety();
+  const { sceneState, sceneDispatch } = useScene();
   const { challengePhase, challengeScore, challengeTotal } = varietyState;
+  const savedPlayerXRef = useRef(sceneState.playerX);
 
   const handleStart = useCallback(() => {
+    savedPlayerXRef.current = sceneState.playerX;
+    // Center player for the minigame
+    sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: 50 });
+    sceneDispatch({ type: 'SET_PLAYER_TARGET', x: 50 });
     setChallengePhase('active');
-  }, [setChallengePhase]);
+  }, [setChallengePhase, sceneState.playerX, sceneDispatch]);
 
   const handleComplete = useCallback(() => {
     setChallengePhase('result');
   }, [setChallengePhase]);
 
   const handleDismiss = useCallback(() => {
+    // Restore player to pre-challenge position
+    sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: savedPlayerXRef.current });
+    sceneDispatch({ type: 'SET_PLAYER_TARGET', x: savedPlayerXRef.current });
     completeChallenge(challenge.id);
-  }, [completeChallenge, challenge.id]);
+  }, [completeChallenge, challenge.id, sceneDispatch]);
 
   // Enter key for intro/result screens
   useEffect(() => {

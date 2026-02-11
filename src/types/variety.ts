@@ -18,8 +18,14 @@ export interface CollectibleDefinition {
 
 export type ChallengeType = 'quick-time' | 'falling-catch';
 
+export interface QuickTimePrompt {
+  key: string;
+  displayKey: string;
+  combo?: { key: string; displayKey: string }[]; // multi-key sequence (press each in order)
+}
+
 export interface QuickTimeConfig {
-  prompts: { key: string; displayKey: string }[];
+  prompts: QuickTimePrompt[];
   timePerPrompt: number; // ms
 }
 

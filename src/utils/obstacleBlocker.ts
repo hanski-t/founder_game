@@ -5,7 +5,7 @@ import type { ObstacleDefinition } from '../types/platformer';
 let currentObstacles: ObstacleDefinition[] = [];
 let currentGroundY = 78;
 
-const PLAYER_HALF_W = 1.8; // must match collision.ts
+const PLAYER_HALF_W = 1.2; // must match collision.ts
 
 /** Called by GothicGameScreen when the scene changes */
 export function setCurrentObstacles(obstacles: ObstacleDefinition[], groundY: number) {

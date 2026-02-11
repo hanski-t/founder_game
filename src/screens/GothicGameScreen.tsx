@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useMemo } from 'react';
 import { useGame } from '../context/GameContext';
 import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
@@ -39,10 +39,24 @@ export function GothicGameScreen() {
     }
   }, [currentScene]);
 
+  // Merge real platforms with obstacle tops so player can stand on obstacles
+  const allPlatforms = useMemo(() => {
+    if (!currentScene) return undefined;
+    const scenePlatforms = currentScene.platforms ?? [];
+    const obstaclePlatforms = (currentScene.obstacles ?? []).map((obs) => ({
+      id: `obs-plat-${obs.id}`,
+      x: obs.x - obs.width / 2,
+      y: currentScene.groundY - obs.height,
+      width: obs.width,
+      visual: 'stone' as const,
+    }));
+    return [...scenePlatforms, ...obstaclePlatforms];
+  }, [currentScene]);
+
   // Activate movement hooks
   useCharacterMovement();
   useKeyboardMovement();
-  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, currentScene?.platforms);
+  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, allPlatforms);
 
   // Watch for node changes -> trigger scene transitions
   useEffect(() => {
@@ -227,7 +241,7 @@ export function GothicGameScreen() {
   return (
     <>
       {/* Scene */}
-      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={triggerKnockback} />
+      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={triggerKnockback} challengeActive={varietyState.challengePhase === 'active'} />
 
       {/* Resource HUD */}
       <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />

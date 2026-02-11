@@ -13,19 +13,18 @@ interface SceneRendererProps {
   scene: SceneDefinition;
   onInteract: (interactable: SceneInteractable) => void;
   onObstacleCollision?: (direction: 'left' | 'right') => void;
+  challengeActive?: boolean;
 }
 
-export function SceneRenderer({ scene, onInteract, onObstacleCollision }: SceneRendererProps) {
+export function SceneRenderer({ scene, onInteract, onObstacleCollision, challengeActive }: SceneRendererProps) {
   const { sceneDispatch, sceneState } = useScene();
   const isFirstScene = scene.id === 'town-square';
   const [showHint, setShowHint] = useState(isFirstScene);
 
-  // Show hint only on first scene load
+  // Show hint only on first scene load (dismissed by keypress, not timer)
   useEffect(() => {
     if (!isFirstScene) return;
     setShowHint(true);
-    const timer = setTimeout(() => setShowHint(false), 4000);
-    return () => clearTimeout(timer);
   }, [isFirstScene]);
 
   // Dismiss hint on first keypress
@@ -43,7 +42,7 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision }: SceneR
 
   return (
     <div
-      className={`scene-container ${sceneState.screenShake ? 'screen-shake' : ''}`}
+      className={`scene-container ${sceneState.screenShake ? 'screen-shake' : ''} ${challengeActive ? 'challenge-mode' : ''}`}
       onAnimationEnd={() => {
         if (sceneState.screenShake) {
           sceneDispatch({ type: 'STOP_SCREEN_SHAKE' });
@@ -55,28 +54,32 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision }: SceneR
         ambientColor={scene.ambientColor}
       />
 
-      {scene.interactables.map((obj) => (
-        <Interactable
-          key={obj.id}
-          interactable={obj}
-          onInteract={onInteract}
-        />
-      ))}
+      {!challengeActive && (
+        <>
+          {scene.interactables.map((obj) => (
+            <Interactable
+              key={obj.id}
+              interactable={obj}
+              onInteract={onInteract}
+            />
+          ))}
 
-      {scene.collectibles && scene.collectibles.length > 0 && (
-        <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
-      )}
+          {scene.collectibles && scene.collectibles.length > 0 && (
+            <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
+          )}
 
-      {scene.platforms && scene.platforms.length > 0 && (
-        <PlatformLayer platforms={scene.platforms} />
-      )}
+          {scene.platforms && scene.platforms.length > 0 && (
+            <PlatformLayer platforms={scene.platforms} />
+          )}
 
-      {scene.obstacles && scene.obstacles.length > 0 && onObstacleCollision && (
-        <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} onCollision={onObstacleCollision} />
-      )}
+          {scene.obstacles && scene.obstacles.length > 0 && (
+            <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} />
+          )}
 
-      {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (
-        <EnemyLayer enemies={scene.enemies} groundY={scene.groundY} onCollision={onObstacleCollision} />
+          {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (
+            <EnemyLayer enemies={scene.enemies} groundY={scene.groundY} onCollision={onObstacleCollision} />
+          )}
+        </>
       )}
 
       <PlayerCharacter />
@@ -96,11 +99,12 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision }: SceneR
             border: '1px solid #5a3030',
             whiteSpace: 'nowrap',
             zIndex: 15,
-            animation: 'hint-fade 4s ease-in-out forwards',
+            animation: 'hint-pulse 2s ease-in-out infinite',
             pointerEvents: 'none',
           }}
         >
           Arrow keys to move, Space to jump {hintArrow} towards {firstNpc.label}
+          <div style={{ fontSize: '11px', opacity: 0.7, marginTop: 4 }}>Press any key to dismiss</div>
         </div>
       )}
     </div>

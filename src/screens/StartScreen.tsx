@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
+import { SpriteAnimator } from '../components/character/SpriteAnimator';
 import townBg from '@assets/backgrounds/town/background.png';
 import townMid from '@assets/backgrounds/town/middleground.png';
+import heroIdle from '@assets/characters/player/hero-idle.png';
+import oldmanIdle from '@assets/characters/npcs/oldman-idle.png';
 
 export function StartScreen() {
   const { startGame } = useGame();
@@ -70,9 +73,57 @@ export function StartScreen() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(180deg, rgba(10,6,7,0.85) 0%, rgba(10,6,7,0.5) 40%, rgba(10,6,7,0.7) 70%, rgba(10,6,7,0.95) 100%)',
+          background: 'linear-gradient(180deg, rgba(10,6,7,0.9) 0%, rgba(10,6,7,0.65) 40%, rgba(10,6,7,0.75) 70%, rgba(10,6,7,0.95) 100%)',
         }}
       />
+
+      {/* Left side decoration: hero */}
+      <div
+        style={{
+          position: 'absolute',
+          left: '0',
+          width: '20%',
+          bottom: '30%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          opacity: showContent ? 0.55 : 0,
+          transition: 'opacity 1.2s ease-out 0.8s',
+          pointerEvents: 'none',
+          zIndex: 5,
+        }}
+      >
+        <SpriteAnimator
+          sheet={heroIdle}
+          config={{ frameWidth: 160, frameHeight: 90, frameCount: 4, frameDuration: 150 }}
+          scale={4}
+        />
+      </div>
+
+      {/* Right side decoration: oldman */}
+      <div
+        style={{
+          position: 'absolute',
+          right: '0',
+          width: '20%',
+          bottom: '30%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          opacity: showContent ? 0.55 : 0,
+          transition: 'opacity 1.2s ease-out 0.8s',
+          pointerEvents: 'none',
+          zIndex: 5,
+        }}
+      >
+        <div style={{ transform: 'scaleX(-1)' }}>
+          <SpriteAnimator
+            sheet={oldmanIdle}
+            config={{ frameWidth: 34, frameHeight: 42, frameCount: 8, frameDuration: 150 }}
+            scale={6}
+          />
+        </div>
+      </div>
 
       {/* Content */}
       <div
@@ -153,7 +204,7 @@ export function StartScreen() {
               color: '#e8d5b5',
               lineHeight: 1.8,
               margin: 0,
-              opacity: 0.8,
+              opacity: 0.6,
             }}
           >
             You are a university student with a dream:
@@ -177,10 +228,23 @@ export function StartScreen() {
         {/* Starting Resources */}
         <div
           style={{
+            fontFamily: "'Cinzel', Georgia, serif",
+            fontSize: '0.7rem',
+            color: '#e8d5b5',
+            opacity: showContent ? 0.5 : 0,
+            letterSpacing: '0.2em',
+            marginTop: '2.5rem',
+            transition: 'opacity 0.8s ease-out 0.6s',
+          }}
+        >
+          YOUR STARTING RESOURCES
+        </div>
+        <div
+          style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, auto)',
             gap: '1.5rem',
-            marginTop: '2rem',
+            marginTop: '0.75rem',
             opacity: showContent ? 1 : 0,
             transition: 'opacity 0.8s ease-out 0.6s',
           }}
@@ -271,18 +335,6 @@ export function StartScreen() {
         <div
           style={{
             marginTop: '1.5rem',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.7rem',
-            color: '#e8d5b5',
-            opacity: showButton ? 0.4 : 0,
-            transition: 'opacity 0.5s ease-out 0.3s',
-          }}
-        >
-          Use arrow keys to move &middot; Walk to characters to interact
-        </div>
-        <div
-          style={{
-            marginTop: '0.5rem',
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: '0.6rem',
             color: '#e8d5b5',

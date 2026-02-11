@@ -1,5 +1,5 @@
-// Player hitbox size in percentage coordinates (tighter for precise feel)
-const PLAYER_HALF_W = 1.8; // half-width
+// Player hitbox size in percentage coordinates (tight — collision feels fair)
+const PLAYER_HALF_W = 1.2; // half-width
 const PLAYER_H = 7; // full height
 
 /**

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useScene } from '../../context/SceneContext';
+import { useVariety } from '../../context/VarietyContext';
 import { checkPlayerCollision } from '../../utils/collision';
 import { SpriteAnimator } from '../character/SpriteAnimator';
 import type { EnemyDefinition } from '../../types/platformer';
@@ -28,6 +29,8 @@ interface EnemyLayerProps {
 
 export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
   const { sceneState } = useScene();
+  const { varietyState } = useVariety();
+  const challengeActive = varietyState.challengePhase !== 'not-started';
 
   // Track each enemy's position and direction
   const [enemyStates, setEnemyStates] = useState<EnemyState[]>(() =>
@@ -44,6 +47,8 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
   const playerYRef = useRef(sceneState.playerY);
   playerXRef.current = sceneState.playerX;
   playerYRef.current = sceneState.playerY;
+  const challengeActiveRef = useRef(challengeActive);
+  challengeActiveRef.current = challengeActive;
   const animFrameRef = useRef(0);
   const lastTimeRef = useRef(0);
   const lastCollisionRef = useRef<string | null>(null);
@@ -95,8 +100,8 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
           newDir = 'right';
         }
 
-        // Check collision with player (only if not already in knockback)
-        if (!sceneState.knockbackActive && !hasCollision) {
+        // Check collision with player (skip during knockback or active challenge)
+        if (!sceneState.knockbackActive && !challengeActiveRef.current && !hasCollision) {
           const hit = checkPlayerCollision(
             playerXRef.current,
             playerYRef.current,
@@ -171,7 +176,6 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
               zIndex: 5,
               userSelect: 'none',
               filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))',
-              transition: 'left 0.05s linear',
             }}
           >
             {spriteData ? (

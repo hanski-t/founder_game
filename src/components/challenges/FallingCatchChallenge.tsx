@@ -195,10 +195,14 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
   const timerPercent = (timeLeft / config.duration) * 100;
 
   return (
-    <div className="challenge-overlay">
+    <div className="challenge-overlay challenge-falling-active">
       {/* HUD */}
       <div className="challenge-hud">
         <div className="challenge-title">Catch the good items!</div>
+        <div className="challenge-legend">
+          <span className="legend-good">&#x1F7E2; Catch</span>
+          <span className="legend-bad">&#x1F534; Avoid</span>
+        </div>
         <div className="challenge-timer-bar">
           <div className="challenge-timer-fill" style={{ width: `${timerPercent}%` }} />
         </div>
@@ -212,6 +216,12 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
         </div>
       </div>
 
+      {/* Catch zone indicator */}
+      <div
+        className="catch-zone-indicator"
+        style={{ left: 0, right: 0, top: `${GROUND_Y}%` }}
+      />
+
       {/* Falling items */}
       {items.map(item => {
         const caughtClass = item.caught
@@ -221,15 +231,15 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
         return (
           <div
             key={item.id}
-            className={`falling-item ${caughtClass}`}
+            className={`falling-item ${caughtClass} ${item.isGood ? 'falling-good' : 'falling-bad'}`}
             style={{
               left: `${item.x}%`,
               top: `${item.y}%`,
               transform: item.caught ? undefined : 'translateX(-50%)',
-              color: item.isGood ? 'var(--color-gothic-positive)' : 'var(--color-gothic-negative)',
             }}
           >
-            {item.visual}
+            <span className="falling-item-emoji">{item.visual}</span>
+            <span className="falling-item-label">{item.label}</span>
           </div>
         );
       })}

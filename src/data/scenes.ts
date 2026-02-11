@@ -64,7 +64,7 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'ts-scroll-1', visual: 'scroll', x: 95, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
     ],
     obstacles: [
-      { id: 'ts-bush-1', type: 'bush', x: 32, width: 4, height: 5 },
+      { id: 'ts-bush-1', type: 'barrel', x: 32, width: 4, height: 5 },
       { id: 'ts-crate-1', type: 'crate', x: 55, width: 4, height: 6 },
       { id: 'ts-rock-1', type: 'rock', x: 72, width: 5, height: 5 },
     ],
@@ -182,6 +182,7 @@ export const scenes: Record<string, SceneDefinition> = {
     backgroundLayers: [
       { src: cemeteryBg, scrollFactor: 0 },
       { src: cemeteryMountains, scrollFactor: 0.2 },
+      { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
     groundY: 78,
     sceneWidth: 960,
@@ -211,7 +212,7 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cg-doc-2', visual: 'document', x: 95, label: '+10 Rep', resourceBonus: { reputation: 10 } },
     ],
     obstacles: [
-      { id: 'cg-grave-1', type: 'grave', x: 35, width: 4, height: 6 },
+      { id: 'cg-grave-1', type: 'crate', x: 35, width: 4, height: 6 },
       { id: 'cg-rock-1', type: 'rock', x: 65, width: 5, height: 5 },
     ],
     enemies: [
@@ -305,7 +306,7 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'sd-gem-1', visual: 'gem', x: 95, label: '+$500', resourceBonus: { money: 500 } },
     ],
     obstacles: [
-      { id: 'sd-bush-1', type: 'bush', x: 45, width: 4, height: 5 },
+      { id: 'sd-bush-1', type: 'barrel', x: 45, width: 4, height: 5 },
       { id: 'sd-rock-1', type: 'rock', x: 68, width: 5, height: 5 },
     ],
     platforms: [
@@ -315,22 +316,24 @@ export const scenes: Record<string, SceneDefinition> = {
       id: 'falling-market-noise',
       type: 'falling-catch',
       title: 'Navigate the Market Noise',
-      description: 'Catch customers and dodge disreputations! Move left/right to catch the green items.',
+      description: 'Startup life is full of distractions! Move left/right to catch revenue and customers (green glow). Dodge the parties and doomscrolling (red glow)!',
       successThreshold: 4,
       gateX: 50,
       fallingCatchConfig: {
         duration: 12000,
         spawnInterval: 900,
         goodItems: [
-          { visual: '\u{1F9D1}', label: 'Customer' },
-          { visual: '\u{1F465}', label: 'Users' },
-          { visual: '\u{1F31F}', label: 'Fan' },
+          { visual: '\u{1F4B0}', label: 'Revenue' },
+          { visual: '\u{1F464}', label: 'Customer' },
+          { visual: '\u{1F4C8}', label: 'Traction' },
+          { visual: '\u{2B50}', label: 'Review' },
         ],
         badItems: [
-          { visual: '\u{1F3E2}', label: 'Accelerator' },
+          { visual: '\u{1F389}', label: 'Party' },
           { visual: '\u{1F378}', label: 'Networking' },
-          { visual: '\u{1F4F1}', label: 'Social Media' },
-          { visual: '\u{1F4DA}', label: 'Conference' },
+          { visual: '\u{1F4F1}', label: 'Doomscroll' },
+          { visual: '\u{1F5DE}', label: 'Hype Article' },
+          { visual: '\u{1F4AC}', label: 'Drama' },
         ],
         fallDuration: 2500,
       },
@@ -392,6 +395,7 @@ export const scenes: Record<string, SceneDefinition> = {
     backgroundLayers: [
       { src: cemeteryBg, scrollFactor: 0 },
       { src: cemeteryMountains, scrollFactor: 0.2 },
+      { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
     groundY: 78,
     sceneWidth: 960,
@@ -433,20 +437,18 @@ export const scenes: Record<string, SceneDefinition> = {
       id: 'qte-investor-pitch',
       type: 'quick-time',
       title: 'Impress the Investor',
-      description: 'React quickly to show your confidence! 5 prompts, faster timing.',
+      description: 'Nail the key combos to impress the investor!',
       successThreshold: 3,
       gateX: 55,
       quickTimeConfig: {
         prompts: [
-          { key: 'r', displayKey: 'R' },
-          { key: 'g', displayKey: 'G' },
+          { key: 'r', displayKey: 'R', combo: [{ key: 'g', displayKey: 'G' }] },
           { key: ' ', displayKey: 'SPACE' },
-          { key: 'h', displayKey: 'H' },
-          { key: 'l', displayKey: 'L' },
-          { key: 'p', displayKey: 'P' },
-          { key: 'n', displayKey: 'N' },
+          { key: 'h', displayKey: 'H', combo: [{ key: 'l', displayKey: 'L' }] },
+          { key: 'p', displayKey: 'P', combo: [{ key: 'n', displayKey: 'N' }, { key: 'k', displayKey: 'K' }] },
+          { key: 'f', displayKey: 'F', combo: [{ key: 'j', displayKey: 'J' }] },
         ],
-        timePerPrompt: 1200,
+        timePerPrompt: 2000,
       },
     },
   },
@@ -485,8 +487,8 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cl-usb-1', visual: 'usb', x: 95, label: '+20 Rep', resourceBonus: { reputation: 20 } },
     ],
     obstacles: [
-      { id: 'cl-grave-1', type: 'grave', x: 28, width: 4, height: 6 },
-      { id: 'cl-grave-2', type: 'grave', x: 50, width: 4, height: 6 },
+      { id: 'cl-grave-1', type: 'crate', x: 28, width: 4, height: 6 },
+      { id: 'cl-grave-2', type: 'barrel', x: 50, width: 4, height: 6 },
       { id: 'cl-rock-1', type: 'rock', x: 70, width: 5, height: 5 },
     ],
     enemies: [
@@ -505,6 +507,7 @@ export const scenes: Record<string, SceneDefinition> = {
     backgroundLayers: [
       { src: cemeteryBg, scrollFactor: 0 },
       { src: cemeteryMountains, scrollFactor: 0.2 },
+      { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
     groundY: 78,
     sceneWidth: 960,

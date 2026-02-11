@@ -3,8 +3,8 @@ import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
 import { getBlockedX } from '../utils/obstacleBlocker';
 
-const GROUND_STEP = 3; // percentage per keypress update on ground
-const AIR_STEP = 1; // percentage per keypress update while airborne (much slower)
+const GROUND_STEP = 1.5; // percentage per keypress update on ground
+const AIR_STEP = 0.5; // percentage per keypress update while airborne (much slower)
 const UPDATE_INTERVAL = 50; // ms between updates while key held
 
 export function useKeyboardMovement() {
@@ -20,7 +20,8 @@ export function useKeyboardMovement() {
   const isGroundedRef = useRef(sceneState.isGrounded);
   const showDecisionRef = useRef(sceneState.showDecisionPanel);
   const showOutcomeRef = useRef(sceneState.showOutcomePanel);
-  const challengeActiveRef = useRef(varietyState.challengePhase !== 'not-started');
+  const challengeModalRef = useRef(varietyState.challengePhase === 'intro' || varietyState.challengePhase === 'result');
+  const challengeGameplayRef = useRef(varietyState.challengePhase === 'active');
 
   // Keep refs in sync with state every render
   playerXRef.current = sceneState.playerX;
@@ -28,12 +29,13 @@ export function useKeyboardMovement() {
   isGroundedRef.current = sceneState.isGrounded;
   showDecisionRef.current = sceneState.showDecisionPanel;
   showOutcomeRef.current = sceneState.showOutcomePanel;
-  challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
+  challengeModalRef.current = varietyState.challengePhase === 'intro' || varietyState.challengePhase === 'result';
+  challengeGameplayRef.current = varietyState.challengePhase === 'active';
 
   // Stable callback — only depends on sceneDispatch (which is stable from useReducer)
   const updatePosition = useCallback(() => {
     if (showDecisionRef.current || showOutcomeRef.current) return;
-    if (challengeActiveRef.current) return; // freeze during challenges
+    if (challengeModalRef.current) return; // freeze during challenge intro/result modals
 
     const step = isGroundedRef.current ? GROUND_STEP : AIR_STEP;
 
@@ -43,8 +45,10 @@ export function useKeyboardMovement() {
 
     if (dx !== 0) {
       let newX = Math.max(2, Math.min(98, playerXRef.current + dx));
-      // Block movement into obstacles (only when at ground level)
-      newX = getBlockedX(newX, playerYRef.current);
+      // Block movement into obstacles (only when at ground level, skip during minigame)
+      if (!challengeGameplayRef.current) {
+        newX = getBlockedX(newX, playerYRef.current);
+      }
       newX = Math.max(2, Math.min(98, newX));
 
       playerXRef.current = newX; // update ref immediately for next interval tick
