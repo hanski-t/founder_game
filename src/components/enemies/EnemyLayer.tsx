@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useScene } from '../../context/SceneContext';
 import { useVariety } from '../../context/VarietyContext';
+import { usePhaseConfig } from '../../hooks/usePhaseConfig';
 import { checkPlayerCollision } from '../../utils/collision';
 import { SpriteAnimator } from '../character/SpriteAnimator';
 import type { EnemyDefinition } from '../../types/platformer';
@@ -30,6 +31,7 @@ interface EnemyLayerProps {
 export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
   const { sceneState } = useScene();
   const { varietyState } = useVariety();
+  const phaseConfig = usePhaseConfig();
   const challengeActive = varietyState.challengePhase !== 'not-started';
 
   // Track each enemy's position and direction
@@ -49,6 +51,8 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
   playerYRef.current = sceneState.playerY;
   const challengeActiveRef = useRef(challengeActive);
   challengeActiveRef.current = challengeActive;
+  const enemySpeedMultRef = useRef(phaseConfig.enemySpeedMultiplier);
+  enemySpeedMultRef.current = phaseConfig.enemySpeedMultiplier;
   const animFrameRef = useRef(0);
   const lastTimeRef = useRef(0);
   const lastCollisionRef = useRef<string | null>(null);
@@ -87,7 +91,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
         if (!def) return state;
 
         // Move enemy
-        const speed = def.speed * delta;
+        const speed = def.speed * delta * enemySpeedMultRef.current;
         let newX = state.x + (state.direction === 'right' ? speed : -speed);
         let newDir = state.direction;
 

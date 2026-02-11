@@ -16,6 +16,7 @@ import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
 import { ChallengeOverlay } from '../components/challenges/ChallengeOverlay';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, scenes } from '../data/scenes';
+import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
 import { setCurrentObstacles } from '../utils/obstacleBlocker';
 import type { SceneInteractable } from '../types/scene';
 import type { Choice } from '../types/game';
@@ -28,6 +29,13 @@ export function GothicGameScreen() {
   const { varietyState, isChallengeCompleted, startChallenge } = useVariety();
   const prevNodeIdRef = useRef(state.currentNodeId);
   const prevPhaseRef = useRef<GamePhase>(state.currentPhase);
+
+  // Set phase accent CSS custom properties on :root for global UI theming
+  useEffect(() => {
+    const phaseConfig = PHASE_ATMOSPHERE[state.currentPhase];
+    document.documentElement.style.setProperty('--phase-accent', phaseConfig.accentColor);
+    document.documentElement.style.setProperty('--phase-accent-rgb', phaseConfig.accentColorRgb);
+  }, [state.currentPhase]);
 
   // Get current scene
   const currentScene = getSceneById(sceneState.currentSceneId);
@@ -293,6 +301,7 @@ export function GothicGameScreen() {
       {sceneState.phaseTitle && (
         <PhaseTitle
           title={sceneState.phaseTitle}
+          phase={state.currentPhase}
           onComplete={handlePhaseTitleComplete}
         />
       )}

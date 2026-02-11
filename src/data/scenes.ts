@@ -317,10 +317,10 @@ export const scenes: Record<string, SceneDefinition> = {
       type: 'falling-catch',
       title: 'Navigate the Market Noise',
       description: 'Startup life is full of distractions! Move left/right to catch revenue and customers (green glow). Dodge the parties and doomscrolling (red glow)!',
-      successThreshold: 4,
+      successThreshold: 8,
       gateX: 50,
       fallingCatchConfig: {
-        duration: 12000,
+        duration: 24000,
         spawnInterval: 900,
         goodItems: [
           { visual: '\u{1F4B0}', label: 'Revenue' },

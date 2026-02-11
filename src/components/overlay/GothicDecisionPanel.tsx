@@ -172,13 +172,13 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
               onClick={() => onChoice(choice)}
               onMouseEnter={() => setHighlightedIndex(index)}
               style={index === highlightedIndex ? {
-                borderColor: 'var(--color-gothic-gold)',
-                boxShadow: '0 0 15px rgba(212, 168, 83, 0.2), inset 0 0 20px rgba(212, 168, 83, 0.05)',
+                borderColor: 'var(--phase-accent, var(--color-gothic-gold))',
+                boxShadow: '0 0 15px rgba(var(--phase-accent-rgb, 212, 168, 83), 0.2), inset 0 0 20px rgba(var(--phase-accent-rgb, 212, 168, 83), 0.05)',
                 background: 'rgba(40, 25, 26, 0.9)',
               } : undefined}
             >
               <div className="gothic-choice-text">
-                <span style={{ color: 'var(--color-gothic-gold)', marginRight: 8 }}>
+                <span style={{ color: 'var(--phase-accent, var(--color-gothic-gold))', marginRight: 8 }}>
                   [{String.fromCharCode(65 + index)}]
                 </span>
                 {choice.text}

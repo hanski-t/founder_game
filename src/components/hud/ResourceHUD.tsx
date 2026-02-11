@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import type { Resources } from '../../types/game';
+import type { Resources, GamePhase } from '../../types/game';
 import { RESOURCE_LIMITS } from '../../types/game';
+import { PHASE_ATMOSPHERE } from '../../data/phaseConfig';
 import { HourglassIcon, CoinIcon, FlameIcon, PeopleIcon } from './ResourceIcons';
 
 interface ResourceHUDProps {
@@ -74,6 +75,7 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
 }
 
 export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
+  const phaseConfig = PHASE_ATMOSPHERE[currentPhase as GamePhase];
   const phaseLabel =
     currentPhase === 'university' ? 'Phase 1' :
     currentPhase === 'firstStartup' ? 'Phase 2' :
@@ -90,7 +92,7 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
         alignItems: 'center',
         padding: '6px 10px',
         background: 'rgba(10, 6, 7, 0.9)',
-        border: '1px solid var(--color-gothic-border)',
+        border: `1px solid ${phaseConfig.accentColor}40`,
         borderTop: 'none',
         borderRadius: '0 0 6px 6px',
         pointerEvents: 'auto',
@@ -138,7 +140,7 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
         <div style={{
           fontFamily: 'var(--font-gothic)',
           fontSize: '0.6rem',
-          color: 'var(--color-gothic-gold)',
+          color: phaseConfig.accentColor,
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           opacity: 0.7,

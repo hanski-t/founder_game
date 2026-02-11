@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
+import { usePhaseConfig } from './usePhaseConfig';
 import { getBlockedX } from '../utils/obstacleBlocker';
 
 const GROUND_STEP = 1.5; // percentage per keypress update on ground
@@ -10,8 +11,10 @@ const UPDATE_INTERVAL = 50; // ms between updates while key held
 export function useKeyboardMovement() {
   const { sceneState, sceneDispatch } = useScene();
   const { varietyState } = useVariety();
+  const phaseConfig = usePhaseConfig();
   const keysRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<number>(0);
+  const speedMultiplierRef = useRef(phaseConfig.playerSpeedMultiplier);
 
   // Use refs for values that change frequently during gameplay
   // This prevents the callback from recreating and killing the interval mid-jump
@@ -31,13 +34,15 @@ export function useKeyboardMovement() {
   showOutcomeRef.current = sceneState.showOutcomePanel;
   challengeModalRef.current = varietyState.challengePhase === 'intro' || varietyState.challengePhase === 'result';
   challengeGameplayRef.current = varietyState.challengePhase === 'active';
+  speedMultiplierRef.current = phaseConfig.playerSpeedMultiplier;
 
   // Stable callback — only depends on sceneDispatch (which is stable from useReducer)
   const updatePosition = useCallback(() => {
     if (showDecisionRef.current || showOutcomeRef.current) return;
     if (challengeModalRef.current) return; // freeze during challenge intro/result modals
 
-    const step = isGroundedRef.current ? GROUND_STEP : AIR_STEP;
+    const baseStep = isGroundedRef.current ? GROUND_STEP : AIR_STEP;
+    const step = baseStep * speedMultiplierRef.current;
 
     let dx = 0;
     if (keysRef.current.has('ArrowLeft') || keysRef.current.has('a')) dx -= step;

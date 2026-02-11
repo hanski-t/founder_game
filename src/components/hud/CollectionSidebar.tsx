@@ -33,6 +33,7 @@ function MilestoneCard({ milestone, index }: { milestone: ActiveMilestone; index
       border: '1px solid rgba(90, 48, 48, 0.4)',
       borderRadius: 4,
       width: 145,
+      flexShrink: 0,
       animation: `gothic-fade-in 0.5s ease-out ${index * 0.12}s both`,
     }}>
       <div style={{
@@ -84,15 +85,16 @@ export function CollectionSidebar() {
   return (
     <div style={{
       position: 'fixed',
-      left: 10,
-      top: '50%',
-      transform: 'translateY(-50%)',
+      bottom: 6,
+      left: '50%',
+      transform: 'translateX(-50%)',
       zIndex: 40,
       display: 'flex',
       flexDirection: 'column',
-      gap: 5,
-      maxHeight: '70vh',
-      overflow: 'hidden',
+      alignItems: 'center',
+      gap: 4,
+      width: '92vw',
+      maxWidth: 960,
       pointerEvents: 'none',
     }}>
       {/* Header */}
@@ -103,14 +105,21 @@ export function CollectionSidebar() {
         letterSpacing: '0.15em',
         opacity: 0.5,
         textAlign: 'center',
-        marginBottom: 2,
       }}>
         JOURNEY LOG
       </div>
 
-      {milestones.map((m, i) => (
-        <MilestoneCard key={m.id} milestone={m} index={i} />
-      ))}
+      {/* Cards row */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 5,
+      }}>
+        {milestones.map((m, i) => (
+          <MilestoneCard key={m.id} milestone={m} index={i} />
+        ))}
+      </div>
     </div>
   );
 }

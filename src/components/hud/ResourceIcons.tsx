@@ -77,6 +77,41 @@ export function PeopleIcon({ color, size = 14 }: IconProps) {
   );
 }
 
+export function SwordIcon({ color, size = 14 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ imageRendering: 'pixelated' }}>
+      <rect x="10" y="1" width="2" height="2" fill={color} />
+      <rect x="9" y="3" width="2" height="1" fill={color} opacity="0.9" />
+      <rect x="8" y="4" width="2" height="1" fill={color} opacity="0.85" />
+      <rect x="7" y="5" width="2" height="1" fill={color} opacity="0.8" />
+      <rect x="6" y="6" width="2" height="1" fill={color} opacity="0.75" />
+      <rect x="4" y="7" width="6" height="1" fill={color} />
+      <rect x="5" y="8" width="2" height="1" fill={color} opacity="0.75" />
+      <rect x="4" y="9" width="2" height="1" fill={color} opacity="0.6" />
+      <rect x="3" y="10" width="2" height="1" fill={color} opacity="0.5" />
+      <rect x="2" y="11" width="2" height="1" fill={color} opacity="0.4" />
+    </svg>
+  );
+}
+
+export function CastleIcon({ color, size = 14 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ imageRendering: 'pixelated' }}>
+      <rect x="1" y="1" width="2" height="2" fill={color} />
+      <rect x="6" y="1" width="2" height="2" fill={color} />
+      <rect x="11" y="1" width="2" height="2" fill={color} />
+      <rect x="1" y="3" width="2" height="5" fill={color} opacity="0.7" />
+      <rect x="6" y="3" width="2" height="3" fill={color} opacity="0.7" />
+      <rect x="11" y="3" width="2" height="5" fill={color} opacity="0.7" />
+      <rect x="3" y="5" width="3" height="1" fill={color} opacity="0.5" />
+      <rect x="8" y="5" width="3" height="1" fill={color} opacity="0.5" />
+      <rect x="1" y="8" width="12" height="1" fill={color} opacity="0.85" />
+      <rect x="1" y="9" width="12" height="3" fill={color} opacity="0.6" />
+      <rect x="5" y="9" width="4" height="3" fill={color} opacity="0.3" />
+    </svg>
+  );
+}
+
 // Map resource keys to their icon component and color
 export const RESOURCE_ICON_MAP = {
   momentum: { Icon: HourglassIcon, color: '#60a5fa' },

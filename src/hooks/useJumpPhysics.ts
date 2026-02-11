@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
+import { usePhaseConfig } from './usePhaseConfig';
 import type { PlatformDefinition } from '../types/platformer';
 
 // Physics constants (all in percentage units)
@@ -15,6 +16,7 @@ const KNOCKBACK_TELEPORT = 5; // % instant displacement to clear obstacle on hit
 export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]) {
   const { sceneState, sceneDispatch } = useScene();
   const { varietyState } = useVariety();
+  const phaseConfig = usePhaseConfig();
 
   // Refs to avoid stale closures in RAF loop
   const playerYRef = useRef(sceneState.playerY);
@@ -26,12 +28,14 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
   const animFrameRef = useRef(0);
   const lastTimeRef = useRef(0);
   const jumpRequestedRef = useRef(false);
+  const gravityMultiplierRef = useRef(phaseConfig.gravityMultiplier);
   const challengeActiveRef = useRef(varietyState.challengePhase !== 'not-started');
 
   // Keep refs in sync with state
   playerYRef.current = sceneState.playerY;
   playerXRef.current = sceneState.playerX;
   isGroundedRef.current = sceneState.isGrounded;
+  gravityMultiplierRef.current = phaseConfig.gravityMultiplier;
   challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
 
   // Jump input handler
@@ -74,18 +78,21 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
       let yChanged = false;
       let xChanged = false;
 
+      const gMult = gravityMultiplierRef.current;
+
       // Handle jump request (blocked during challenges)
       if (jumpRequestedRef.current && isGroundedRef.current && !challengeActiveRef.current) {
-        velocityYRef.current = JUMP_VELOCITY;
+        // Scale jump velocity with sqrt of gravity multiplier to keep jump height similar
+        velocityYRef.current = JUMP_VELOCITY * Math.sqrt(gMult);
         isGroundedRef.current = false;
         sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
         sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
         jumpRequestedRef.current = false;
       }
 
-      // Apply gravity when airborne
+      // Apply gravity when airborne (scaled by phase multiplier)
       if (!isGroundedRef.current) {
-        velocityYRef.current += GRAVITY * delta;
+        velocityYRef.current += GRAVITY * gMult * delta;
         const newY = playerYRef.current + velocityYRef.current * delta;
 
         // Check platform landings (only when falling)

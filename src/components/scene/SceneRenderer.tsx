@@ -7,7 +7,9 @@ import { CollectibleLayer } from '../collectibles/CollectibleLayer';
 import { ObstacleLayer } from '../obstacles/ObstacleLayer';
 import { EnemyLayer } from '../enemies/EnemyLayer';
 import { PlatformLayer } from '../platforms/PlatformLayer';
+import { AtmosphericOverlay } from './AtmosphericOverlay';
 import { useScene } from '../../context/SceneContext';
+import { usePhaseConfig } from '../../hooks/usePhaseConfig';
 
 interface SceneRendererProps {
   scene: SceneDefinition;
@@ -18,6 +20,7 @@ interface SceneRendererProps {
 
 export function SceneRenderer({ scene, onInteract, onObstacleCollision, challengeActive }: SceneRendererProps) {
   const { sceneDispatch, sceneState } = useScene();
+  const phaseConfig = usePhaseConfig();
   const isFirstScene = scene.id === 'town-square';
   const [showHint, setShowHint] = useState(isFirstScene);
 
@@ -42,7 +45,7 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision, challeng
 
   return (
     <div
-      className={`scene-container ${sceneState.screenShake ? 'screen-shake' : ''} ${challengeActive ? 'challenge-mode' : ''}`}
+      className={`scene-container ${phaseConfig.cssClass} ${sceneState.screenShake ? 'screen-shake' : ''} ${challengeActive ? 'challenge-mode' : ''}`}
       onAnimationEnd={() => {
         if (sceneState.screenShake) {
           sceneDispatch({ type: 'STOP_SCREEN_SHAKE' });
@@ -53,6 +56,8 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision, challeng
         layers={scene.backgroundLayers}
         ambientColor={scene.ambientColor}
       />
+
+      <AtmosphericOverlay />
 
       {!challengeActive && (
         <>
