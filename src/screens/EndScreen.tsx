@@ -55,6 +55,9 @@ export function EndScreen() {
     { label: 'Phase Reached', value: state.currentPhase === 'university' ? 'University' : 'First Startup' },
   ];
 
+  const accentColor = isSuccess ? '#d4a853' : '#f87171';
+  const borderDark = isSuccess ? '#d4a853' : '#5a3030';
+
   return (
     <div
       style={{
@@ -115,20 +118,17 @@ export function EndScreen() {
           flexDirection: 'column',
           alignItems: 'center',
           height: '100%',
-          padding: '2rem',
-          overflowY: 'auto',
+          padding: '2.5vh 3vw 2vh',
+          overflow: 'hidden',
         }}
       >
-        {/* Spacer */}
-        <div style={{ flex: '0 0 8vh' }} />
-
         {/* Title */}
         <h1
           style={{
             fontFamily: "'Cinzel', Georgia, serif",
-            fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+            fontSize: 'clamp(1.4rem, 3vw, 2.4rem)',
             fontWeight: 700,
-            color: isSuccess ? '#d4a853' : '#f87171',
+            color: accentColor,
             textShadow: isSuccess
               ? '0 0 30px rgba(212, 168, 83, 0.5)'
               : '0 0 30px rgba(248, 113, 113, 0.4)',
@@ -144,11 +144,11 @@ export function EndScreen() {
         <div
           style={{
             fontFamily: "'Cinzel', Georgia, serif",
-            fontSize: '0.8rem',
+            fontSize: '0.7rem',
             color: '#e8d5b5',
             opacity: 0.6,
             letterSpacing: '0.2em',
-            marginTop: '0.5rem',
+            marginTop: '0.3rem',
           }}
         >
           {isSuccess ? 'PROTOTYPE COMPLETE' : 'SIMULATION TERMINATED'}
@@ -159,196 +159,232 @@ export function EndScreen() {
           style={{
             width: '160px',
             height: '1px',
-            background: `linear-gradient(90deg, transparent, ${isSuccess ? '#d4a853' : '#5a3030'}, transparent)`,
-            margin: '1.5rem 0',
+            background: `linear-gradient(90deg, transparent, ${borderDark}, transparent)`,
+            margin: '1rem 0',
           }}
         />
 
-        {/* Message */}
+        {/* Two-column body: message left, stats+journey+button right */}
         <div
           style={{
-            maxWidth: '550px',
-            padding: '16px 24px',
-            background: 'rgba(0, 0, 0, 0.4)',
-            borderLeft: `3px solid ${isSuccess ? '#d4a853' : '#5a3030'}`,
+            display: 'flex',
+            gap: 'clamp(1.5rem, 3vw, 3rem)',
+            flex: 1,
+            width: '100%',
+            maxWidth: '900px',
+            minHeight: 0,
             animation: 'gothic-fade-in 0.8s ease-out 0.2s both',
           }}
         >
-          <p
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.82rem',
-              color: '#e8d5b5',
-              lineHeight: 1.7,
-              margin: 0,
-              whiteSpace: 'pre-line',
-            }}
-          >
-            {getEndingMessage()}
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '12px',
-            marginTop: '1.5rem',
-            maxWidth: '480px',
-            width: '100%',
-            animation: 'gothic-fade-in 0.8s ease-out 0.4s both',
-          }}
-        >
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              style={{
-                textAlign: 'center',
-                padding: '10px 8px',
-                background: 'rgba(26, 15, 16, 0.7)',
-                border: '1px solid rgba(90, 48, 48, 0.4)',
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  color: isSuccess ? '#d4a853' : '#60a5fa',
-                }}
-              >
-                {stat.value}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Cinzel', Georgia, serif",
-                  fontSize: '0.6rem',
-                  color: '#e8d5b5',
-                  opacity: 0.5,
-                  letterSpacing: '0.05em',
-                  marginTop: '4px',
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Journey Recap */}
-        {state.decisionHistory.length > 0 && (
+          {/* Left column: Message */}
           <div
             style={{
-              marginTop: '1.5rem',
-              maxWidth: '480px',
-              width: '100%',
-              animation: 'gothic-fade-in 0.8s ease-out 0.6s both',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              minWidth: 0,
             }}
           >
             <div
               style={{
-                fontFamily: "'Cinzel', Georgia, serif",
-                fontSize: '0.7rem',
-                color: '#d4a853',
-                letterSpacing: '0.15em',
-                marginBottom: '8px',
-                opacity: 0.7,
+                padding: '14px 20px',
+                background: 'rgba(0, 0, 0, 0.4)',
+                borderLeft: `3px solid ${borderDark}`,
               }}
             >
-              YOUR JOURNEY
+              <p
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 'clamp(0.7rem, 1.1vw, 0.82rem)',
+                  color: '#e8d5b5',
+                  lineHeight: 1.65,
+                  margin: 0,
+                  whiteSpace: 'pre-line',
+                }}
+              >
+                {getEndingMessage()}
+              </p>
             </div>
+
             <div
               style={{
-                maxHeight: '140px',
-                overflowY: 'auto',
-                padding: '8px 12px',
-                background: 'rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(90, 48, 48, 0.3)',
+                marginTop: '1rem',
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.65rem',
+                color: '#e8d5b5',
+                opacity: 0.35,
               }}
             >
-              {state.decisionHistory.map((decision, index) => (
+              Every playthrough is different. Make new choices, discover new outcomes.
+            </div>
+          </div>
+
+          {/* Right column: Stats + Journey + Button */}
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.8rem',
+              minWidth: 0,
+              minHeight: 0,
+            }}
+          >
+            {/* Stats */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+              }}
+            >
+              {stats.map((stat) => (
                 <div
-                  key={index}
+                  key={stat.label}
                   style={{
-                    display: 'flex',
-                    gap: '8px',
-                    fontSize: '0.72rem',
-                    fontFamily: "'JetBrains Mono', monospace",
-                    marginBottom: '4px',
-                    lineHeight: 1.4,
+                    textAlign: 'center',
+                    padding: '8px 6px',
+                    background: 'rgba(26, 15, 16, 0.7)',
+                    border: '1px solid rgba(90, 48, 48, 0.4)',
                   }}
                 >
-                  <span style={{ color: '#5a3030', fontWeight: 600, flexShrink: 0 }}>
-                    {String(index + 1).padStart(2, '0')}.
-                  </span>
-                  <span style={{ color: '#e8d5b5', opacity: 0.5, flexShrink: 0 }}>
-                    {decision.nodeTitle}:
-                  </span>
-                  <span style={{ color: '#e8d5b5', opacity: 0.8 }}>
-                    {decision.choiceText}
-                  </span>
+                  <div
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+                      fontWeight: 600,
+                      color: isSuccess ? '#d4a853' : '#60a5fa',
+                    }}
+                  >
+                    {stat.value}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Cinzel', Georgia, serif",
+                      fontSize: '0.55rem',
+                      color: '#e8d5b5',
+                      opacity: 0.5,
+                      letterSpacing: '0.05em',
+                      marginTop: '3px',
+                    }}
+                  >
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
+
+            {/* Journey Recap */}
+            {state.decisionHistory.length > 0 && (
+              <div
+                style={{
+                  flex: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Cinzel', Georgia, serif",
+                    fontSize: '0.65rem',
+                    color: '#d4a853',
+                    letterSpacing: '0.15em',
+                    marginBottom: '6px',
+                    opacity: 0.7,
+                    flexShrink: 0,
+                  }}
+                >
+                  YOUR JOURNEY
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: 'hidden',
+                    padding: '6px 10px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(90, 48, 48, 0.3)',
+                  }}
+                >
+                  {state.decisionHistory.map((decision, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        gap: '6px',
+                        fontSize: '0.68rem',
+                        fontFamily: "'JetBrains Mono', monospace",
+                        marginBottom: '2px',
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      <span style={{ color: '#5a3030', fontWeight: 600, flexShrink: 0 }}>
+                        {String(index + 1).padStart(2, '0')}.
+                      </span>
+                      <span
+                        style={{
+                          color: '#e8d5b5',
+                          opacity: 0.7,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        <span style={{ opacity: 0.6 }}>{decision.nodeTitle}:</span>{' '}
+                        {decision.choiceText}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Restart Button */}
+            <div style={{ flexShrink: 0, textAlign: 'center' }}>
+              <button
+                onClick={restartGame}
+                style={{
+                  width: '100%',
+                  padding: '10px 32px',
+                  background: 'linear-gradient(180deg, rgba(90, 48, 48, 0.6) 0%, rgba(26, 15, 16, 0.8) 100%)',
+                  border: '2px solid #5a3030',
+                  color: '#d4a853',
+                  fontFamily: "'Cinzel', Georgia, serif",
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.15em',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  animation: 'gothic-fade-in 0.8s ease-out 0.6s both',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#d4a853';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(212, 168, 83, 0.3), inset 0 0 20px rgba(212, 168, 83, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#5a3030';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                TRY AGAIN?
+              </button>
+              <div
+                style={{
+                  marginTop: '0.3rem',
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '0.6rem',
+                  color: '#e8d5b5',
+                  opacity: 0.35,
+                }}
+              >
+                press Enter
+              </div>
+            </div>
           </div>
-        )}
-
-        {/* Restart Button */}
-        <button
-          onClick={restartGame}
-          style={{
-            marginTop: '2rem',
-            padding: '12px 40px',
-            background: 'linear-gradient(180deg, rgba(90, 48, 48, 0.6) 0%, rgba(26, 15, 16, 0.8) 100%)',
-            border: '2px solid #5a3030',
-            color: '#d4a853',
-            fontFamily: "'Cinzel', Georgia, serif",
-            fontSize: '1rem',
-            fontWeight: 600,
-            letterSpacing: '0.15em',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            animation: 'gothic-fade-in 0.8s ease-out 0.8s both',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#d4a853';
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(212, 168, 83, 0.3), inset 0 0 20px rgba(212, 168, 83, 0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#5a3030';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          TRY AGAIN?
-        </button>
-        <div
-          style={{
-            marginTop: '0.4rem',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.65rem',
-            color: '#e8d5b5',
-            opacity: 0.35,
-          }}
-        >
-          press Enter
         </div>
-
-        <div
-          style={{
-            marginTop: '0.75rem',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.7rem',
-            color: '#e8d5b5',
-            opacity: 0.35,
-            textAlign: 'center',
-          }}
-        >
-          Every playthrough is different. Make new choices, discover new outcomes.
-        </div>
-
-        {/* Bottom spacer */}
-        <div style={{ flex: '0 0 4vh' }} />
       </div>
     </div>
   );

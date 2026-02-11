@@ -92,7 +92,7 @@ export function CollectionSidebar() {
       flexDirection: 'column',
       gap: 5,
       maxHeight: '70vh',
-      overflowY: 'auto',
+      overflow: 'hidden',
       pointerEvents: 'none',
     }}>
       {/* Header */}
