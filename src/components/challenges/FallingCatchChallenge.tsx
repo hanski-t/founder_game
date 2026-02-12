@@ -28,7 +28,7 @@ interface FeedbackEvent {
   createdAt: number;
 }
 
-const CATCH_RANGE_X = 8;
+const CATCH_RANGE_X = 4;
 const GROUND_Y = 78;
 const FEEDBACK_DURATION = 800;
 const CATCH_POP_DURATION = 350;
