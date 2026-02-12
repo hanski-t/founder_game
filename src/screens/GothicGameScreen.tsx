@@ -5,6 +5,8 @@ import { useVariety } from '../context/VarietyContext';
 import { useCharacterMovement } from '../hooks/useCharacterMovement';
 import { useKeyboardMovement } from '../hooks/useKeyboardMovement';
 import { useJumpPhysics } from '../hooks/useJumpPhysics';
+import { useCamera } from '../hooks/useCamera';
+import { useMovingPlatforms } from '../hooks/useMovingPlatforms';
 import { SceneRenderer } from '../components/scene/SceneRenderer';
 import { GothicDecisionPanel } from '../components/overlay/GothicDecisionPanel';
 import { GothicOutcomePanel } from '../components/overlay/GothicOutcomePanel';
@@ -47,10 +49,12 @@ export function GothicGameScreen() {
     }
   }, [currentScene]);
 
-  // Merge real platforms with obstacle tops so player can stand on obstacles
+  // Animate moving platforms (returns resolved positions + deltas)
+  const { resolvedPlatforms, platformDeltas } = useMovingPlatforms(currentScene?.platforms ?? []);
+
+  // Merge resolved platforms with obstacle tops so player can stand on obstacles
   const allPlatforms = useMemo(() => {
     if (!currentScene) return undefined;
-    const scenePlatforms = currentScene.platforms ?? [];
     const obstaclePlatforms = (currentScene.obstacles ?? []).map((obs) => ({
       id: `obs-plat-${obs.id}`,
       x: obs.x - obs.width / 2,
@@ -58,13 +62,14 @@ export function GothicGameScreen() {
       width: obs.width,
       visual: 'stone' as const,
     }));
-    return [...scenePlatforms, ...obstaclePlatforms];
-  }, [currentScene]);
+    return [...resolvedPlatforms, ...obstaclePlatforms];
+  }, [currentScene, resolvedPlatforms]);
 
   // Activate movement hooks
   useCharacterMovement();
   useKeyboardMovement();
-  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, allPlatforms);
+  useCamera();
+  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, allPlatforms, platformDeltas);
 
   // Wrap knockback so enemy hits also cost $100
   const handleEnemyHit = useCallback((direction: 'left' | 'right') => {
@@ -227,6 +232,7 @@ export function GothicGameScreen() {
           sceneId: sceneState.transitionTargetSceneId,
           playerStartX: targetScene.playerStartX,
           groundY: targetScene.groundY,
+          levelWidth: targetScene.levelWidth,
         });
       }
     }
@@ -255,7 +261,7 @@ export function GothicGameScreen() {
   return (
     <>
       {/* Scene */}
-      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} />
+      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} resolvedPlatforms={resolvedPlatforms} />
 
       {/* Resource HUD */}
       <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />

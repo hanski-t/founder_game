@@ -19,6 +19,8 @@ const initialSceneState: SceneState = {
   showOutcomePanel: false,
   screenShake: false,
   phaseTitle: null,
+  cameraX: 0,
+  levelWidth: 100,
 };
 
 function sceneReducer(state: SceneState, action: SceneAction): SceneState {
@@ -88,6 +90,9 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
     case 'CLEAR_KNOCKBACK':
       return { ...state, knockbackActive: false };
 
+    case 'UPDATE_CAMERA':
+      return { ...state, cameraX: action.cameraX };
+
     case 'RESET_SCENE':
       return {
         ...state,
@@ -105,6 +110,8 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
         showOutcomePanel: false,
         isTransitioning: false,
         transitionTargetSceneId: null,
+        levelWidth: action.levelWidth,
+        cameraX: Math.max(0, Math.min(action.playerStartX - 50, action.levelWidth - 100)),
       };
 
     default:

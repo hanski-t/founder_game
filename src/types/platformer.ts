@@ -29,4 +29,8 @@ export interface PlatformDefinition {
   y: number; // top edge, percentage
   width: number; // percentage
   visual: 'wood' | 'stone' | 'metal';
+  // Moving platform fields (optional — static if omitted)
+  moveAxis?: 'horizontal' | 'vertical';
+  moveRange?: number; // max displacement from base position in %
+  moveSpeed?: number; // oscillation speed in cycles per second (e.g., 0.4)
 }

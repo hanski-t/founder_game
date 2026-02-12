@@ -8,9 +8,11 @@ export function useCharacterMovement() {
   const animFrameRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const currentXRef = useRef(sceneState.playerX);
+  const levelWidthRef = useRef(sceneState.levelWidth);
 
-  // Keep ref in sync with state
+  // Keep refs in sync with state
   currentXRef.current = sceneState.playerX;
+  levelWidthRef.current = sceneState.levelWidth;
 
   useEffect(() => {
     if (sceneState.playerTargetX === null) return;
@@ -51,7 +53,7 @@ export function useCharacterMovement() {
       }
 
       const dir = target > currentX ? 1 : -1;
-      const newX = Math.max(2, Math.min(98, currentX + step * dir));
+      const newX = Math.max(2, Math.min(levelWidthRef.current - 2, currentX + step * dir));
       currentXRef.current = newX;
       sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: newX });
 

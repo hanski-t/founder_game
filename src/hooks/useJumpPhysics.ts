@@ -13,7 +13,11 @@ const KNOCKBACK_THRESHOLD = 0.5; // stop knockback when velocity below this
 const INVINCIBILITY_DURATION = 500; // ms after knockback before next hit
 const KNOCKBACK_TELEPORT = 5; // % instant displacement to clear obstacle on hit
 
-export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]) {
+export function useJumpPhysics(
+  groundY: number,
+  platforms?: PlatformDefinition[],
+  platformDeltas?: Map<string, { dx: number; dy: number }>,
+) {
   const { sceneState, sceneDispatch } = useScene();
   const { varietyState } = useVariety();
   const phaseConfig = usePhaseConfig();
@@ -30,6 +34,9 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
   const jumpRequestedRef = useRef(false);
   const gravityMultiplierRef = useRef(phaseConfig.gravityMultiplier);
   const challengeActiveRef = useRef(varietyState.challengePhase !== 'not-started');
+  const levelWidthRef = useRef(sceneState.levelWidth);
+  const onPlatformIdRef = useRef<string | null>(null);
+  const platformDeltasRef = useRef(platformDeltas);
 
   // Keep refs in sync with state
   playerYRef.current = sceneState.playerY;
@@ -37,6 +44,8 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
   isGroundedRef.current = sceneState.isGrounded;
   gravityMultiplierRef.current = phaseConfig.gravityMultiplier;
   challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
+  levelWidthRef.current = sceneState.levelWidth;
+  platformDeltasRef.current = platformDeltas;
 
   // Jump input handler
   useEffect(() => {
@@ -106,6 +115,7 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
               playerYRef.current = plat.y;
               velocityYRef.current = 0;
               isGroundedRef.current = true;
+              onPlatformIdRef.current = plat.id;
               sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
               sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
               landed = true;
@@ -139,15 +149,33 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
           // Walked off edge — start falling
           isGroundedRef.current = false;
           velocityYRef.current = 0;
+          onPlatformIdRef.current = null;
           sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
           sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
         }
       }
 
+      // Ride moving platforms: carry player with platform movement
+      if (isGroundedRef.current && onPlatformIdRef.current && platformDeltasRef.current) {
+        const delta = platformDeltasRef.current.get(onPlatformIdRef.current);
+        if (delta && (Math.abs(delta.dx) > 0.001 || Math.abs(delta.dy) > 0.001)) {
+          const maxX = levelWidthRef.current - 2;
+          playerXRef.current = Math.max(2, Math.min(maxX, playerXRef.current + delta.dx));
+          playerYRef.current += delta.dy;
+          xChanged = true;
+          yChanged = true;
+        }
+      }
+
+      // Clear platform tracking when on ground
+      if (isGroundedRef.current && playerYRef.current >= groundY - 0.5) {
+        onPlatformIdRef.current = null;
+      }
+
       // Apply knockback
       if (Math.abs(knockbackVXRef.current) > KNOCKBACK_THRESHOLD) {
         const newX = playerXRef.current + knockbackVXRef.current * delta;
-        playerXRef.current = Math.max(2, Math.min(98, newX));
+        playerXRef.current = Math.max(2, Math.min(levelWidthRef.current - 2, newX));
         knockbackVXRef.current *= Math.exp(-KNOCKBACK_DECAY * delta);
         xChanged = true;
 
@@ -186,7 +214,7 @@ export function useJumpPhysics(groundY: number, platforms?: PlatformDefinition[]
 
     // Instant teleport away from obstacle to prevent overlapping
     const teleportDir = direction === 'left' ? -KNOCKBACK_TELEPORT : KNOCKBACK_TELEPORT;
-    playerXRef.current = Math.max(2, Math.min(98, playerXRef.current + teleportDir));
+    playerXRef.current = Math.max(2, Math.min(levelWidthRef.current - 2, playerXRef.current + teleportDir));
     sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: playerXRef.current });
 
     // Then apply velocity-based knockback on top

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { SceneDefinition, SceneInteractable } from '../../types/scene';
+import type { PlatformDefinition } from '../../types/platformer';
 import { ParallaxBackground } from './ParallaxBackground';
 import { PlayerCharacter } from '../character/PlayerCharacter';
 import { Interactable } from '../interactables/Interactable';
@@ -16,9 +17,10 @@ interface SceneRendererProps {
   onInteract: (interactable: SceneInteractable) => void;
   onObstacleCollision?: (direction: 'left' | 'right') => void;
   challengeActive?: boolean;
+  resolvedPlatforms?: PlatformDefinition[];
 }
 
-export function SceneRenderer({ scene, onInteract, onObstacleCollision, challengeActive }: SceneRendererProps) {
+export function SceneRenderer({ scene, onInteract, onObstacleCollision, challengeActive, resolvedPlatforms }: SceneRendererProps) {
   const { sceneDispatch, sceneState } = useScene();
   const phaseConfig = usePhaseConfig();
   const isFirstScene = scene.id === 'town-square';
@@ -59,35 +61,48 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision, challeng
 
       <AtmosphericOverlay />
 
-      {!challengeActive && (
-        <>
-          {scene.interactables.map((obj) => (
-            <Interactable
-              key={obj.id}
-              interactable={obj}
-              onInteract={onInteract}
-            />
-          ))}
+      {/* Camera-offset world wrapper: all game elements scroll together */}
+      <div
+        className="scene-world"
+        style={{
+          position: 'absolute',
+          left: `${-sceneState.cameraX}%`,
+          top: 0,
+          width: '100%',
+          height: '100%',
+          overflow: 'visible',
+        }}
+      >
+        {!challengeActive && (
+          <>
+            {scene.interactables.map((obj) => (
+              <Interactable
+                key={obj.id}
+                interactable={obj}
+                onInteract={onInteract}
+              />
+            ))}
 
-          {scene.collectibles && scene.collectibles.length > 0 && (
-            <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
-          )}
+            {scene.collectibles && scene.collectibles.length > 0 && (
+              <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
+            )}
 
-          {scene.platforms && scene.platforms.length > 0 && (
-            <PlatformLayer platforms={scene.platforms} />
-          )}
+            {(resolvedPlatforms || scene.platforms) && (resolvedPlatforms || scene.platforms)!.length > 0 && (
+              <PlatformLayer platforms={resolvedPlatforms || scene.platforms!} />
+            )}
 
-          {scene.obstacles && scene.obstacles.length > 0 && (
-            <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} />
-          )}
+            {scene.obstacles && scene.obstacles.length > 0 && (
+              <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} />
+            )}
 
-          {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (
-            <EnemyLayer enemies={scene.enemies} groundY={scene.groundY} onCollision={onObstacleCollision} />
-          )}
-        </>
-      )}
+            {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (
+              <EnemyLayer enemies={scene.enemies} groundY={scene.groundY} onCollision={onObstacleCollision} />
+            )}
+          </>
+        )}
 
-      <PlayerCharacter />
+        <PlayerCharacter />
+      </div>
 
       {/* Hint for new players */}
       {showHint && !sceneState.showDecisionPanel && !sceneState.showOutcomePanel && firstNpc && (
