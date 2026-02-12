@@ -51,7 +51,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.oldman,
         label: 'Academic Advisor',
         triggerNodeId: 'uni_intro',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -64,9 +64,9 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'ts-scroll-1', visual: 'scroll', x: 95, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
     ],
     obstacles: [
-      { id: 'ts-bush-1', type: 'barrel', x: 32, width: 4, height: 5 },
-      { id: 'ts-crate-1', type: 'crate', x: 55, width: 4, height: 6 },
-      { id: 'ts-rock-1', type: 'rock', x: 72, width: 5, height: 5 },
+      { id: 'ts-bush-1', type: 'barrel', x: 32, width: 5, height: 10 },
+      { id: 'ts-crate-1', type: 'crate', x: 55, width: 6, height: 11 },
+      { id: 'ts-rock-1', type: 'rock', x: 72, width: 6, height: 9 },
     ],
     platforms: [
       { id: 'ts-plat-1', x: 38, y: 63, width: 15, visual: 'wood' },
@@ -96,7 +96,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.woman,
         label: 'Student Activities Lead',
         triggerNodeId: 'uni_clubs',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -107,11 +107,11 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'tc-doc-1', visual: 'document', x: 95, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
     ],
     obstacles: [
-      { id: 'tc-rock-1', type: 'rock', x: 38, width: 5, height: 5 },
-      { id: 'tc-crate-1', type: 'crate', x: 65, width: 4, height: 6 },
+      { id: 'tc-rock-1', type: 'rock', x: 38, width: 6, height: 9 },
+      { id: 'tc-crate-1', type: 'crate', x: 65, width: 6, height: 11 },
     ],
     enemies: [
-      { id: 'tc-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 42, patrolEnd: 60, y: 78, speed: 10, width: 4, height: 5 },
+      { id: 'tc-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 42, patrolEnd: 60, y: 78, speed: 10, width: 5, height: 10 },
     ],
     platforms: [
       { id: 'tc-plat-1', x: 43, y: 62, width: 14, visual: 'stone' },
@@ -140,7 +140,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.bearded,
         label: 'Interesting Stranger',
         triggerNodeId: 'uni_event_cofounder',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -152,8 +152,8 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'dci-plat-1', x: 28, y: 63, width: 15, visual: 'wood' },
     ],
     obstacles: [
-      { id: 'dci-barrel-1', type: 'barrel', x: 50, width: 4, height: 6 },
-      { id: 'dci-crate-1', type: 'crate', x: 68, width: 4, height: 5 },
+      { id: 'dci-barrel-1', type: 'barrel', x: 50, width: 6, height: 11 },
+      { id: 'dci-crate-1', type: 'crate', x: 68, width: 5, height: 10 },
     ],
     challenge: {
       id: 'qte-social-gathering',
@@ -199,7 +199,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.oldman,
         label: 'Career Advisor',
         triggerNodeId: 'uni_final',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -212,8 +212,8 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cg-doc-2', visual: 'document', x: 95, label: '+10 Rep', resourceBonus: { reputation: 10 } },
     ],
     obstacles: [
-      { id: 'cg-grave-1', type: 'crate', x: 35, width: 4, height: 6 },
-      { id: 'cg-rock-1', type: 'rock', x: 65, width: 5, height: 5 },
+      { id: 'cg-grave-1', type: 'crate', x: 35, width: 6, height: 11 },
+      { id: 'cg-rock-1', type: 'rock', x: 65, width: 6, height: 9 },
     ],
     enemies: [
       { id: 'cg-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 40, patrolEnd: 60, y: 78, speed: 9, width: 4, height: 7 },
@@ -247,7 +247,7 @@ export const scenes: Record<string, SceneDefinition> = {
         staticImage: signImg,
         label: 'Business Plan Board',
         triggerNodeId: 'startup_idea',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -258,9 +258,9 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'sg-coffee-1', visual: 'coffee', x: 93, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
     obstacles: [
-      { id: 'sg-barrel-1', type: 'barrel', x: 30, width: 4, height: 6 },
-      { id: 'sg-crate-1', type: 'crate', x: 55, width: 4, height: 5 },
-      { id: 'sg-rock-1', type: 'rock', x: 72, width: 5, height: 5 },
+      { id: 'sg-barrel-1', type: 'barrel', x: 30, width: 6, height: 11 },
+      { id: 'sg-crate-1', type: 'crate', x: 55, width: 5, height: 10 },
+      { id: 'sg-rock-1', type: 'rock', x: 72, width: 6, height: 9 },
     ],
     enemies: [
       { id: 'sg-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 35, patrolEnd: 50, y: 78, speed: 12, width: 4, height: 7 },
@@ -295,7 +295,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.hatMan,
         label: 'Market Analyst',
         triggerNodeId: 'startup_competitor',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -306,8 +306,8 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'sd-gem-1', visual: 'gem', x: 95, label: '+$500', resourceBonus: { money: 500 } },
     ],
     obstacles: [
-      { id: 'sd-bush-1', type: 'barrel', x: 45, width: 4, height: 5 },
-      { id: 'sd-rock-1', type: 'rock', x: 68, width: 5, height: 5 },
+      { id: 'sd-bush-1', type: 'barrel', x: 45, width: 5, height: 10 },
+      { id: 'sd-rock-1', type: 'rock', x: 68, width: 6, height: 9 },
     ],
     platforms: [
       { id: 'sd-plat-1', x: 23, y: 63, width: 14, visual: 'wood' },
@@ -362,7 +362,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.bearded,
         label: 'Alex (Co-Founder)',
         triggerNodeId: 'startup_cofounder',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -375,12 +375,12 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cm-coffee-1', visual: 'coffee', x: 65, y: 60, label: '+5 Energy', resourceBonus: { energy: 5 } },
     ],
     obstacles: [
-      { id: 'cm-crate-1', type: 'crate', x: 28, width: 4, height: 6 },
-      { id: 'cm-rock-1', type: 'rock', x: 52, width: 5, height: 5 },
-      { id: 'cm-barrel-1', type: 'barrel', x: 75, width: 4, height: 6 },
+      { id: 'cm-crate-1', type: 'crate', x: 28, width: 6, height: 11 },
+      { id: 'cm-rock-1', type: 'rock', x: 52, width: 6, height: 9 },
+      { id: 'cm-barrel-1', type: 'barrel', x: 75, width: 6, height: 11 },
     ],
     enemies: [
-      { id: 'cm-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 35, patrolEnd: 55, y: 78, speed: 8, width: 4, height: 5 },
+      { id: 'cm-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 35, patrolEnd: 55, y: 78, speed: 8, width: 5, height: 10 },
     ],
     platforms: [
       { id: 'cm-plat-1', x: 30, y: 63, width: 16, visual: 'wood' },
@@ -412,7 +412,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.woman,
         label: 'Lead Investor',
         triggerNodeId: 'startup_funding',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -423,11 +423,11 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'ch-doc-1', visual: 'document', x: 95, label: 'Term Sheet', flavorText: '"Pre-money valuation: $2M"' },
     ],
     obstacles: [
-      { id: 'ch-rock-1', type: 'rock', x: 35, width: 5, height: 5 },
-      { id: 'ch-crate-1', type: 'crate', x: 60, width: 4, height: 6 },
+      { id: 'ch-rock-1', type: 'rock', x: 35, width: 6, height: 9 },
+      { id: 'ch-crate-1', type: 'crate', x: 60, width: 6, height: 11 },
     ],
     enemies: [
-      { id: 'ch-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 45, patrolEnd: 65, y: 78, speed: 10, width: 4, height: 5 },
+      { id: 'ch-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 39, patrolEnd: 56, y: 78, speed: 10, width: 5, height: 10 },
     ],
     platforms: [
       { id: 'ch-plat-1', x: 35, y: 65, width: 14, visual: 'stone' },
@@ -439,7 +439,7 @@ export const scenes: Record<string, SceneDefinition> = {
       title: 'Impress the Investor',
       description: 'Nail the key combos to impress the investor!',
       successThreshold: 3,
-      gateX: 55,
+      gateX: 65,
       quickTimeConfig: {
         prompts: [
           { key: 'r', displayKey: 'R', combo: [{ key: 'g', displayKey: 'G' }] },
@@ -476,7 +476,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.hatMan,
         label: 'Launch Coordinator',
         triggerNodeId: 'startup_final',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],
@@ -487,13 +487,13 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cl-usb-1', visual: 'usb', x: 95, label: '+20 Rep', resourceBonus: { reputation: 20 } },
     ],
     obstacles: [
-      { id: 'cl-grave-1', type: 'crate', x: 28, width: 4, height: 6 },
-      { id: 'cl-grave-2', type: 'barrel', x: 50, width: 4, height: 6 },
-      { id: 'cl-rock-1', type: 'rock', x: 70, width: 5, height: 5 },
+      { id: 'cl-grave-1', type: 'crate', x: 28, width: 6, height: 11 },
+      { id: 'cl-grave-2', type: 'barrel', x: 50, width: 6, height: 11 },
+      { id: 'cl-rock-1', type: 'rock', x: 70, width: 6, height: 9 },
     ],
     enemies: [
       { id: 'cl-skeleton-1', type: 'skeleton', visual: '\u{1F480}', patrolStart: 35, patrolEnd: 60, y: 78, speed: 10, width: 4, height: 7 },
-      { id: 'cl-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 55, patrolEnd: 75, y: 78, speed: 12, width: 4, height: 5 },
+      { id: 'cl-ghost-1', type: 'ghost', visual: '\u{1F47B}', patrolStart: 55, patrolEnd: 75, y: 78, speed: 12, width: 5, height: 10 },
     ],
     platforms: [
       { id: 'cl-plat-1', x: 28, y: 63, width: 16, visual: 'stone' },
@@ -524,7 +524,7 @@ export const scenes: Record<string, SceneDefinition> = {
         spriteConfig: NPC_SPRITE_CONFIG.oldman,
         label: 'Your Mentor',
         triggerNodeId: 'game_success',
-        proximityRange: 4,
+        proximityRange: 2,
         interactionType: 'decision',
       },
     ],

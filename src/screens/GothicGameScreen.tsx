@@ -24,7 +24,7 @@ import type { GamePhase } from '../types/game';
 import { PHASES } from '../types/game';
 
 export function GothicGameScreen() {
-  const { state, makeChoice, startMiniGame, continueFromOutcome } = useGame();
+  const { state, dispatch, makeChoice, startMiniGame, continueFromOutcome } = useGame();
   const { sceneState, sceneDispatch } = useScene();
   const { varietyState, isChallengeCompleted, startChallenge } = useVariety();
   const prevNodeIdRef = useRef(state.currentNodeId);
@@ -65,6 +65,12 @@ export function GothicGameScreen() {
   useCharacterMovement();
   useKeyboardMovement();
   const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, allPlatforms);
+
+  // Wrap knockback so enemy hits also cost $100
+  const handleEnemyHit = useCallback((direction: 'left' | 'right') => {
+    triggerKnockback(direction);
+    dispatch({ type: 'APPLY_BONUS', resourceChanges: { money: -100 } });
+  }, [triggerKnockback, dispatch]);
 
   // Watch for node changes -> trigger scene transitions
   useEffect(() => {
@@ -249,7 +255,7 @@ export function GothicGameScreen() {
   return (
     <>
       {/* Scene */}
-      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={triggerKnockback} challengeActive={varietyState.challengePhase === 'active'} />
+      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} />
 
       {/* Resource HUD */}
       <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />
@@ -284,7 +290,7 @@ export function GothicGameScreen() {
       {/* Mini-game */}
       {state.screen === 'minigame' && (
         <div className="gothic-overlay">
-          <div className="gothic-panel" style={{ maxWidth: 900, maxHeight: '90vh' }}>
+          <div className="gothic-panel" style={{ maxWidth: 900, maxHeight: '90vh', overflowY: 'auto' }}>
             <PitchDeckMiniGame />
           </div>
         </div>

@@ -17,8 +17,7 @@ export function Interactable({ interactable, onInteract }: InteractableProps) {
       style={{
         left: `${x}%`,
         top: `${y}%`,
-        width,
-        height,
+        ...(spriteSheet ? {} : { width, height }),
         transform: 'translateX(-50%) translateY(-100%)',
       }}
       onClick={(e) => {

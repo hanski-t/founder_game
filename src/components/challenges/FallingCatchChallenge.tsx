@@ -54,6 +54,7 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
   const varietyDispatchRef = useRef(varietyDispatch);
   const scoreRef = useRef(0);
   const streakRef = useRef(0);
+  const scoredIdsRef = useRef<Set<number>>(new Set()); // prevent double-counting
 
   // Keep refs current
   playerXRef.current = sceneState.playerX;
@@ -86,6 +87,7 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
     completedRef.current = false;
     scoreRef.current = 0;
     streakRef.current = 0;
+    scoredIdsRef.current.clear();
 
     const baseFallPerMs = GROUND_Y / config.fallDuration;
 
@@ -144,33 +146,39 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
           if (item.caught) return item;
           const newY = item.y + fallPerMs * dt;
 
-          // Check catch
+          // Check catch (guard with scoredIdsRef to prevent double-counting)
           if (newY >= GROUND_Y - 5 && Math.abs(item.x - px) < CATCH_RANGE_X) {
-            if (item.isGood) {
-              varietyDispatchRef.current({ type: 'INCREMENT_SCORE' });
-              scoreRef.current += 1;
-              streakRef.current += 1;
-              setScore(scoreRef.current);
-              setStreak(streakRef.current);
-              const streakText = streakRef.current >= 3 ? ` x${streakRef.current}!` : '';
-              pushFeedback(item.x, newY, 'good', `+1${streakText}`);
-            } else {
-              varietyDispatchRef.current({ type: 'DECREMENT_SCORE' });
-              scoreRef.current = Math.max(0, scoreRef.current - 1);
-              streakRef.current = 0;
-              setScore(scoreRef.current);
-              setStreak(0);
-              pushFeedback(item.x, newY, 'bad', '-1');
+            if (!scoredIdsRef.current.has(item.id)) {
+              scoredIdsRef.current.add(item.id);
+              if (item.isGood) {
+                varietyDispatchRef.current({ type: 'INCREMENT_SCORE' });
+                scoreRef.current += 1;
+                streakRef.current += 1;
+                setScore(scoreRef.current);
+                setStreak(streakRef.current);
+                const streakText = streakRef.current >= 3 ? ` x${streakRef.current}!` : '';
+                pushFeedback(item.x, newY, 'good', `+1${streakText}`);
+              } else {
+                varietyDispatchRef.current({ type: 'DECREMENT_SCORE' });
+                scoreRef.current = Math.max(0, scoreRef.current - 1);
+                streakRef.current = 0;
+                setScore(scoreRef.current);
+                setStreak(0);
+                pushFeedback(item.x, newY, 'bad', '-1');
+              }
             }
             return { ...item, y: newY, caught: true, caughtAt: now };
           }
 
           // Check miss (good item fell past ground without being caught)
           if (newY > GROUND_Y + 2 && item.isGood) {
-            streakRef.current = 0;
-            setStreak(0);
-            pushFeedback(item.x, GROUND_Y - 5, 'miss', 'Missed!');
-            return { ...item, y: newY, caught: true, caughtAt: now }; // mark as caught to trigger removal
+            if (!scoredIdsRef.current.has(item.id)) {
+              scoredIdsRef.current.add(item.id);
+              streakRef.current = 0;
+              setStreak(0);
+              pushFeedback(item.x, GROUND_Y - 5, 'miss', 'Missed!');
+            }
+            return { ...item, y: newY, caught: true, caughtAt: now };
           }
 
           return { ...item, y: newY };

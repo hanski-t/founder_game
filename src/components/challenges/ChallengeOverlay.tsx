@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { ChallengeDefinition } from '../../types/variety';
 import { useVariety } from '../../context/VarietyContext';
 import { useScene } from '../../context/SceneContext';
+import { useGame } from '../../context/GameContext';
 import { QuickTimeChallenge } from './QuickTimeChallenge';
 import { FallingCatchChallenge } from './FallingCatchChallenge';
 
@@ -9,11 +10,25 @@ interface ChallengeOverlayProps {
   challenge: ChallengeDefinition;
 }
 
+/** Calculate money reward/penalty based on challenge performance */
+function getChallengeReward(score: number, total: number, threshold: number): number {
+  if (total > 0 && score >= total) return 1000;   // Perfect
+  if (score >= threshold) return 500;               // Success
+  return -200;                                      // Failure
+}
+
 export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
   const { varietyState, setChallengePhase, completeChallenge } = useVariety();
   const { sceneState, sceneDispatch } = useScene();
+  const { dispatch: gameDispatch } = useGame();
   const { challengePhase, challengeScore, challengeTotal } = varietyState;
   const savedPlayerXRef = useRef(sceneState.playerX);
+
+  // Calculate reward when result is shown (score is finalized)
+  const reward = useMemo(
+    () => getChallengeReward(challengeScore, challengeTotal, challenge.successThreshold),
+    [challengeScore, challengeTotal, challenge.successThreshold],
+  );
 
   const handleStart = useCallback(() => {
     savedPlayerXRef.current = sceneState.playerX;
@@ -28,11 +43,13 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
   }, [setChallengePhase]);
 
   const handleDismiss = useCallback(() => {
+    // Apply resource reward/penalty before completing
+    gameDispatch({ type: 'APPLY_BONUS', resourceChanges: { money: reward } });
     // Restore player to pre-challenge position
     sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: savedPlayerXRef.current });
     sceneDispatch({ type: 'SET_PLAYER_TARGET', x: savedPlayerXRef.current });
     completeChallenge(challenge.id);
-  }, [completeChallenge, challenge.id, sceneDispatch]);
+  }, [completeChallenge, challenge.id, sceneDispatch, gameDispatch, reward]);
 
   // Enter key for intro/result screens
   useEffect(() => {
@@ -137,7 +154,9 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
             fontSize: '1.4rem',
             marginBottom: 12,
           }}>
-            {succeeded ? 'Well Done!' : 'Nice Try!'}
+            {challengeTotal > 0 && challengeScore >= challengeTotal
+              ? 'Perfect!'
+              : succeeded ? 'Well Done!' : 'Nice Try!'}
           </h2>
           <p style={{
             fontFamily: 'var(--font-mono)',
@@ -148,14 +167,27 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
             Score: {challengeScore} / {challengeTotal}
           </p>
           <p style={{
+            fontFamily: 'var(--font-gothic)',
+            color: reward > 0 ? 'var(--color-gothic-positive)' : '#e57373',
+            fontSize: '1.1rem',
+            marginBottom: 8,
+            textShadow: reward > 0
+              ? '0 0 10px rgba(74, 222, 128, 0.4)'
+              : '0 0 10px rgba(229, 115, 115, 0.4)',
+          }}>
+            {reward > 0 ? `+$${reward}` : `-$${Math.abs(reward)}`}
+          </p>
+          <p style={{
             fontFamily: 'var(--font-mono)',
             color: 'var(--color-gothic-text)',
             fontSize: '0.8rem',
             opacity: 0.7,
           }}>
-            {succeeded
-              ? 'You proved your mettle. Onward!'
-              : 'The journey continues regardless.'}
+            {challengeTotal > 0 && challengeScore >= challengeTotal
+              ? 'Flawless performance! Maximum reward.'
+              : succeeded
+                ? 'You proved your mettle. Onward!'
+                : 'The journey continues regardless.'}
           </p>
           <div style={{
             borderTop: '1px solid var(--color-gothic-border)',

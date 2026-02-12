@@ -1,9 +1,99 @@
-import { useEffect, useState, useRef, useCallback, type ReactNode } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo, type ReactNode } from 'react';
 import { useGame } from '../context/GameContext';
 import { SwordIcon, HourglassIcon, CoinIcon, FlameIcon, PeopleIcon, CastleIcon } from '../components/hud/ResourceIcons';
 import cemeteryBg from '@assets/backgrounds/cemetery/background.png';
 import cemeteryMountains from '@assets/backgrounds/cemetery/mountains.png';
 import townBg from '@assets/backgrounds/town/background.png';
+import type { DecisionHistoryEntry } from '../types/game';
+
+/* ── Founder archetype based on decisions ── */
+interface Archetype {
+  title: string;
+  description: string;
+}
+
+function getFounderArchetype(history: DecisionHistoryEntry[]): Archetype {
+  const choices = new Set(history.map(h => h.choiceId));
+
+  // Score traits based on actual choices
+  let risk = 0;
+  let social = 0;
+  let hustle = 0;
+  let caution = 0;
+
+  // University major
+  if (choices.has('cs'))          hustle += 1;
+  if (choices.has('business'))    social += 1;
+  if (choices.has('engineering')) caution += 1;
+
+  // Clubs
+  if (choices.has('entrepreneur_club')) social += 1;
+  if (choices.has('hackathon_team'))    hustle += 1;
+  if (choices.has('skip_clubs'))        caution += 1;
+
+  // Co-founder event
+  if (choices.has('deep_dive'))      risk += 1;
+  if (choices.has('exchange_info'))   social += 1;
+  if (choices.has('polite_decline'))  caution += 1;
+
+  // Final semester
+  if (choices.has('side_project'))    risk += 2;
+  if (choices.has('alumni_network'))  social += 2;
+  if (choices.has('grades'))          caution += 2;
+
+  // Startup validation
+  if (choices.has('build_mvp'))          risk += 2;
+  if (choices.has('customer_discovery')) caution += 1;
+  if (choices.has('pitch_deck'))         social += 1;
+
+  // Competitor response
+  if (choices.has('double_down')) { risk += 1; hustle += 1; }
+  if (choices.has('pivot'))       caution += 1;
+  if (choices.has('ignore'))      caution += 1;
+
+  // Co-founder decision
+  if (choices.has('full_time'))         risk += 1;
+  if (choices.has('part_time'))         caution += 1;
+  if (choices.has('decline_cofounder')) hustle += 1;
+
+  // Funding
+  if (choices.has('bootstrap'))    hustle += 2;
+  if (choices.has('raise'))        social += 2;
+  if (choices.has('accelerator'))  { social += 1; risk += 1; }
+
+  // Final move
+  if (choices.has('launch_public'))     risk += 1;
+  if (choices.has('enterprise_pivot'))  caution += 1;
+  if (choices.has('growth_experiment')) hustle += 1;
+
+  // Pick dominant trait
+  const scores = { risk, social, hustle, caution };
+  const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+
+  switch (top) {
+    case 'risk':
+      return {
+        title: 'The Risk-Taker',
+        description: 'You bet big, move fast, and trust your gut over spreadsheets.',
+      };
+    case 'social':
+      return {
+        title: 'The Networker',
+        description: 'Your strength is people — you build bridges before you build products.',
+      };
+    case 'hustle':
+      return {
+        title: 'The Bootstrapper',
+        description: 'You keep your head down, ship relentlessly, and let the work speak for itself.',
+      };
+    case 'caution':
+    default:
+      return {
+        title: 'The Strategist',
+        description: 'You measure twice and cut once — calculated moves over blind leaps.',
+      };
+  }
+}
 
 /* ── Animated counter hook ── */
 function useCountUp(target: number, duration: number, startDelay: number) {
@@ -183,6 +273,8 @@ export function EndScreen() {
   const money = useCountUp(state.resources.money, 1000, 2900);
   const energy = useCountUp(state.resources.energy, 800, 3100);
   const reputation = useCountUp(state.resources.reputation, 800, 3300);
+
+  const archetype = useMemo(() => getFounderArchetype(state.decisionHistory), [state.decisionHistory]);
 
   const iconSize = 20;
   const stats: { label: string; value: string; icon: ReactNode }[] = [
@@ -378,6 +470,57 @@ export function EndScreen() {
           </div>
         )}
 
+        {/* ── ARCHETYPE CARD ── */}
+        {phase >= 3 && (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: 'clamp(8px, 1.2vh, 14px) clamp(20px, 3vw, 40px)',
+              background: 'rgba(26, 15, 16, 0.7)',
+              border: `1px solid rgba(90, 48, 48, 0.5)`,
+              marginBottom: '1rem',
+              maxWidth: '420px',
+              animation: 'end-stat-slam 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s both',
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'Cinzel', Georgia, serif",
+                fontSize: '0.55rem',
+                color: '#e8d5b5',
+                opacity: 0.5,
+                letterSpacing: '0.12em',
+                marginBottom: '4px',
+              }}
+            >
+              YOUR FOUNDER ARCHETYPE
+            </div>
+            <div
+              style={{
+                fontFamily: "'Cinzel', Georgia, serif",
+                fontSize: 'clamp(1rem, 1.8vw, 1.3rem)',
+                fontWeight: 700,
+                color: accentColor,
+                animation: `end-stat-value-glow 2s ease-in-out 1.5s infinite`,
+              }}
+            >
+              {archetype.title}
+            </div>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 'clamp(0.6rem, 0.9vw, 0.72rem)',
+                color: '#e8d5b5',
+                opacity: 0.7,
+                marginTop: '6px',
+                lineHeight: 1.5,
+              }}
+            >
+              {archetype.description}
+            </div>
+          </div>
+        )}
+
         {/* ── MESSAGE LINES ── */}
         {phase >= 4 && (
           <div
@@ -485,6 +628,19 @@ export function EndScreen() {
               }}
             >
               press Enter
+            </div>
+            <div
+              style={{
+                marginTop: '1.5rem',
+                fontFamily: "'Cinzel', Georgia, serif",
+                fontSize: '0.6rem',
+                color: '#e8d5b5',
+                opacity: 0.35,
+                letterSpacing: '0.08em',
+                lineHeight: 1.6,
+              }}
+            >
+              This is a demo version — more stages coming soon.
             </div>
           </div>
         )}
