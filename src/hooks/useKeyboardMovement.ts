@@ -15,6 +15,7 @@ export function useKeyboardMovement() {
   const keysRef = useRef<Set<string>>(new Set());
   const intervalRef = useRef<number>(0);
   const speedMultiplierRef = useRef(phaseConfig.playerSpeedMultiplier);
+  const levelWidthRef = useRef(sceneState.levelWidth);
 
   // Use refs for values that change frequently during gameplay
   // This prevents the callback from recreating and killing the interval mid-jump
@@ -35,6 +36,7 @@ export function useKeyboardMovement() {
   challengeModalRef.current = varietyState.challengePhase === 'intro' || varietyState.challengePhase === 'result';
   challengeGameplayRef.current = varietyState.challengePhase === 'active';
   speedMultiplierRef.current = phaseConfig.playerSpeedMultiplier;
+  levelWidthRef.current = sceneState.levelWidth;
 
   // Stable callback — only depends on sceneDispatch (which is stable from useReducer)
   const updatePosition = useCallback(() => {
@@ -49,12 +51,13 @@ export function useKeyboardMovement() {
     if (keysRef.current.has('ArrowRight') || keysRef.current.has('d')) dx += step;
 
     if (dx !== 0) {
-      let newX = Math.max(2, Math.min(98, playerXRef.current + dx));
+      const maxX = levelWidthRef.current - 2;
+      let newX = Math.max(2, Math.min(maxX, playerXRef.current + dx));
       // Block movement into obstacles (only when at ground level, skip during minigame)
       if (!challengeGameplayRef.current) {
         newX = getBlockedX(newX, playerYRef.current);
       }
-      newX = Math.max(2, Math.min(98, newX));
+      newX = Math.max(2, Math.min(maxX, newX));
 
       playerXRef.current = newX; // update ref immediately for next interval tick
       sceneDispatch({ type: 'SET_PLAYER_FACING', facing: dx > 0 ? 'right' : 'left' });

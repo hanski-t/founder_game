@@ -1,14 +1,11 @@
 import type { SceneInteractable } from '../../types/scene';
 import { SpriteAnimator } from '../character/SpriteAnimator';
-import { useScene } from '../../context/SceneContext';
 
 interface InteractableProps {
   interactable: SceneInteractable;
-  onInteract: (interactable: SceneInteractable) => void;
 }
 
-export function Interactable({ interactable, onInteract }: InteractableProps) {
-  const { sceneDispatch } = useScene();
+export function Interactable({ interactable }: InteractableProps) {
   const { x, y, width, height, spriteSheet, spriteConfig, staticImage, label } = interactable;
 
   return (
@@ -19,15 +16,9 @@ export function Interactable({ interactable, onInteract }: InteractableProps) {
         top: `${y}%`,
         ...(spriteSheet ? {} : { width, height }),
         transform: 'translateX(-50%) translateY(-100%)',
+        pointerEvents: 'none',
       }}
-      onClick={(e) => {
-        e.stopPropagation();
-        onInteract(interactable);
-      }}
-      onMouseEnter={() => sceneDispatch({ type: 'HOVER_INTERACTABLE', id: interactable.id })}
-      onMouseLeave={() => sceneDispatch({ type: 'HOVER_INTERACTABLE', id: null })}
     >
-      <div className="interactable-marker">!</div>
       <div className="interactable-label">{label}</div>
       {spriteSheet && spriteConfig ? (
         <SpriteAnimator sheet={spriteSheet} config={spriteConfig} scale={2} />

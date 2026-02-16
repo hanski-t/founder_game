@@ -37,7 +37,7 @@ export interface SceneDefinition {
   phase: GamePhase;
   backgroundLayers: SceneBackgroundLayer[];
   groundY: number; // percentage from top (e.g., 75 = 75% down)
-  sceneWidth: number; // logical width in pixels for movement
+  levelWidth: number; // 100 = one screen, 200 = two screens, etc.
   playerStartX: number; // percentage of scene width
   interactables: SceneInteractable[];
   ambientColor?: string;
@@ -65,6 +65,8 @@ export interface SceneState {
   showOutcomePanel: boolean;
   screenShake: boolean;
   phaseTitle: string | null; // shown during phase transitions
+  cameraX: number; // camera offset in % (0 = left edge)
+  levelWidth: number; // current level width (100 = one screen)
 }
 
 export type SceneAction =
@@ -88,4 +90,5 @@ export type SceneAction =
   | { type: 'SET_GROUNDED'; grounded: boolean }
   | { type: 'TRIGGER_KNOCKBACK'; velocityX: number }
   | { type: 'CLEAR_KNOCKBACK' }
-  | { type: 'RESET_SCENE'; sceneId: string; playerStartX: number; groundY: number };
+  | { type: 'UPDATE_CAMERA'; cameraX: number }
+  | { type: 'RESET_SCENE'; sceneId: string; playerStartX: number; groundY: number; levelWidth: number };

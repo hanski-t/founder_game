@@ -58,6 +58,7 @@ export interface VarietyState {
   activePickup: {
     id: string;
     x: number;
+    y: number;
     label: string;
     resourceBonus?: ResourceChange;
     flavorText?: string;

@@ -8,9 +8,11 @@ import type { EnemyDefinition } from '../../types/platformer';
 
 import ghostSheet from '@assets/characters/enemies/ghost-spritesheet.png';
 import skeletonImg from '@assets/characters/enemies/skeleton.png';
+import batSheet from '@assets/characters/enemies/bat.png';
 
-const ENEMY_SPRITE_CONFIG: Record<string, { sheet: string; config: { frameWidth: number; frameHeight: number; frameCount: number; frameDuration: number } }> = {
+const ENEMY_SPRITE_CONFIG: Record<string, { sheet: string; config: { frameWidth: number; frameHeight: number; frameCount: number; frameDuration: number }; scale?: number }> = {
   ghost: { sheet: ghostSheet, config: { frameWidth: 31, frameHeight: 44, frameCount: 4, frameDuration: 150 } },
+  bat: { sheet: batSheet, config: { frameWidth: 12, frameHeight: 16, frameCount: 4, frameDuration: 120 }, scale: 3.5 },
 };
 
 const ENEMY_STATIC_IMG: Record<string, string> = {
@@ -186,7 +188,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
               <SpriteAnimator
                 sheet={spriteData.sheet}
                 config={spriteData.config}
-                scale={2}
+                scale={spriteData.scale ?? 2}
               />
             ) : staticImg ? (
               <img

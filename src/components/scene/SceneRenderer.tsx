@@ -1,25 +1,29 @@
 import { useState, useEffect } from 'react';
-import type { SceneDefinition, SceneInteractable } from '../../types/scene';
+import type { SceneDefinition } from '../../types/scene';
+import type { PlatformDefinition } from '../../types/platformer';
 import { ParallaxBackground } from './ParallaxBackground';
 import { PlayerCharacter } from '../character/PlayerCharacter';
 import { Interactable } from '../interactables/Interactable';
 import { CollectibleLayer } from '../collectibles/CollectibleLayer';
+import { PickupAnimation } from '../collectibles/PickupAnimation';
 import { ObstacleLayer } from '../obstacles/ObstacleLayer';
 import { EnemyLayer } from '../enemies/EnemyLayer';
 import { PlatformLayer } from '../platforms/PlatformLayer';
 import { AtmosphericOverlay } from './AtmosphericOverlay';
 import { useScene } from '../../context/SceneContext';
+import { useVariety } from '../../context/VarietyContext';
 import { usePhaseConfig } from '../../hooks/usePhaseConfig';
 
 interface SceneRendererProps {
   scene: SceneDefinition;
-  onInteract: (interactable: SceneInteractable) => void;
   onObstacleCollision?: (direction: 'left' | 'right') => void;
   challengeActive?: boolean;
+  resolvedPlatforms?: PlatformDefinition[];
 }
 
-export function SceneRenderer({ scene, onInteract, onObstacleCollision, challengeActive }: SceneRendererProps) {
+export function SceneRenderer({ scene, onObstacleCollision, challengeActive, resolvedPlatforms }: SceneRendererProps) {
   const { sceneDispatch, sceneState } = useScene();
+  const { varietyState, varietyDispatch } = useVariety();
   const phaseConfig = usePhaseConfig();
   const isFirstScene = scene.id === 'town-square';
   const [showHint, setShowHint] = useState(isFirstScene);
@@ -59,35 +63,70 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision, challeng
 
       <AtmosphericOverlay />
 
-      {!challengeActive && (
-        <>
-          {scene.interactables.map((obj) => (
-            <Interactable
-              key={obj.id}
-              interactable={obj}
-              onInteract={onInteract}
-            />
-          ))}
+      {/* Camera-offset world wrapper: all game elements scroll together */}
+      <div
+        className="scene-world"
+        style={{
+          position: 'absolute',
+          left: `${-sceneState.cameraX}%`,
+          top: 0,
+          width: '100%',
+          height: '100%',
+          overflow: 'visible',
+        }}
+      >
+        {!challengeActive && (
+          <>
+            {scene.interactables.map((obj) => (
+              <Interactable
+                key={obj.id}
+                interactable={obj}
+              />
+            ))}
 
-          {scene.collectibles && scene.collectibles.length > 0 && (
-            <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
-          )}
+            {scene.collectibles && scene.collectibles.length > 0 && (
+              <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
+            )}
 
-          {scene.platforms && scene.platforms.length > 0 && (
-            <PlatformLayer platforms={scene.platforms} />
-          )}
+            {(resolvedPlatforms || scene.platforms) && (resolvedPlatforms || scene.platforms)!.length > 0 && (
+              <PlatformLayer platforms={resolvedPlatforms || scene.platforms!} />
+            )}
 
-          {scene.obstacles && scene.obstacles.length > 0 && (
-            <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} />
-          )}
+            {scene.obstacles && scene.obstacles.length > 0 && (
+              <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} />
+            )}
 
-          {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (
-            <EnemyLayer enemies={scene.enemies} groundY={scene.groundY} onCollision={onObstacleCollision} />
-          )}
-        </>
+            {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (
+              <EnemyLayer enemies={scene.enemies} groundY={scene.groundY} onCollision={onObstacleCollision} />
+            )}
+          </>
+        )}
+
+        <PlayerCharacter />
+      </div>
+
+      {/* Pickup animation: rendered outside scene-world so it's always on top */}
+      {varietyState.activePickup && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${-sceneState.cameraX}%`,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 50,
+          }}
+        >
+          <PickupAnimation
+            x={varietyState.activePickup.x}
+            y={varietyState.activePickup.y}
+            label={varietyState.activePickup.label}
+            flavorText={varietyState.activePickup.flavorText}
+            onComplete={() => varietyDispatch({ type: 'CLEAR_PICKUP' })}
+          />
+        </div>
       )}
-
-      <PlayerCharacter />
 
       {/* Hint for new players */}
       {showHint && !sceneState.showDecisionPanel && !sceneState.showOutcomePanel && firstNpc && (

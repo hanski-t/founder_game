@@ -1,9 +1,8 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import type { CollectibleDefinition } from '../../types/variety';
 import { useScene } from '../../context/SceneContext';
 import { useVariety } from '../../context/VarietyContext';
 import { Collectible } from './Collectible';
-import { PickupAnimation } from './PickupAnimation';
 
 const PICKUP_RANGE = 5; // percentage of scene width
 
@@ -14,7 +13,7 @@ interface CollectibleLayerProps {
 
 export function CollectibleLayer({ collectibles, groundY }: CollectibleLayerProps) {
   const { sceneState } = useScene();
-  const { varietyState, collectItem, isCollected, varietyDispatch } = useVariety();
+  const { collectItem, isCollected } = useVariety();
 
   // Proximity detection for collectibles
   useEffect(() => {
@@ -27,15 +26,11 @@ export function CollectibleLayer({ collectibles, groundY }: CollectibleLayerProp
       const itemY = item.y ?? groundY;
       const distanceY = Math.abs(sceneState.playerY - itemY);
       if (distanceX < PICKUP_RANGE && distanceY < PICKUP_RANGE) {
-        collectItem(item);
+        collectItem({ ...item, y: itemY });
         return; // collect one at a time
       }
     }
   }, [sceneState.playerX, sceneState.playerY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, collectibles, groundY, isCollected, collectItem]);
-
-  const handlePickupComplete = useCallback(() => {
-    varietyDispatch({ type: 'CLEAR_PICKUP' });
-  }, [varietyDispatch]);
 
   const visibleCollectibles = collectibles.filter(c => !isCollected(c.id));
 
@@ -44,16 +39,6 @@ export function CollectibleLayer({ collectibles, groundY }: CollectibleLayerProp
       {visibleCollectibles.map(item => (
         <Collectible key={item.id} collectible={item} groundY={groundY} />
       ))}
-
-      {varietyState.activePickup && (
-        <PickupAnimation
-          x={varietyState.activePickup.x}
-          groundY={groundY}
-          label={varietyState.activePickup.label}
-          flavorText={varietyState.activePickup.flavorText}
-          onComplete={handlePickupComplete}
-        />
-      )}
     </>
   );
 }

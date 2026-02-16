@@ -3,12 +3,16 @@ import type { ObstacleDefinition } from '../../types/platformer';
 import barrelImg from '@assets/objects/obstacles/barrel.png';
 import crateImg from '@assets/objects/obstacles/crate.png';
 import stoneImg from '@assets/objects/obstacles/stone.png';
+import bushImg from '@assets/objects/obstacles/bush.png';
+import graveImg from '@assets/objects/obstacles/grave.png';
 
 // Map obstacle types to sprite images
 const OBSTACLE_SPRITES: Record<string, string> = {
   barrel: barrelImg,
   crate: crateImg,
   rock: stoneImg,
+  bush: bushImg,
+  grave: graveImg,
 };
 
 interface ObstacleLayerProps {
