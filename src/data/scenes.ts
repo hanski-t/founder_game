@@ -62,14 +62,15 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ts-coin-1', visual: 'coin', x: 42, y: 62, label: '+$500', resourceBonus: { money: 500 } },
-      { id: 'ts-scroll-1', visual: 'scroll', x: 60, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
+      { id: 'ts-scroll-1', visual: 'scroll', x: 88, y: 52, label: 'Startup Tip', flavorText: '"The best time to start is yesterday."' },
     ],
     obstacles: [
-      { id: 'ts-barrel-1', type: 'barrel', x: 40, width: 5, height: 10 },
+      { id: 'ts-crate-1', type: 'crate', x: 38, width: 5, height: 10 },
+      { id: 'ts-barrel-1', type: 'barrel', x: 74, width: 5, height: 10 },
     ],
     platforms: [
-      { id: 'ts-plat-1', x: 35, y: 65, width: 14, visual: 'wood' },
+      { id: 'ts-plat-1', x: 48, y: 65, width: 14, visual: 'wood' },
+      { id: 'ts-plat-2', x: 82, y: 63, width: 14, visual: 'wood' },
     ],
   },
 
@@ -106,7 +107,7 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'tc-coffee-1', visual: 'coffee', x: 58, y: 61, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      { id: 'tc-coffee-1', visual: 'coffee', x: 58, y: 61, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Fuel for the grind."' },
       { id: 'tc-doc-1', visual: 'document', x: 140, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
     ],
     obstacles: [
@@ -153,8 +154,8 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'dci-gem-1', visual: 'gem', x: 39, y: 57, label: '+$1000', resourceBonus: { money: 1000 } },
-      { id: 'dci-coin-1', visual: 'coin', x: 85, label: '+$200', resourceBonus: { money: 200 } },
+      { id: 'dci-gem-1', visual: 'gem', x: 39, y: 57, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"Found some seed money!"' },
+      { id: 'dci-coin-1', visual: 'coin', x: 85, label: '+$200', resourceBonus: { money: 200 }, flavorText: '"Every dollar counts."' },
     ],
     platforms: [
       { id: 'dci-plat-1', x: 20, y: 68, width: 12, visual: 'wood' },
@@ -219,8 +220,8 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     collectibles: [
       { id: 'cg-doc-1', visual: 'document', x: 22, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
-      { id: 'cg-gem-plat', visual: 'gem', x: 74, y: 55, label: '+$1000', resourceBonus: { money: 1000 } },
-      { id: 'cg-doc-2', visual: 'document', x: 190, label: '+10 Rep', resourceBonus: { reputation: 10 } },
+      { id: 'cg-gem-plat', visual: 'gem', x: 74, y: 55, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"A hidden opportunity."' },
+      { id: 'cg-doc-2', visual: 'document', x: 190, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"Building your network."' },
     ],
     obstacles: [
       { id: 'cg-crate-1', type: 'crate', x: 30, width: 6, height: 11 },
@@ -271,8 +272,8 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sg-usb-1', visual: 'usb', x: 58, y: 59, label: '+10 Rep', resourceBonus: { reputation: 10 } },
-      { id: 'sg-coffee-1', visual: 'coffee', x: 180, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      { id: 'sg-usb-1', visual: 'usb', x: 58, y: 59, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"A backup of your pitch deck."' },
+      { id: 'sg-coffee-1', visual: 'coffee', x: 180, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Late-night coding fuel."' },
     ],
     obstacles: [
       { id: 'sg-barrel-1', type: 'barrel', x: 25, width: 5, height: 10 },
@@ -324,8 +325,8 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sd-coin-1', visual: 'coin', x: 55, y: 62, label: '+$300', resourceBonus: { money: 300 } },
-      { id: 'sd-gem-1', visual: 'gem', x: 235, label: '+$500', resourceBonus: { money: 500 } },
+      { id: 'sd-coin-1', visual: 'coin', x: 55, y: 62, label: '+$300', resourceBonus: { money: 300 }, flavorText: '"Early revenue!"' },
+      { id: 'sd-gem-1', visual: 'gem', x: 235, label: '+$500', resourceBonus: { money: 500 }, flavorText: '"Market research pays off."' },
     ],
     obstacles: [
       { id: 'sd-barrel-1', type: 'barrel', x: 30, width: 5, height: 10 },
@@ -400,9 +401,9 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'cm-coin-1', visual: 'coin', x: 44, y: 58, label: '+$500', resourceBonus: { money: 500 } },
-      { id: 'cm-coffee-1', visual: 'coffee', x: 110, y: 60, label: '+5 Energy', resourceBonus: { energy: 5 } },
-      { id: 'cm-coin-2', visual: 'coin', x: 240, label: '+$300', resourceBonus: { money: 300 } },
+      { id: 'cm-coin-1', visual: 'coin', x: 44, y: 58, label: '+$500', resourceBonus: { money: 500 }, flavorText: '"Crisis fund secured."' },
+      { id: 'cm-coffee-1', visual: 'coffee', x: 110, y: 60, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Stay focused, stay sharp."' },
+      { id: 'cm-coin-2', visual: 'coin', x: 240, label: '+$300', resourceBonus: { money: 300 }, flavorText: '"Emergency budget unlocked."' },
     ],
     obstacles: [
       { id: 'cm-crate-1', type: 'crate', x: 25, width: 6, height: 11 },
@@ -457,7 +458,7 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ch-gem-1', visual: 'gem', x: 140, y: 57, label: '+$1500', resourceBonus: { money: 1500 } },
+      { id: 'ch-gem-1', visual: 'gem', x: 140, y: 57, label: '+$1500', resourceBonus: { money: 1500 }, flavorText: '"Angel investment!"' },
       { id: 'ch-doc-1', visual: 'document', x: 290, label: 'Term Sheet', flavorText: '"Pre-money valuation: $2M"' },
     ],
     obstacles: [
@@ -532,8 +533,8 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     collectibles: [
       { id: 'cl-scroll-1', visual: 'scroll', x: 65, y: 60, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
-      { id: 'cl-usb-1', visual: 'usb', x: 285, label: '+20 Rep', resourceBonus: { reputation: 20 } },
-      { id: 'cl-coffee-1', visual: 'coffee', x: 195, y: 57, label: '+5 Energy', resourceBonus: { energy: 5 } },
+      { id: 'cl-usb-1', visual: 'usb', x: 285, label: '+20 Rep', resourceBonus: { reputation: 20 }, flavorText: '"Press coverage incoming."' },
+      { id: 'cl-coffee-1', visual: 'coffee', x: 195, y: 57, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"One last push."' },
     ],
     obstacles: [
       { id: 'cl-crate-1', type: 'crate', x: 28, width: 6, height: 11 },
@@ -592,11 +593,11 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ct-gem-1', visual: 'gem', x: 44, y: 69, label: '+$2000', resourceBonus: { money: 2000 } },
-      { id: 'ct-gem-2', visual: 'gem', x: 62, y: 62, label: '+$2000', resourceBonus: { money: 2000 } },
-      { id: 'ct-gem-3', visual: 'gem', x: 82, y: 55, label: '+$2000', resourceBonus: { money: 2000 } },
-      { id: 'ct-gem-4', visual: 'gem', x: 102, y: 49, label: '+$2000', resourceBonus: { money: 2000 } },
-      { id: 'ct-gem-5', visual: 'gem', x: 180, label: '+$2000', resourceBonus: { money: 2000 } },
+      { id: 'ct-gem-1', visual: 'gem', x: 44, y: 69, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"The first step is always the hardest."' },
+      { id: 'ct-gem-2', visual: 'gem', x: 62, y: 62, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Momentum builds with every leap."' },
+      { id: 'ct-gem-3', visual: 'gem', x: 82, y: 55, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Higher ground, clearer vision."' },
+      { id: 'ct-gem-4', visual: 'gem', x: 102, y: 49, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Almost there — don\'t look down."' },
+      { id: 'ct-gem-5', visual: 'gem', x: 180, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"You made it. The threshold awaits."' },
     ],
     platforms: [
       { id: 'ct-plat-1', x: 35, y: 72, width: 14, visual: 'wood' },

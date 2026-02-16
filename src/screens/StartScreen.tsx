@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { SpriteAnimator } from '../components/character/SpriteAnimator';
 import townBg from '@assets/backgrounds/town/background.png';
 import townMid from '@assets/backgrounds/town/middleground.png';
-import heroIdle from '@assets/characters/player/hero-idle.png';
-import oldmanIdle from '@assets/characters/npcs/oldman-idle.png';
 
 export function StartScreen() {
   const { startGame } = useGame();
@@ -77,54 +74,6 @@ export function StartScreen() {
         }}
       />
 
-      {/* Left side decoration: hero */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '0',
-          width: '20%',
-          bottom: '30%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          opacity: showContent ? 0.55 : 0,
-          transition: 'opacity 1.2s ease-out 0.8s',
-          pointerEvents: 'none',
-          zIndex: 5,
-        }}
-      >
-        <SpriteAnimator
-          sheet={heroIdle}
-          config={{ frameWidth: 160, frameHeight: 90, frameCount: 4, frameDuration: 150 }}
-          scale={4}
-        />
-      </div>
-
-      {/* Right side decoration: oldman */}
-      <div
-        style={{
-          position: 'absolute',
-          right: '0',
-          width: '20%',
-          bottom: '30%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          opacity: showContent ? 0.55 : 0,
-          transition: 'opacity 1.2s ease-out 0.8s',
-          pointerEvents: 'none',
-          zIndex: 5,
-        }}
-      >
-        <div style={{ transform: 'scaleX(-1)' }}>
-          <SpriteAnimator
-            sheet={oldmanIdle}
-            config={{ frameWidth: 34, frameHeight: 42, frameCount: 8, frameDuration: 150 }}
-            scale={6}
-          />
-        </div>
-      </div>
-
       {/* Content */}
       <div
         style={{
@@ -135,7 +84,7 @@ export function StartScreen() {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          padding: '2rem',
+          padding: 'clamp(1rem, 3vh, 2rem) 2rem',
         }}
       >
         {/* Title */}
@@ -181,7 +130,7 @@ export function StartScreen() {
             width: '200px',
             height: '1px',
             background: 'linear-gradient(90deg, transparent, #5a3030, #d4a853, #5a3030, transparent)',
-            margin: '2rem 0',
+            margin: 'clamp(1rem, 3vh, 2rem) 0',
             opacity: showContent ? 1 : 0,
             transition: 'opacity 1s ease-out 0.3s',
           }}
@@ -233,7 +182,7 @@ export function StartScreen() {
             color: '#e8d5b5',
             opacity: showContent ? 0.5 : 0,
             letterSpacing: '0.2em',
-            marginTop: '2.5rem',
+            marginTop: 'clamp(1rem, 3vh, 2.5rem)',
             transition: 'opacity 0.8s ease-out 0.6s',
           }}
         >
@@ -292,7 +241,7 @@ export function StartScreen() {
         <button
           onClick={startGame}
           style={{
-            marginTop: '2.5rem',
+            marginTop: 'clamp(1rem, 3vh, 2.5rem)',
             padding: '14px 48px',
             background: 'linear-gradient(180deg, rgba(90, 48, 48, 0.6) 0%, rgba(26, 15, 16, 0.8) 100%)',
             border: '2px solid #5a3030',
@@ -334,7 +283,7 @@ export function StartScreen() {
         {/* Footer hint */}
         <div
           style={{
-            marginTop: '1.5rem',
+            marginTop: 'clamp(0.5rem, 2vh, 1.5rem)',
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: '0.6rem',
             color: '#e8d5b5',

@@ -28,6 +28,7 @@ function varietyReducer(state: VarietyState, action: VarietyAction): VarietyStat
         activePickup: {
           id: action.item.id,
           x: action.item.x,
+          y: action.item.y ?? 0,
           label: action.item.label,
           resourceBonus: action.item.resourceBonus,
           flavorText: action.item.flavorText,

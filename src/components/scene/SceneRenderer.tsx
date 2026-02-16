@@ -1,27 +1,29 @@
 import { useState, useEffect } from 'react';
-import type { SceneDefinition, SceneInteractable } from '../../types/scene';
+import type { SceneDefinition } from '../../types/scene';
 import type { PlatformDefinition } from '../../types/platformer';
 import { ParallaxBackground } from './ParallaxBackground';
 import { PlayerCharacter } from '../character/PlayerCharacter';
 import { Interactable } from '../interactables/Interactable';
 import { CollectibleLayer } from '../collectibles/CollectibleLayer';
+import { PickupAnimation } from '../collectibles/PickupAnimation';
 import { ObstacleLayer } from '../obstacles/ObstacleLayer';
 import { EnemyLayer } from '../enemies/EnemyLayer';
 import { PlatformLayer } from '../platforms/PlatformLayer';
 import { AtmosphericOverlay } from './AtmosphericOverlay';
 import { useScene } from '../../context/SceneContext';
+import { useVariety } from '../../context/VarietyContext';
 import { usePhaseConfig } from '../../hooks/usePhaseConfig';
 
 interface SceneRendererProps {
   scene: SceneDefinition;
-  onInteract: (interactable: SceneInteractable) => void;
   onObstacleCollision?: (direction: 'left' | 'right') => void;
   challengeActive?: boolean;
   resolvedPlatforms?: PlatformDefinition[];
 }
 
-export function SceneRenderer({ scene, onInteract, onObstacleCollision, challengeActive, resolvedPlatforms }: SceneRendererProps) {
+export function SceneRenderer({ scene, onObstacleCollision, challengeActive, resolvedPlatforms }: SceneRendererProps) {
   const { sceneDispatch, sceneState } = useScene();
+  const { varietyState, varietyDispatch } = useVariety();
   const phaseConfig = usePhaseConfig();
   const isFirstScene = scene.id === 'town-square';
   const [showHint, setShowHint] = useState(isFirstScene);
@@ -79,7 +81,6 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision, challeng
               <Interactable
                 key={obj.id}
                 interactable={obj}
-                onInteract={onInteract}
               />
             ))}
 
@@ -103,6 +104,29 @@ export function SceneRenderer({ scene, onInteract, onObstacleCollision, challeng
 
         <PlayerCharacter />
       </div>
+
+      {/* Pickup animation: rendered outside scene-world so it's always on top */}
+      {varietyState.activePickup && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${-sceneState.cameraX}%`,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 50,
+          }}
+        >
+          <PickupAnimation
+            x={varietyState.activePickup.x}
+            y={varietyState.activePickup.y}
+            label={varietyState.activePickup.label}
+            flavorText={varietyState.activePickup.flavorText}
+            onComplete={() => varietyDispatch({ type: 'CLEAR_PICKUP' })}
+          />
+        </div>
+      )}
 
       {/* Hint for new players */}
       {showHint && !sceneState.showDecisionPanel && !sceneState.showOutcomePanel && firstNpc && (

@@ -1,7 +1,13 @@
 # Founder's Journey
 
 ## Overview
-Gothic point-and-click adventure game. TypeScript + Vite + Vercel.
+Gothic-themed startup simulation game — narrative decisions, resource management, 2D platformer. TypeScript + React + Vite + Vercel.
+
+## Design Specification
+Always reference GAME_DESIGN_DOCUMENT.md as the authoritative design 
+specification. All feature decisions, architecture choices, and 
+implementation priorities must align with this document. When in doubt 
+about what to build or how something should work, check the GDD first.
 
 ## Commands
 - `npm run dev` — development server

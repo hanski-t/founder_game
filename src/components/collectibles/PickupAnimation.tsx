@@ -1,39 +1,43 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface PickupAnimationProps {
   x: number;
-  groundY: number;
+  y: number;
   label: string;
   flavorText?: string;
   onComplete: () => void;
 }
 
-export function PickupAnimation({ x, groundY, label, flavorText, onComplete }: PickupAnimationProps) {
+export function PickupAnimation({ x, y, label, flavorText, onComplete }: PickupAnimationProps) {
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  // Fire once on mount — useRef avoids resetting the timer on every render
   useEffect(() => {
-    const timer = setTimeout(onComplete, 1200);
+    const timer = setTimeout(() => onCompleteRef.current(), 3000);
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, []);
 
   return (
     <>
-      {/* Resource/label text floating up */}
+      {/* Resource/label text floating up above the collectible */}
       <div
         className="pickup-text"
         style={{
           left: `${x}%`,
-          top: `${groundY - 5}%`,
+          top: `${y - 8}%`,
         }}
       >
         {label}
       </div>
 
-      {/* Optional flavor text below */}
+      {/* Optional flavor text below the label */}
       {flavorText && (
         <div
           className="pickup-flavor"
           style={{
             left: `${x}%`,
-            top: `${groundY - 1}%`,
+            top: `${y - 4}%`,
           }}
         >
           {flavorText}

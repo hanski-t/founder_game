@@ -103,9 +103,10 @@
 
   .interactable-label {
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
+    margin-top: 4px;
     padding: 2px 8px;
     background: var(--color-gothic-shadow);
     color: var(--color-gothic-gold);
@@ -319,20 +320,20 @@
   .pickup-text {
     position: absolute;
     transform: translateX(-50%);
-    z-index: 20;
+    z-index: 100;
     font-family: var(--font-gothic);
     font-size: 1rem;
     font-weight: 700;
     color: var(--color-gothic-gold);
     text-shadow: 0 0 10px rgba(212, 168, 83, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8);
     pointer-events: none;
-    animation: pickup-float 1.2s ease-out forwards;
+    animation: pickup-float 3s ease-out forwards;
   }
 
   .pickup-flavor {
     position: absolute;
     transform: translateX(-50%);
-    z-index: 20;
+    z-index: 100;
     font-family: var(--font-mono);
     font-size: 0.7rem;
     font-style: italic;
@@ -340,7 +341,7 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     pointer-events: none;
     white-space: nowrap;
-    animation: pickup-flavor-fade 2s ease-out forwards;
+    animation: pickup-flavor-fade 3s ease-out forwards;
     max-width: 250px;
     text-align: center;
   }
@@ -919,13 +920,14 @@
 
 @keyframes pickup-float {
   0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  70% { opacity: 1; transform: translateX(-50%) translateY(-20px); }
   100% { opacity: 0; transform: translateX(-50%) translateY(-50px); }
 }
 
 @keyframes pickup-flavor-fade {
   0% { opacity: 0; transform: translateX(-50%) translateY(0); }
-  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  70% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; transform: translateX(-50%) translateY(0); }
   100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }
 

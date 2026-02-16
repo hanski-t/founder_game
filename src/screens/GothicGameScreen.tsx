@@ -20,7 +20,6 @@ import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, scenes } from '../data/scenes';
 import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
 import { setCurrentObstacles } from '../utils/obstacleBlocker';
-import type { SceneInteractable } from '../types/scene';
 import type { Choice } from '../types/game';
 import type { GamePhase } from '../types/game';
 import { PHASES } from '../types/game';
@@ -167,24 +166,6 @@ export function GothicGameScreen() {
     }
   }, [sceneState.playerX, sceneState.playerY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, challengeActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Handle interactable click: walk to it first
-  const handleInteract = useCallback((interactable: SceneInteractable) => {
-    if (sceneState.showDecisionPanel || sceneState.showOutcomePanel) return;
-
-    const distance = Math.abs(sceneState.playerX - interactable.x);
-    if (distance < interactable.proximityRange) {
-      // Already close enough - trigger immediately
-      if (interactable.interactionType === 'decision' && interactable.triggerNodeId) {
-        sceneDispatch({ type: 'SHOW_DECISION_PANEL' });
-      } else if (interactable.interactionType === 'transition' && interactable.triggerSceneId) {
-        sceneDispatch({ type: 'START_SCENE_TRANSITION', targetSceneId: interactable.triggerSceneId });
-      }
-    } else {
-      // Walk to interactable first
-      sceneDispatch({ type: 'SET_PENDING_INTERACTABLE', id: interactable.id });
-      sceneDispatch({ type: 'SET_PLAYER_TARGET', x: interactable.x });
-    }
-  }, [sceneState.playerX, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneDispatch]);
 
   // Handle choice selection
   const handleChoice = useCallback((choice: Choice) => {
@@ -261,7 +242,7 @@ export function GothicGameScreen() {
   return (
     <>
       {/* Scene */}
-      <SceneRenderer scene={currentScene} onInteract={handleInteract} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} resolvedPlatforms={resolvedPlatforms} />
+      <SceneRenderer scene={currentScene} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} resolvedPlatforms={resolvedPlatforms} />
 
       {/* Resource HUD */}
       <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />
