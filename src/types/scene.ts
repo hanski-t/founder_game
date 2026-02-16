@@ -31,6 +31,12 @@ export interface SceneInteractable {
   interactionType: 'decision' | 'transition' | 'info';
 }
 
+export interface GroundHole {
+  id: string;
+  startX: number; // percentage of scene width
+  endX: number;   // percentage of scene width
+}
+
 export interface SceneDefinition {
   id: string;
   name: string;
@@ -46,6 +52,8 @@ export interface SceneDefinition {
   obstacles?: ObstacleDefinition[];
   enemies?: EnemyDefinition[];
   platforms?: PlatformDefinition[];
+  groundBiome?: 'cemetery' | 'swamp' | 'town' | 'church';
+  groundHoles?: GroundHole[];
 }
 
 export interface SceneState {

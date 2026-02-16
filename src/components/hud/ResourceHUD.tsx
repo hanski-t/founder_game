@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useRef, useEffect, useState } from 'react';
 import type { Resources, GamePhase } from '../../types/game';
 import { RESOURCE_LIMITS } from '../../types/game';
 import { PHASE_ATMOSPHERE } from '../../data/phaseConfig';
@@ -22,8 +22,40 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
   const percentage = Math.max(0, Math.min(100, (value / maxValue) * 100));
   const displayValue = format ? format(value) : String(value);
 
+  const prevValueRef = useRef(value);
+  const [pulse, setPulse] = useState(false);
+  const [delta, setDelta] = useState<{ amount: number; key: number } | null>(null);
+  const deltaKeyRef = useRef(0);
+
+  useEffect(() => {
+    const prev = prevValueRef.current;
+    if (prev !== value) {
+      const diff = value - prev;
+      prevValueRef.current = value;
+
+      // Trigger pulse animation
+      setPulse(true);
+      const timer = setTimeout(() => setPulse(false), 600);
+
+      // Show floating delta
+      deltaKeyRef.current += 1;
+      setDelta({ amount: diff, key: deltaKeyRef.current });
+      const deltaTimer = setTimeout(() => setDelta(null), 2000);
+
+      return () => { clearTimeout(timer); clearTimeout(deltaTimer); };
+    }
+  }, [value]);
+
+  const deltaText = delta
+    ? format
+      ? (delta.amount > 0 ? '+' : '') + format(delta.amount)
+      : (delta.amount > 0 ? '+' : '') + String(delta.amount)
+    : null;
+
+  const isGain = delta ? delta.amount > 0 : false;
+
   return (
-    <div style={{
+    <div className={`resource-item ${pulse ? (isGain ? 'resource-pulse-gain' : 'resource-pulse-loss') : ''}`} style={{
       display: 'flex',
       flexDirection: 'column',
       gap: 3,
@@ -32,7 +64,19 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
       border: '1px solid rgba(90, 48, 48, 0.4)',
       borderRadius: 3,
       minWidth: 110,
+      position: 'relative',
     }}>
+      {/* Floating delta indicator */}
+      {delta && (
+        <span
+          key={delta.key}
+          className="resource-delta"
+          style={{ color: isGain ? '#4ade80' : '#f87171' }}
+        >
+          {deltaText}
+        </span>
+      )}
+
       {/* Top row: icon + label + value */}
       <div style={{
         display: 'flex',
@@ -50,7 +94,7 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
         }}>
           {label}
         </span>
-        <span style={{
+        <span className={pulse ? 'resource-value-pulse' : ''} style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '0.7rem',
           fontWeight: 600,
@@ -63,7 +107,7 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
       {/* Bar spanning full width */}
       <div className="gothic-resource-bar" style={{ width: '100%' }}>
         <div
-          className="gothic-resource-fill"
+          className={`gothic-resource-fill ${pulse ? (isGain ? 'bar-flash-gain' : 'bar-flash-loss') : ''}`}
           style={{
             width: `${percentage}%`,
             backgroundColor: color,

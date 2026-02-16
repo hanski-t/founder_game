@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useMemo } from 'react';
+import { useEffect, useCallback, useRef, useMemo, useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
@@ -16,6 +16,7 @@ import { SceneTransition } from '../components/transitions/SceneTransition';
 import { PhaseTitle } from '../components/transitions/PhaseTitle';
 import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
 import { ChallengeOverlay } from '../components/challenges/ChallengeOverlay';
+import { FallNotification } from '../components/scene/FallNotification';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, scenes } from '../data/scenes';
 import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
@@ -30,6 +31,7 @@ export function GothicGameScreen() {
   const { varietyState, isChallengeCompleted, startChallenge } = useVariety();
   const prevNodeIdRef = useRef(state.currentNodeId);
   const prevPhaseRef = useRef<GamePhase>(state.currentPhase);
+  const [showFallNotification, setShowFallNotification] = useState(false);
 
   // Set phase accent CSS custom properties on :root for global UI theming
   useEffect(() => {
@@ -64,11 +66,30 @@ export function GothicGameScreen() {
     return [...resolvedPlatforms, ...obstaclePlatforms];
   }, [currentScene, resolvedPlatforms]);
 
+  // Handle falling into a ground hole: lose 5% momentum, respawn at start
+  const handleFallInHole = useCallback(() => {
+    if (!currentScene) return;
+    dispatch({ type: 'APPLY_BONUS', resourceChanges: { momentum: -5 } });
+    sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: currentScene.playerStartX });
+    sceneDispatch({ type: 'UPDATE_PLAYER_Y', y: currentScene.groundY });
+    sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
+    sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
+    sceneDispatch({ type: 'TRIGGER_SCREEN_SHAKE' });
+    setTimeout(() => sceneDispatch({ type: 'STOP_SCREEN_SHAKE' }), 300);
+    setShowFallNotification(true);
+  }, [currentScene, dispatch, sceneDispatch]);
+
   // Activate movement hooks
   useCharacterMovement();
   useKeyboardMovement();
   useCamera();
-  const { triggerKnockback } = useJumpPhysics(currentScene?.groundY ?? 78, allPlatforms, platformDeltas);
+  const { triggerKnockback } = useJumpPhysics(
+    currentScene?.groundY ?? 78,
+    allPlatforms,
+    platformDeltas,
+    currentScene?.groundHoles,
+    handleFallInHole,
+  );
 
   // Wrap knockback so enemy hits also cost $100
   const handleEnemyHit = useCallback((direction: 'left' | 'right') => {
@@ -272,6 +293,11 @@ export function GothicGameScreen() {
       {/* Mini-challenge */}
       {challengeActive && currentScene.challenge && (
         <ChallengeOverlay challenge={currentScene.challenge} />
+      )}
+
+      {/* Fall notification */}
+      {showFallNotification && (
+        <FallNotification onComplete={() => setShowFallNotification(false)} />
       )}
 
       {/* Mini-game */}

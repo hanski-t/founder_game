@@ -3,6 +3,7 @@ import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
 import { usePhaseConfig } from './usePhaseConfig';
 import type { PlatformDefinition } from '../types/platformer';
+import type { GroundHole } from '../types/scene';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
@@ -12,11 +13,19 @@ const KNOCKBACK_DECAY = 8; // exponential decay rate
 const KNOCKBACK_THRESHOLD = 0.5; // stop knockback when velocity below this
 const INVINCIBILITY_DURATION = 500; // ms after knockback before next hit
 const KNOCKBACK_TELEPORT = 5; // % instant displacement to clear obstacle on hit
+const FALL_DEATH_THRESHOLD = 25; // % below groundY before triggering respawn
+
+function isOverHole(x: number, holes?: GroundHole[]): boolean {
+  if (!holes || holes.length === 0) return false;
+  return holes.some(h => x >= h.startX && x <= h.endX);
+}
 
 export function useJumpPhysics(
   groundY: number,
   platforms?: PlatformDefinition[],
   platformDeltas?: Map<string, { dx: number; dy: number }>,
+  groundHoles?: GroundHole[],
+  onFallInHole?: () => void,
 ) {
   const { sceneState, sceneDispatch } = useScene();
   const { varietyState } = useVariety();
@@ -37,6 +46,9 @@ export function useJumpPhysics(
   const levelWidthRef = useRef(sceneState.levelWidth);
   const onPlatformIdRef = useRef<string | null>(null);
   const platformDeltasRef = useRef(platformDeltas);
+  const groundHolesRef = useRef(groundHoles);
+  const onFallInHoleRef = useRef(onFallInHole);
+  const fallingInHoleRef = useRef(false);
 
   // Keep refs in sync with state
   playerYRef.current = sceneState.playerY;
@@ -46,6 +58,8 @@ export function useJumpPhysics(
   challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
   levelWidthRef.current = sceneState.levelWidth;
   platformDeltasRef.current = platformDeltas;
+  groundHolesRef.current = groundHoles;
+  onFallInHoleRef.current = onFallInHole;
 
   // Jump input handler
   useEffect(() => {
@@ -73,6 +87,7 @@ export function useJumpPhysics(
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
 
     lastTimeRef.current = 0;
+    fallingInHoleRef.current = false;
 
     const update = (timestamp: number) => {
       if (!lastTimeRef.current) {
@@ -104,6 +119,14 @@ export function useJumpPhysics(
         velocityYRef.current += GRAVITY * gMult * delta;
         const newY = playerYRef.current + velocityYRef.current * delta;
 
+        // Check if player fell into a hole and passed the death threshold
+        if (newY > groundY + FALL_DEATH_THRESHOLD && !fallingInHoleRef.current) {
+          fallingInHoleRef.current = true;
+          onFallInHoleRef.current?.();
+          animFrameRef.current = requestAnimationFrame(update);
+          return;
+        }
+
         // Check platform landings (only when falling)
         let landed = false;
         if (velocityYRef.current > 0 && platforms) {
@@ -125,8 +148,10 @@ export function useJumpPhysics(
         }
 
         if (!landed) {
-          if (newY >= groundY) {
-            // Land on ground
+          // Check if over a ground hole — if so, fall through instead of landing (skip during challenges)
+          const overHole = !challengeActiveRef.current && isOverHole(playerXRef.current, groundHolesRef.current);
+          if (newY >= groundY && !overHole) {
+            // Land on solid ground
             playerYRef.current = groundY;
             velocityYRef.current = 0;
             isGroundedRef.current = true;
@@ -153,6 +178,17 @@ export function useJumpPhysics(
           sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
           sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
         }
+      } else if (isGroundedRef.current && Math.abs(playerYRef.current - groundY) < 1) {
+        // Walking on ground — check if player walked into a hole (skip during challenges)
+        const overHole = !challengeActiveRef.current && isOverHole(playerXRef.current, groundHolesRef.current);
+        if (overHole) {
+          isGroundedRef.current = false;
+          velocityYRef.current = 0;
+          onPlatformIdRef.current = null;
+          sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
+          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
+          yChanged = true;
+        }
       }
 
       // Ride moving platforms: carry player with platform movement
@@ -170,6 +206,11 @@ export function useJumpPhysics(
       // Clear platform tracking when on ground
       if (isGroundedRef.current && playerYRef.current >= groundY - 0.5) {
         onPlatformIdRef.current = null;
+      }
+
+      // Reset hole-fall flag once safely grounded (allows falling again after respawn)
+      if (isGroundedRef.current && fallingInHoleRef.current) {
+        fallingInHoleRef.current = false;
       }
 
       // Apply knockback
@@ -203,7 +244,7 @@ export function useJumpPhysics(
         cancelAnimationFrame(animFrameRef.current);
       }
     };
-  }, [groundY, platforms, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]);
+  }, [groundY, platforms, groundHoles, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]);
 
   // Trigger knockback from obstacle/enemy collision
   const triggerKnockback = useCallback((direction: 'left' | 'right') => {

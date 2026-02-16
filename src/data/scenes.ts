@@ -42,6 +42,7 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: townBg, scrollFactor: 0 },
       { src: townMid, scrollFactor: 0.3 },
     ],
+    groundBiome: 'town',
     groundY: 78,
     levelWidth: 100,
     playerStartX: 10,
@@ -87,6 +88,7 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: townBg, scrollFactor: 0 },
       { src: townMid, scrollFactor: 0.3 },
     ],
+    groundBiome: 'town',
     groundY: 78,
     levelWidth: 150,
     playerStartX: 8,
@@ -134,15 +136,19 @@ export const scenes: Record<string, SceneDefinition> = {
     backgroundLayers: [
       { src: churchBg, scrollFactor: 0 },
     ],
-    groundY: 78,
+    groundBiome: 'church',
+    groundY: 74,
     levelWidth: 150,
     playerStartX: 8,
+    groundHoles: [
+      { id: 'dci-hole-1', startX: 48, endX: 53 },
+    ],
     interactables: [
       {
         id: 'cofounder-npc',
         type: 'npc',
         x: 115,
-        y: 78,
+        y: 74,
         width: 64,
         height: 64,
         spriteSheet: beardedIdle,
@@ -154,12 +160,12 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'dci-gem-1', visual: 'gem', x: 39, y: 57, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"Found some seed money!"' },
+      { id: 'dci-gem-1', visual: 'gem', x: 39, y: 53, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"Found some seed money!"' },
       { id: 'dci-coin-1', visual: 'coin', x: 85, label: '+$200', resourceBonus: { money: 200 }, flavorText: '"Every dollar counts."' },
     ],
     platforms: [
-      { id: 'dci-plat-1', x: 20, y: 68, width: 12, visual: 'wood' },
-      { id: 'dci-plat-2', x: 32, y: 60, width: 14, visual: 'stone' },
+      { id: 'dci-plat-1', x: 20, y: 64, width: 12, visual: 'wood' },
+      { id: 'dci-plat-2', x: 32, y: 56, width: 14, visual: 'stone' },
     ],
     obstacles: [
       { id: 'dci-barrel-1', type: 'barrel', x: 55, width: 6, height: 11 },
@@ -199,15 +205,20 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: cemeteryMountains, scrollFactor: 0.2 },
       { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
-    groundY: 78,
+    groundBiome: 'cemetery',
+    groundY: 80,
     levelWidth: 200,
     playerStartX: 8,
+    groundHoles: [
+      { id: 'cg-hole-1', startX: 82, endX: 87 },
+      { id: 'cg-hole-2', startX: 155, endX: 160 },
+    ],
     interactables: [
       {
         id: 'final-advisor-npc',
         type: 'npc',
         x: 170,
-        y: 68,
+        y: 70,
         width: 64,
         height: 64,
         spriteSheet: oldmanIdle,
@@ -220,7 +231,7 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     collectibles: [
       { id: 'cg-doc-1', visual: 'document', x: 22, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
-      { id: 'cg-gem-plat', visual: 'gem', x: 74, y: 55, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"A hidden opportunity."' },
+      { id: 'cg-gem-plat', visual: 'gem', x: 74, y: 57, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"A hidden opportunity."' },
       { id: 'cg-doc-2', visual: 'document', x: 190, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"Building your network."' },
     ],
     obstacles: [
@@ -228,14 +239,14 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cg-rock-1', type: 'rock', x: 100, width: 6, height: 9 },
     ],
     enemies: [
-      { id: 'cg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 40, patrolEnd: 70, y: 78, speed: 9, width: 4, height: 7 },
-      { id: 'cg-ghost-1', type: 'ghost', visual: '', patrolStart: 110, patrolEnd: 145, y: 78, speed: 10, width: 5, height: 10 },
+      { id: 'cg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 40, patrolEnd: 70, y: 80, speed: 9, width: 4, height: 7 },
+      { id: 'cg-ghost-1', type: 'ghost', visual: '', patrolStart: 110, patrolEnd: 145, y: 80, speed: 10, width: 5, height: 10 },
     ],
     platforms: [
-      { id: 'cg-plat-1', x: 50, y: 65, width: 15, visual: 'stone' },
-      { id: 'cg-plat-2', x: 68, y: 58, width: 14, visual: 'stone' },
-      { id: 'cg-plat-3', x: 120, y: 72, width: 12, visual: 'wood' },
-      { id: 'cg-plat-4', x: 150, y: 68, width: 14, visual: 'stone' },
+      { id: 'cg-plat-1', x: 50, y: 67, width: 15, visual: 'stone' },
+      { id: 'cg-plat-2', x: 68, y: 60, width: 14, visual: 'stone' },
+      { id: 'cg-plat-3', x: 120, y: 74, width: 12, visual: 'wood' },
+      { id: 'cg-plat-4', x: 150, y: 70, width: 14, visual: 'stone' },
     ],
   },
 
@@ -253,15 +264,20 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: swampMid1, scrollFactor: 0.3 },
       { src: swampMid2, scrollFactor: 0.5 },
     ],
-    groundY: 78,
+    groundBiome: 'swamp',
+    groundY: 82,
     levelWidth: 200,
     playerStartX: 8,
+    groundHoles: [
+      { id: 'sg-hole-1', startX: 72, endX: 77 },
+      { id: 'sg-hole-2', startX: 140, endX: 145 },
+    ],
     interactables: [
       {
         id: 'idea-sign',
         type: 'object',
         x: 160,
-        y: 78,
+        y: 82,
         width: 48,
         height: 48,
         staticImage: signImg,
@@ -272,7 +288,7 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sg-usb-1', visual: 'usb', x: 58, y: 59, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"A backup of your pitch deck."' },
+      { id: 'sg-usb-1', visual: 'usb', x: 58, y: 63, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"A backup of your pitch deck."' },
       { id: 'sg-coffee-1', visual: 'coffee', x: 180, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Late-night coding fuel."' },
     ],
     obstacles: [
@@ -282,11 +298,11 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'sg-crate-2', type: 'crate', x: 120, width: 6, height: 11 },
     ],
     enemies: [
-      { id: 'sg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 30, patrolEnd: 58, y: 78, speed: 12, width: 4, height: 7 },
+      { id: 'sg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 30, patrolEnd: 58, y: 82, speed: 12, width: 4, height: 7 },
     ],
     platforms: [
-      { id: 'sg-plat-1', x: 50, y: 62, width: 16, visual: 'wood' },
-      { id: 'sg-plat-move', x: 80, y: 65, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 15, moveSpeed: 0.4 },
+      { id: 'sg-plat-1', x: 50, y: 66, width: 16, visual: 'wood' },
+      { id: 'sg-plat-move', x: 80, y: 69, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 15, moveSpeed: 0.4 },
     ],
   },
 
@@ -304,16 +320,21 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: swampMid1, scrollFactor: 0.2 },
       { src: swampMid2, scrollFactor: 0.4 },
     ],
-    groundY: 78,
+    groundBiome: 'swamp',
+    groundY: 84,
     levelWidth: 250,
     playerStartX: 8,
     ambientColor: 'sepia(0.2) brightness(0.8)',
+    groundHoles: [
+      { id: 'sd-hole-1', startX: 80, endX: 86 },
+      { id: 'sd-hole-2', startX: 125, endX: 131 },
+    ],
     interactables: [
       {
         id: 'competitor-npc',
         type: 'npc',
         x: 200,
-        y: 78,
+        y: 84,
         width: 64,
         height: 64,
         spriteSheet: hatManIdle,
@@ -325,7 +346,7 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'sd-coin-1', visual: 'coin', x: 55, y: 62, label: '+$300', resourceBonus: { money: 300 }, flavorText: '"Early revenue!"' },
+      { id: 'sd-coin-1', visual: 'coin', x: 55, y: 68, label: '+$300', resourceBonus: { money: 300 }, flavorText: '"Early revenue!"' },
       { id: 'sd-gem-1', visual: 'gem', x: 235, label: '+$500', resourceBonus: { money: 500 }, flavorText: '"Market research pays off."' },
     ],
     obstacles: [
@@ -334,12 +355,12 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'sd-bush-1', type: 'bush', x: 170, width: 5, height: 8 },
     ],
     enemies: [
-      { id: 'sd-ghost-1', type: 'ghost', visual: '', patrolStart: 40, patrolEnd: 70, y: 78, speed: 10, width: 5, height: 10 },
-      { id: 'sd-bat-1', type: 'bat', visual: '', patrolStart: 60, patrolEnd: 100, y: 60, speed: 14, width: 4, height: 5 },
+      { id: 'sd-ghost-1', type: 'ghost', visual: '', patrolStart: 40, patrolEnd: 70, y: 84, speed: 10, width: 5, height: 10 },
+      { id: 'sd-bat-1', type: 'bat', visual: '', patrolStart: 60, patrolEnd: 100, y: 66, speed: 14, width: 4, height: 5 },
     ],
     platforms: [
-      { id: 'sd-plat-1', x: 48, y: 65, width: 14, visual: 'wood' },
-      { id: 'sd-plat-2', x: 150, y: 68, width: 12, visual: 'stone' },
+      { id: 'sd-plat-1', x: 48, y: 71, width: 14, visual: 'wood' },
+      { id: 'sd-plat-2', x: 150, y: 74, width: 12, visual: 'stone' },
     ],
     challenge: {
       id: 'falling-market-noise',
@@ -381,15 +402,20 @@ export const scenes: Record<string, SceneDefinition> = {
     backgroundLayers: [
       { src: churchBg, scrollFactor: 0 },
     ],
-    groundY: 78,
+    groundBiome: 'church',
+    groundY: 74,
     levelWidth: 250,
     playerStartX: 8,
+    groundHoles: [
+      { id: 'cm-hole-1', startX: 65, endX: 70 },
+      { id: 'cm-hole-2', startX: 135, endX: 141 },
+    ],
     interactables: [
       {
         id: 'alex-npc',
         type: 'npc',
         x: 215,
-        y: 78,
+        y: 74,
         width: 64,
         height: 64,
         spriteSheet: beardedIdle,
@@ -401,8 +427,8 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'cm-coin-1', visual: 'coin', x: 44, y: 58, label: '+$500', resourceBonus: { money: 500 }, flavorText: '"Crisis fund secured."' },
-      { id: 'cm-coffee-1', visual: 'coffee', x: 110, y: 60, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Stay focused, stay sharp."' },
+      { id: 'cm-coin-1', visual: 'coin', x: 44, y: 54, label: '+$500', resourceBonus: { money: 500 }, flavorText: '"Crisis fund secured."' },
+      { id: 'cm-coffee-1', visual: 'coffee', x: 110, y: 56, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Stay focused, stay sharp."' },
       { id: 'cm-coin-2', visual: 'coin', x: 240, label: '+$300', resourceBonus: { money: 300 }, flavorText: '"Emergency budget unlocked."' },
     ],
     obstacles: [
@@ -411,14 +437,14 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cm-bush-1', type: 'bush', x: 150, width: 5, height: 8 },
     ],
     enemies: [
-      { id: 'cm-ghost-1', type: 'ghost', visual: '', patrolStart: 30, patrolEnd: 60, y: 78, speed: 8, width: 5, height: 10 },
-      { id: 'cm-skeleton-1', type: 'skeleton', visual: '', patrolStart: 80, patrolEnd: 120, y: 78, speed: 12, width: 4, height: 7 },
-      { id: 'cm-bat-1', type: 'bat', visual: '', patrolStart: 140, patrolEnd: 185, y: 62, speed: 12, width: 4, height: 5 },
+      { id: 'cm-ghost-1', type: 'ghost', visual: '', patrolStart: 30, patrolEnd: 60, y: 74, speed: 8, width: 5, height: 10 },
+      { id: 'cm-skeleton-1', type: 'skeleton', visual: '', patrolStart: 80, patrolEnd: 120, y: 74, speed: 12, width: 4, height: 7 },
+      { id: 'cm-bat-1', type: 'bat', visual: '', patrolStart: 140, patrolEnd: 185, y: 58, speed: 12, width: 4, height: 5 },
     ],
     platforms: [
-      { id: 'cm-plat-move1', x: 38, y: 65, width: 14, visual: 'wood', moveAxis: 'vertical', moveRange: 8, moveSpeed: 0.35 },
-      { id: 'cm-plat-move2', x: 100, y: 63, width: 12, visual: 'stone', moveAxis: 'horizontal', moveRange: 20, moveSpeed: 0.45 },
-      { id: 'cm-plat-3', x: 170, y: 66, width: 14, visual: 'stone' },
+      { id: 'cm-plat-move1', x: 38, y: 61, width: 14, visual: 'wood', moveAxis: 'vertical', moveRange: 8, moveSpeed: 0.35 },
+      { id: 'cm-plat-move2', x: 100, y: 59, width: 12, visual: 'stone', moveAxis: 'horizontal', moveRange: 20, moveSpeed: 0.45 },
+      { id: 'cm-plat-3', x: 170, y: 62, width: 14, visual: 'stone' },
     ],
   },
 
@@ -438,15 +464,21 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: cemeteryMountains, scrollFactor: 0.2 },
       { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
-    groundY: 78,
+    groundBiome: 'cemetery',
+    groundY: 80,
     levelWidth: 300,
     playerStartX: 6,
+    groundHoles: [
+      { id: 'ch-hole-1', startX: 88, endX: 93 },
+      { id: 'ch-hole-2', startX: 168, endX: 174 },
+      { id: 'ch-hole-3', startX: 238, endX: 243 },
+    ],
     interactables: [
       {
         id: 'investor-npc',
         type: 'npc',
         x: 268,
-        y: 78,
+        y: 80,
         width: 64,
         height: 64,
         spriteSheet: womanIdle,
@@ -458,7 +490,7 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ch-gem-1', visual: 'gem', x: 140, y: 57, label: '+$1500', resourceBonus: { money: 1500 }, flavorText: '"Angel investment!"' },
+      { id: 'ch-gem-1', visual: 'gem', x: 140, y: 59, label: '+$1500', resourceBonus: { money: 1500 }, flavorText: '"Angel investment!"' },
       { id: 'ch-doc-1', visual: 'document', x: 290, label: 'Term Sheet', flavorText: '"Pre-money valuation: $2M"' },
     ],
     obstacles: [
@@ -469,15 +501,15 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'ch-grave-1', type: 'grave', x: 248, width: 5, height: 10 },
     ],
     enemies: [
-      { id: 'ch-skeleton-1', type: 'skeleton', visual: '', patrolStart: 30, patrolEnd: 65, y: 78, speed: 10, width: 4, height: 7 },
-      { id: 'ch-ghost-1', type: 'ghost', visual: '', patrolStart: 120, patrolEnd: 160, y: 78, speed: 10, width: 5, height: 10 },
-      { id: 'ch-bat-1', type: 'bat', visual: '', patrolStart: 230, patrolEnd: 270, y: 60, speed: 14, width: 4, height: 5 },
+      { id: 'ch-skeleton-1', type: 'skeleton', visual: '', patrolStart: 30, patrolEnd: 65, y: 80, speed: 10, width: 4, height: 7 },
+      { id: 'ch-ghost-1', type: 'ghost', visual: '', patrolStart: 120, patrolEnd: 160, y: 80, speed: 10, width: 5, height: 10 },
+      { id: 'ch-bat-1', type: 'bat', visual: '', patrolStart: 230, patrolEnd: 270, y: 62, speed: 14, width: 4, height: 5 },
     ],
     platforms: [
-      { id: 'ch-plat-1', x: 55, y: 65, width: 12, visual: 'stone' },
-      { id: 'ch-plat-2', x: 110, y: 68, width: 12, visual: 'stone' },
-      { id: 'ch-plat-3', x: 130, y: 60, width: 14, visual: 'metal' },
-      { id: 'ch-plat-move', x: 160, y: 58, width: 10, visual: 'metal', moveAxis: 'horizontal', moveRange: 15, moveSpeed: 0.5 },
+      { id: 'ch-plat-1', x: 55, y: 67, width: 12, visual: 'stone' },
+      { id: 'ch-plat-2', x: 110, y: 70, width: 12, visual: 'stone' },
+      { id: 'ch-plat-3', x: 130, y: 62, width: 14, visual: 'metal' },
+      { id: 'ch-plat-move', x: 160, y: 60, width: 10, visual: 'metal', moveAxis: 'horizontal', moveRange: 15, moveSpeed: 0.5 },
     ],
     challenge: {
       id: 'qte-investor-pitch',
@@ -512,15 +544,21 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: cemeteryBg, scrollFactor: 0 },
       { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
-    groundY: 78,
+    groundBiome: 'cemetery',
+    groundY: 80,
     levelWidth: 300,
     playerStartX: 6,
+    groundHoles: [
+      { id: 'cl-hole-1', startX: 48, endX: 53 },
+      { id: 'cl-hole-2', startX: 118, endX: 124 },
+      { id: 'cl-hole-3', startX: 205, endX: 211 },
+    ],
     interactables: [
       {
         id: 'launch-npc',
         type: 'npc',
         x: 265,
-        y: 78,
+        y: 80,
         width: 64,
         height: 64,
         spriteSheet: hatManIdle,
@@ -532,9 +570,9 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'cl-scroll-1', visual: 'scroll', x: 65, y: 60, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
+      { id: 'cl-scroll-1', visual: 'scroll', x: 65, y: 62, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
       { id: 'cl-usb-1', visual: 'usb', x: 285, label: '+20 Rep', resourceBonus: { reputation: 20 }, flavorText: '"Press coverage incoming."' },
-      { id: 'cl-coffee-1', visual: 'coffee', x: 195, y: 57, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"One last push."' },
+      { id: 'cl-coffee-1', visual: 'coffee', x: 195, y: 59, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"One last push."' },
     ],
     obstacles: [
       { id: 'cl-crate-1', type: 'crate', x: 28, width: 6, height: 11 },
@@ -544,17 +582,17 @@ export const scenes: Record<string, SceneDefinition> = {
       { id: 'cl-bush-1', type: 'bush', x: 170, width: 5, height: 8 },
     ],
     enemies: [
-      { id: 'cl-skeleton-1', type: 'skeleton', visual: '', patrolStart: 35, patrolEnd: 65, y: 78, speed: 10, width: 4, height: 7 },
-      { id: 'cl-ghost-1', type: 'ghost', visual: '', patrolStart: 75, patrolEnd: 110, y: 78, speed: 12, width: 5, height: 10 },
-      { id: 'cl-bat-1', type: 'bat', visual: '', patrolStart: 95, patrolEnd: 145, y: 58, speed: 15, width: 4, height: 5 },
-      { id: 'cl-skeleton-2', type: 'skeleton', visual: '', patrolStart: 155, patrolEnd: 200, y: 78, speed: 13, width: 4, height: 7 },
-      { id: 'cl-ghost-2', type: 'ghost', visual: '', patrolStart: 210, patrolEnd: 250, y: 78, speed: 11, width: 5, height: 10 },
+      { id: 'cl-skeleton-1', type: 'skeleton', visual: '', patrolStart: 35, patrolEnd: 65, y: 80, speed: 10, width: 4, height: 7 },
+      { id: 'cl-ghost-1', type: 'ghost', visual: '', patrolStart: 75, patrolEnd: 110, y: 80, speed: 12, width: 5, height: 10 },
+      { id: 'cl-bat-1', type: 'bat', visual: '', patrolStart: 95, patrolEnd: 145, y: 60, speed: 15, width: 4, height: 5 },
+      { id: 'cl-skeleton-2', type: 'skeleton', visual: '', patrolStart: 155, patrolEnd: 200, y: 80, speed: 13, width: 4, height: 7 },
+      { id: 'cl-ghost-2', type: 'ghost', visual: '', patrolStart: 210, patrolEnd: 250, y: 80, speed: 11, width: 5, height: 10 },
     ],
     platforms: [
-      { id: 'cl-plat-1', x: 58, y: 63, width: 14, visual: 'stone' },
-      { id: 'cl-plat-move1', x: 100, y: 66, width: 12, visual: 'stone', moveAxis: 'vertical', moveRange: 10, moveSpeed: 0.4 },
-      { id: 'cl-plat-move2', x: 185, y: 60, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 20, moveSpeed: 0.5 },
-      { id: 'cl-plat-2', x: 225, y: 64, width: 14, visual: 'wood' },
+      { id: 'cl-plat-1', x: 58, y: 65, width: 14, visual: 'stone' },
+      { id: 'cl-plat-move1', x: 100, y: 68, width: 12, visual: 'stone', moveAxis: 'vertical', moveRange: 10, moveSpeed: 0.4 },
+      { id: 'cl-plat-move2', x: 185, y: 62, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 20, moveSpeed: 0.5 },
+      { id: 'cl-plat-2', x: 225, y: 66, width: 14, visual: 'wood' },
     ],
   },
 
@@ -573,15 +611,19 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: cemeteryMountains, scrollFactor: 0.2 },
       { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
-    groundY: 78,
+    groundBiome: 'cemetery',
+    groundY: 76,
     levelWidth: 200,
     playerStartX: 10,
+    groundHoles: [
+      { id: 'ct-hole-1', startX: 27, endX: 32 },
+    ],
     interactables: [
       {
         id: 'success-npc',
         type: 'npc',
         x: 130,
-        y: 46,
+        y: 44,
         width: 64,
         height: 64,
         spriteSheet: oldmanIdle,
@@ -593,19 +635,19 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'ct-gem-1', visual: 'gem', x: 44, y: 69, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"The first step is always the hardest."' },
-      { id: 'ct-gem-2', visual: 'gem', x: 62, y: 62, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Momentum builds with every leap."' },
-      { id: 'ct-gem-3', visual: 'gem', x: 82, y: 55, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Higher ground, clearer vision."' },
-      { id: 'ct-gem-4', visual: 'gem', x: 102, y: 49, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Almost there — don\'t look down."' },
+      { id: 'ct-gem-1', visual: 'gem', x: 44, y: 67, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"The first step is always the hardest."' },
+      { id: 'ct-gem-2', visual: 'gem', x: 62, y: 60, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Momentum builds with every leap."' },
+      { id: 'ct-gem-3', visual: 'gem', x: 82, y: 53, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Higher ground, clearer vision."' },
+      { id: 'ct-gem-4', visual: 'gem', x: 102, y: 47, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Almost there — don\'t look down."' },
       { id: 'ct-gem-5', visual: 'gem', x: 180, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"You made it. The threshold awaits."' },
     ],
     platforms: [
-      { id: 'ct-plat-1', x: 35, y: 72, width: 14, visual: 'wood' },
-      { id: 'ct-plat-2', x: 55, y: 65, width: 12, visual: 'stone' },
-      { id: 'ct-plat-3', x: 75, y: 58, width: 12, visual: 'metal' },
-      { id: 'ct-plat-4', x: 95, y: 52, width: 14, visual: 'stone' },
-      { id: 'ct-plat-5', x: 115, y: 46, width: 16, visual: 'metal' },
-      { id: 'ct-plat-move', x: 145, y: 42, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 10, moveSpeed: 0.3 },
+      { id: 'ct-plat-1', x: 35, y: 70, width: 14, visual: 'wood' },
+      { id: 'ct-plat-2', x: 55, y: 63, width: 12, visual: 'stone' },
+      { id: 'ct-plat-3', x: 75, y: 56, width: 12, visual: 'metal' },
+      { id: 'ct-plat-4', x: 95, y: 50, width: 14, visual: 'stone' },
+      { id: 'ct-plat-5', x: 115, y: 44, width: 16, visual: 'metal' },
+      { id: 'ct-plat-move', x: 145, y: 40, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 10, moveSpeed: 0.3 },
     ],
   },
 };

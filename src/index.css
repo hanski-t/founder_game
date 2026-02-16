@@ -69,6 +69,43 @@
     width: 100%;
   }
 
+  .ground-layer {
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  /* ====== FALL NOTIFICATION ====== */
+
+  .fall-notification {
+    position: fixed;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 55;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    animation: fall-notify-in 2s ease-out forwards;
+  }
+
+  .fall-notification-penalty {
+    font-family: var(--font-gothic);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-gothic-negative);
+    text-shadow: 0 0 20px rgba(248, 113, 113, 0.6), 0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .fall-notification-text {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--color-gothic-text);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    opacity: 0.8;
+  }
+
   /* ====== CHARACTER ====== */
 
   .sprite-animator {
@@ -228,6 +265,69 @@
   .gothic-resource-fill {
     height: 100%;
     transition: width 0.5s ease-out;
+  }
+
+  /* Resource change animations */
+  .resource-value-pulse {
+    animation: valuePulse 0.6s ease-out;
+  }
+
+  .resource-pulse-gain {
+    animation: borderFlashGain 0.6s ease-out;
+  }
+
+  .resource-pulse-loss {
+    animation: borderFlashLoss 0.6s ease-out;
+  }
+
+  .bar-flash-gain {
+    animation: barGlow 0.6s ease-out;
+  }
+
+  .bar-flash-loss {
+    animation: barGlow 0.6s ease-out;
+  }
+
+  .resource-delta {
+    position: absolute;
+    bottom: -14px;
+    right: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    pointer-events: none;
+    animation: deltaFloat 2s ease-out forwards;
+    text-shadow: 0 0 4px currentColor;
+  }
+
+  @keyframes valuePulse {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes borderFlashGain {
+    0% { border-color: rgba(90, 48, 48, 0.4); }
+    30% { border-color: rgba(74, 222, 128, 0.6); }
+    100% { border-color: rgba(90, 48, 48, 0.4); }
+  }
+
+  @keyframes borderFlashLoss {
+    0% { border-color: rgba(90, 48, 48, 0.4); }
+    30% { border-color: rgba(248, 113, 113, 0.6); }
+    100% { border-color: rgba(90, 48, 48, 0.4); }
+  }
+
+  @keyframes barGlow {
+    0% { filter: brightness(1); }
+    30% { filter: brightness(1.8); }
+    100% { filter: brightness(1); }
+  }
+
+  @keyframes deltaFloat {
+    0% { opacity: 1; transform: translateY(0); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(18px); }
   }
 
   /* ====== TRANSITIONS ====== */
@@ -673,7 +773,8 @@
     background: radial-gradient(ellipse at center bottom, #1a0a2e 0%, #050210 70%, #000 100%);
   }
 
-  .scene-container.challenge-mode .scene-background-layer {
+  .scene-container.challenge-mode .scene-background-layer,
+  .scene-container.challenge-mode .ground-layer {
     filter: brightness(0.3) saturate(0.4) hue-rotate(40deg);
     transition: filter 0.6s ease-in-out;
   }
@@ -974,6 +1075,13 @@
 @keyframes sparkle-drift {
   from { opacity: 0.3; transform: translateY(0); }
   to { opacity: 0.7; transform: translateY(-10px); }
+}
+
+@keyframes fall-notify-in {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  75% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
 }
 
 /* Enemy animations */

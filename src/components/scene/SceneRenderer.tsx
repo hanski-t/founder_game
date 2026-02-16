@@ -10,6 +10,7 @@ import { ObstacleLayer } from '../obstacles/ObstacleLayer';
 import { EnemyLayer } from '../enemies/EnemyLayer';
 import { PlatformLayer } from '../platforms/PlatformLayer';
 import { AtmosphericOverlay } from './AtmosphericOverlay';
+import { GroundLayer } from './GroundLayer';
 import { useScene } from '../../context/SceneContext';
 import { useVariety } from '../../context/VarietyContext';
 import { usePhaseConfig } from '../../hooks/usePhaseConfig';
@@ -75,6 +76,16 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
           overflow: 'visible',
         }}
       >
+        {/* Ground surface layer — always visible, scrolls with world */}
+        {scene.groundBiome && (
+          <GroundLayer
+            groundY={scene.groundY}
+            groundBiome={scene.groundBiome}
+            levelWidth={scene.levelWidth}
+            groundHoles={scene.groundHoles}
+          />
+        )}
+
         {!challengeActive && (
           <>
             {scene.interactables.map((obj) => (
