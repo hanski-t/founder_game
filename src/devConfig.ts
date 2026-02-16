@@ -14,4 +14,4 @@
 //   9: 'startup_final'
 //  10: 'game_success'
 
-export const DEV_LOCK_LEVEL: string | null = 'startup_idea';
+export const DEV_LOCK_LEVEL: string | null = 'startup_competitor';

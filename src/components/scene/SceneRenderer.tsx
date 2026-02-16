@@ -86,6 +86,7 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
             groundBiome={scene.groundBiome}
             levelWidth={scene.levelWidth}
             groundHoles={challengeActive ? undefined : scene.groundHoles}
+            groundSegments={scene.groundSegments}
           />
         )}
 

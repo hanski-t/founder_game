@@ -37,6 +37,13 @@ export interface GroundHole {
   endX: number;   // percentage of scene width
 }
 
+/** Defines a ground section with a different height than the default groundY */
+export interface GroundSegment {
+  startX: number; // percentage of level width
+  endX: number;   // percentage of level width
+  groundY: number; // percentage from top (overrides scene default)
+}
+
 export interface SceneDefinition {
   id: string;
   name: string;
@@ -54,6 +61,7 @@ export interface SceneDefinition {
   platforms?: PlatformDefinition[];
   groundBiome?: 'cemetery' | 'swamp' | 'town' | 'church' | 'hall';
   groundHoles?: GroundHole[];
+  groundSegments?: GroundSegment[];
 }
 
 export interface SceneState {

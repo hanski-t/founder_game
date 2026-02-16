@@ -3,8 +3,9 @@ import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
 import { usePhaseConfig } from './usePhaseConfig';
 import type { PlatformDefinition } from '../types/platformer';
-import type { GroundHole } from '../types/scene';
+import type { GroundHole, GroundSegment } from '../types/scene';
 import { getBlockedX } from '../utils/obstacleBlocker';
+import { getGroundYAtX } from '../utils/groundHeight';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
@@ -27,6 +28,7 @@ export function useJumpPhysics(
   platformDeltas?: Map<string, { dx: number; dy: number }>,
   groundHoles?: GroundHole[],
   onFallInHole?: () => void,
+  groundSegments?: GroundSegment[],
 ) {
   const { sceneState, sceneDispatch } = useScene();
   const { varietyState } = useVariety();
@@ -51,6 +53,7 @@ export function useJumpPhysics(
   const groundHolesRef = useRef(groundHoles);
   const onFallInHoleRef = useRef(onFallInHole);
   const fallingInHoleRef = useRef(false);
+  const groundSegmentsRef = useRef(groundSegments);
 
   // Keep refs in sync with state — these are read inside the RAF loop
   // IMPORTANT: playerY and isGrounded are managed authoritatively by the
@@ -65,6 +68,7 @@ export function useJumpPhysics(
   platformsRef.current = platforms;
   platformDeltasRef.current = platformDeltas;
   groundHolesRef.current = groundHoles;
+  groundSegmentsRef.current = groundSegments;
   onFallInHoleRef.current = onFallInHole;
 
   // Jump input handler
@@ -120,6 +124,9 @@ export function useJumpPhysics(
       const gMult = gravityMultiplierRef.current;
       const curPlatforms = platformsRef.current;
 
+      // Compute the ground height at the player's current X position
+      const localGroundY = getGroundYAtX(playerXRef.current, groundY, groundSegmentsRef.current);
+
       // Handle jump request (blocked during challenges)
       if (jumpRequestedRef.current && isGroundedRef.current && !challengeActiveRef.current) {
         // Scale jump velocity with sqrt of gravity multiplier to keep jump height similar
@@ -166,9 +173,9 @@ export function useJumpPhysics(
         if (!landed) {
           // Check if over a ground hole — if so, fall through instead of landing (skip during challenges)
           const overHole = !challengeActiveRef.current && isOverHole(playerXRef.current, groundHolesRef.current);
-          if (newY >= groundY && !overHole) {
-            // Land on solid ground
-            playerYRef.current = groundY;
+          if (newY >= localGroundY && !overHole) {
+            // Land on solid ground (at local height)
+            playerYRef.current = localGroundY;
             velocityYRef.current = 0;
             isGroundedRef.current = true;
             sceneDispatch({ type: 'SET_GROUNDED', grounded: true });
@@ -178,7 +185,7 @@ export function useJumpPhysics(
           }
         }
         yChanged = true;
-      } else if (isGroundedRef.current && playerYRef.current < groundY && curPlatforms) {
+      } else if (isGroundedRef.current && onPlatformIdRef.current && curPlatforms) {
         // Check if player walked off a platform edge
         const onAnyPlatform = curPlatforms.some(
           (plat) =>
@@ -194,10 +201,22 @@ export function useJumpPhysics(
           sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
           sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
         }
-      } else if (isGroundedRef.current && Math.abs(playerYRef.current - groundY) < 1) {
-        // Walking on ground — check if player walked into a hole (skip during challenges)
+      } else if (isGroundedRef.current && !onPlatformIdRef.current) {
+        // Walking on ground — check holes and terrain height changes
         const overHole = !challengeActiveRef.current && isOverHole(playerXRef.current, groundHolesRef.current);
         if (overHole) {
+          isGroundedRef.current = false;
+          velocityYRef.current = 0;
+          onPlatformIdRef.current = null;
+          sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
+          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
+          yChanged = true;
+        } else if (localGroundY < playerYRef.current - 0.5) {
+          // Ground rose (uphill) — snap player up to new ground level
+          playerYRef.current = localGroundY;
+          yChanged = true;
+        } else if (localGroundY > playerYRef.current + 1) {
+          // Ground dropped (downhill) — start falling
           isGroundedRef.current = false;
           velocityYRef.current = 0;
           onPlatformIdRef.current = null;

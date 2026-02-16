@@ -93,6 +93,7 @@ export function GothicGameScreen() {
     platformDeltas,
     currentScene?.groundHoles,
     handleFallInHole,
+    currentScene?.groundSegments,
   );
 
   // Wrap knockback so enemy hits also cost $100

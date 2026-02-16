@@ -51,13 +51,16 @@ export function useKeyboardMovement() {
     if (keysRef.current.has('ArrowRight') || keysRef.current.has('d')) dx += step;
 
     if (dx !== 0) {
-      const maxX = levelWidthRef.current - 2;
-      let newX = Math.max(2, Math.min(maxX, playerXRef.current + dx));
+      // During a falling-catch challenge, clamp the player to the viewport range
+      // (items spawn at 10-90% viewport, camera is at 0) so catching works.
+      const minX = challengeGameplayRef.current ? 5 : 2;
+      const maxX = challengeGameplayRef.current ? 95 : levelWidthRef.current - 2;
+      let newX = Math.max(minX, Math.min(maxX, playerXRef.current + dx));
       // Block movement into obstacles (only when at ground level, skip during minigame)
       if (!challengeGameplayRef.current) {
         newX = getBlockedX(newX, playerYRef.current);
       }
-      newX = Math.max(2, Math.min(maxX, newX));
+      newX = Math.max(minX, Math.min(maxX, newX));
 
       playerXRef.current = newX; // update ref immediately for next interval tick
       sceneDispatch({ type: 'SET_PLAYER_FACING', facing: dx > 0 ? 'right' : 'left' });

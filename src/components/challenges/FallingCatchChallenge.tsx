@@ -43,7 +43,9 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
   const [streak, setStreak] = useState(0);
 
   // Refs to avoid stale closures in RAF
-  const playerXRef = useRef(sceneState.playerX);
+  // Use viewport-relative player position (playerX - cameraX) for catch detection
+  // since falling items are positioned in viewport % inside a fixed overlay.
+  const playerXRef = useRef(sceneState.playerX - sceneState.cameraX);
   const nextIdRef = useRef(0);
   const feedbackIdRef = useRef(0);
   const startTimeRef = useRef(0);
@@ -57,7 +59,7 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
   const scoredIdsRef = useRef<Set<number>>(new Set()); // prevent double-counting
 
   // Keep refs current
-  playerXRef.current = sceneState.playerX;
+  playerXRef.current = sceneState.playerX - sceneState.cameraX;
   onCompleteRef.current = onComplete;
   varietyDispatchRef.current = varietyDispatch;
 

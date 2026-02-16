@@ -337,6 +337,11 @@ export const scenes: Record<string, SceneDefinition> = {
     levelWidth: 250,
     playerStartX: 8,
     ambientColor: 'sepia(0.2) brightness(0.8)',
+    groundSegments: [
+      { startX: 165, endX: 178, groundY: 80 },
+      { startX: 178, endX: 188, groundY: 76 },
+      { startX: 188, endX: 215, groundY: 70 },
+    ],
     groundHoles: [
       { id: 'sd-hole-1', startX: 80, endX: 86 },
       { id: 'sd-hole-2', startX: 125, endX: 131 },
@@ -346,7 +351,7 @@ export const scenes: Record<string, SceneDefinition> = {
         id: 'competitor-npc',
         type: 'npc',
         x: 200,
-        y: 84,
+        y: 70,
         width: 64,
         height: 64,
         spriteSheet: hatManIdle,
@@ -363,12 +368,14 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     obstacles: [
       { id: 'sd-barrel-1', type: 'barrel', x: 30, width: 5, height: 10 },
+      { id: 'sd-crate-1', type: 'crate', x: 105, width: 6, height: 11 },
       { id: 'sd-rock-1', type: 'rock', x: 140, width: 6, height: 9 },
-      { id: 'sd-bush-1', type: 'bush', x: 170, width: 5, height: 8 },
+      { id: 'sd-bush-1', type: 'bush', x: 155, width: 5, height: 8 },
     ],
     enemies: [
       { id: 'sd-ghost-1', type: 'ghost', visual: '', patrolStart: 40, patrolEnd: 70, y: 84, speed: 10, width: 5, height: 10 },
-      { id: 'sd-bat-1', type: 'bat', visual: '', patrolStart: 60, patrolEnd: 100, y: 66, speed: 14, width: 4, height: 5 },
+      { id: 'sd-bat-1', type: 'bat', visual: '', patrolStart: 88, patrolEnd: 123, y: 70, speed: 9, width: 4, height: 5 },
+      { id: 'sd-skeleton-1', type: 'skeleton', visual: '', patrolStart: 95, patrolEnd: 118, y: 84, speed: 11, width: 5, height: 8 },
     ],
     platforms: [
       { id: 'sd-plat-1', x: 48, y: 71, width: 14, visual: 'wood' },

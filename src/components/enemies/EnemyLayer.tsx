@@ -13,11 +13,11 @@ import thornBushImg from '@assets/objects/obstacles/bush.png';
 
 const ENEMY_SPRITE_CONFIG: Record<string, { sheet: string; config: { frameWidth: number; frameHeight: number; frameCount: number; frameDuration: number }; scale?: number }> = {
   ghost: { sheet: ghostSheet, config: { frameWidth: 31, frameHeight: 44, frameCount: 4, frameDuration: 150 } },
-  bat: { sheet: batSheet, config: { frameWidth: 12, frameHeight: 16, frameCount: 4, frameDuration: 120 }, scale: 3.5 },
+  bat: { sheet: batSheet, config: { frameWidth: 12, frameHeight: 16, frameCount: 4, frameDuration: 150 }, scale: 3 },
 };
 
 const ENEMY_STATIC_IMG: Record<string, { src: string; width: number; height: number; scale: number }> = {
-  skeleton: { src: skeletonImg, width: 44, height: 52, scale: 2 },
+  skeleton: { src: skeletonImg, width: 44, height: 52, scale: 2.5 },
   'thorn-bush': { src: thornBushImg, width: 76, height: 65, scale: 2 },
 };
 
