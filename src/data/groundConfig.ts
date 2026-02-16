@@ -1,6 +1,7 @@
 import cemeteryTileset from '@assets/tilesets/cemetery-tileset.png';
 import swampTileset from '@assets/tilesets/swamp-tileset.png';
 import churchTileset from '@assets/tilesets/church-tileset.png';
+import townTileset from '@assets/tilesets/town-tileset.png';
 
 interface TilesetSource {
   type: 'tileset';
@@ -73,6 +74,16 @@ export const GROUND_TILESETS: Record<string, GroundTilesetConfig> = {
     sourceHeight: 32,
     scale: 3,
     fillColor: '#0e0e1a',
+  },
+  hall: {
+    type: 'tileset',
+    src: townTileset,
+    sourceX: 0,
+    sourceY: 128,
+    sourceWidth: 144,
+    sourceHeight: 48,
+    scale: 3,
+    fillColor: '#1a1215',
   },
 };
 

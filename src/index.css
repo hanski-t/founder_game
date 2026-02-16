@@ -298,6 +298,7 @@
     pointer-events: none;
     animation: deltaFloat 2s ease-out forwards;
     text-shadow: 0 0 4px currentColor;
+    z-index: -1;
   }
 
   @keyframes valuePulse {

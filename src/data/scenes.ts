@@ -163,8 +163,9 @@ export const scenes: Record<string, SceneDefinition> = {
       },
     ],
     collectibles: [
-      { id: 'dci-gem-1', visual: 'gem', x: 39, y: 53, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"Found some seed money!"' },
+      { id: 'dci-gem-1', visual: 'gem', x: 45, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"Found some fff money!"' },
       { id: 'dci-coin-1', visual: 'coin', x: 85, label: '+$200', resourceBonus: { money: 200 }, flavorText: '"Every dollar counts."' },
+      { id: 'dci-scroll-1', visual: 'scroll', x: 130, y: 57, label: 'Networking Tip', flavorText: '"Your network is your net worth."' },
     ],
     platforms: [
       { id: 'dci-plat-1', x: 20, y: 64, width: 12, visual: 'wood' },
@@ -173,6 +174,10 @@ export const scenes: Record<string, SceneDefinition> = {
     obstacles: [
       { id: 'dci-barrel-1', type: 'barrel', x: 55, width: 6, height: 11 },
       { id: 'dci-crate-1', type: 'crate', x: 90, width: 5, height: 10 },
+      { id: 'dci-barrel-2', type: 'barrel', x: 130, width: 6, height: 11 },
+    ],
+    enemies: [
+      { id: 'dci-ghost-1', type: 'ghost', y: 74, width: 4, height: 6, speed: 10, patrolStart: 58, patrolEnd: 87, visual: '' },
     ],
     challenge: {
       id: 'qte-social-gathering',
@@ -180,7 +185,7 @@ export const scenes: Record<string, SceneDefinition> = {
       title: 'Social Reflexes',
       description: 'Quick! Match the prompts to make a good first impression.',
       successThreshold: 2,
-      gateX: 65,
+      gateX: 90,
       quickTimeConfig: {
         prompts: [
           { key: 'f', displayKey: 'F' },
@@ -208,7 +213,7 @@ export const scenes: Record<string, SceneDefinition> = {
       { src: cemeteryMountains, scrollFactor: 0.2 },
       { src: cemeteryGraveyard, scrollFactor: 0.3 },
     ],
-    groundBiome: 'cemetery',
+    groundBiome: 'hall',
     groundY: 80,
     levelWidth: 200,
     playerStartX: 8,
@@ -220,8 +225,8 @@ export const scenes: Record<string, SceneDefinition> = {
       {
         id: 'final-advisor-npc',
         type: 'npc',
-        x: 170,
-        y: 70,
+        x: 180,
+        y: 68,
         width: 64,
         height: 64,
         spriteSheet: oldmanIdle,
@@ -234,22 +239,23 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     collectibles: [
       { id: 'cg-doc-1', visual: 'document', x: 22, label: 'Resume Draft', flavorText: '"Skills: Leadership, Problem-Solving"' },
-      { id: 'cg-gem-plat', visual: 'gem', x: 74, y: 57, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"A hidden opportunity."' },
-      { id: 'cg-doc-2', visual: 'document', x: 190, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"Building your network."' },
+      { id: 'cg-gem-plat', visual: 'gem', x: 55, y: 55, label: '+$1000', resourceBonus: { money: 1000 }, flavorText: '"A hidden opportunity."' },
+      { id: 'cg-doc-2', visual: 'document', x: 195, label: '+10 Rep', resourceBonus: { reputation: 10 }, flavorText: '"Building your network."' },
     ],
     obstacles: [
       { id: 'cg-crate-1', type: 'crate', x: 30, width: 6, height: 11 },
       { id: 'cg-rock-1', type: 'rock', x: 100, width: 6, height: 9 },
     ],
     enemies: [
-      { id: 'cg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 40, patrolEnd: 70, y: 80, speed: 9, width: 4, height: 7 },
-      { id: 'cg-ghost-1', type: 'ghost', visual: '', patrolStart: 110, patrolEnd: 145, y: 80, speed: 10, width: 5, height: 10 },
+      { id: 'cg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 33, patrolEnd: 79, y: 80, speed: 8, width: 4, height: 7 },
+      { id: 'cg-skeleton-2', type: 'skeleton', visual: '', patrolStart: 33, patrolEnd: 79, y: 80, speed: 11, width: 4, height: 7 },
+      { id: 'cg-ghost-1', type: 'ghost', visual: '', patrolStart: 110, patrolEnd: 145, y: 80, speed: 20, width: 5, height: 10 },
+      { id: 'cg-thorn-left', type: 'thorn-bush', visual: '', patrolStart: 172, patrolEnd: 172, y: 80, speed: 0, width: 5, height: 6 },
+      { id: 'cg-thorn-right', type: 'thorn-bush', visual: '', patrolStart: 188, patrolEnd: 188, y: 80, speed: 0, width: 5, height: 6 },
     ],
     platforms: [
-      { id: 'cg-plat-1', x: 50, y: 67, width: 15, visual: 'stone' },
-      { id: 'cg-plat-2', x: 68, y: 60, width: 14, visual: 'stone' },
-      { id: 'cg-plat-3', x: 120, y: 74, width: 12, visual: 'wood' },
-      { id: 'cg-plat-4', x: 150, y: 70, width: 14, visual: 'stone' },
+      { id: 'cg-plat-1', x: 55, y: 68, width: 18, visual: 'wood' },
+      { id: 'cg-plat-npc', x: 174, y: 68, width: 14, visual: 'stone' },
     ],
   },
 
@@ -273,7 +279,7 @@ export const scenes: Record<string, SceneDefinition> = {
     playerStartX: 8,
     groundHoles: [
       { id: 'sg-hole-1', startX: 72, endX: 77 },
-      { id: 'sg-hole-2', startX: 140, endX: 145 },
+      { id: 'sg-hole-2', startX: 132, endX: 152 },
     ],
     interactables: [
       {
@@ -302,10 +308,13 @@ export const scenes: Record<string, SceneDefinition> = {
     ],
     enemies: [
       { id: 'sg-skeleton-1', type: 'skeleton', visual: '', patrolStart: 30, patrolEnd: 58, y: 82, speed: 12, width: 4, height: 7 },
+      { id: 'sg-skeleton-2', type: 'skeleton', visual: '', patrolStart: 78, patrolEnd: 96, y: 82, speed: 14, width: 4, height: 7 },
+      { id: 'sg-ghost-1', type: 'ghost', visual: '', patrolStart: 100, patrolEnd: 119, y: 82, speed: 18, width: 4, height: 7 },
     ],
     platforms: [
       { id: 'sg-plat-1', x: 50, y: 66, width: 16, visual: 'wood' },
       { id: 'sg-plat-move', x: 80, y: 69, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 15, moveSpeed: 0.4 },
+      { id: 'sg-plat-step', x: 139, y: 74, width: 6, visual: 'stone' },
     ],
   },
 
@@ -670,6 +679,19 @@ export const NODE_TO_SCENE_MAP: Record<string, string> = {
   // Random events stay in current scene
   'random_viral': 'CURRENT_SCENE',
   'random_mentor': 'CURRENT_SCENE',
+};
+
+export const NODE_LEVEL_NUMBER: Record<string, number> = {
+  'uni_intro': 1,
+  'uni_clubs': 2,
+  'uni_event_cofounder': 3,
+  'uni_final': 4,
+  'startup_idea': 5,
+  'startup_competitor': 6,
+  'startup_cofounder': 7,
+  'startup_funding': 8,
+  'startup_final': 9,
+  'game_success': 10,
 };
 
 export function getSceneForNode(nodeId: string): SceneDefinition | null {

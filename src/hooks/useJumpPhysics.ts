@@ -46,18 +46,23 @@ export function useJumpPhysics(
   const challengeActiveRef = useRef(varietyState.challengePhase !== 'not-started');
   const levelWidthRef = useRef(sceneState.levelWidth);
   const onPlatformIdRef = useRef<string | null>(null);
+  const platformsRef = useRef(platforms);
   const platformDeltasRef = useRef(platformDeltas);
   const groundHolesRef = useRef(groundHoles);
   const onFallInHoleRef = useRef(onFallInHole);
   const fallingInHoleRef = useRef(false);
 
-  // Keep refs in sync with state
-  playerYRef.current = sceneState.playerY;
+  // Keep refs in sync with state — these are read inside the RAF loop
+  // IMPORTANT: playerY and isGrounded are managed authoritatively by the
+  // RAF loop — NOT synced from React state on every render, to prevent
+  // stale state from overwriting in-flight physics values.
+  // playerX IS synced because keyboard movement (useKeyboardMovement)
+  // updates X through React dispatch, and this hook needs to see those changes.
   playerXRef.current = sceneState.playerX;
-  isGroundedRef.current = sceneState.isGrounded;
   gravityMultiplierRef.current = phaseConfig.gravityMultiplier;
   challengeActiveRef.current = varietyState.challengePhase !== 'not-started';
   levelWidthRef.current = sceneState.levelWidth;
+  platformsRef.current = platforms;
   platformDeltasRef.current = platformDeltas;
   groundHolesRef.current = groundHoles;
   onFallInHoleRef.current = onFallInHole;
@@ -84,9 +89,18 @@ export function useJumpPhysics(
   }, [sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning]);
 
   // Physics RAF loop
+  // IMPORTANT: platforms/groundHoles use refs (not deps) so moving platforms
+  // don't restart this effect every frame, which would break physics state.
   useEffect(() => {
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
 
+    // Sync physics refs from React state when effect (re)starts (scene changes)
+    playerYRef.current = sceneState.playerY;
+    playerXRef.current = sceneState.playerX;
+    isGroundedRef.current = sceneState.isGrounded;
+    velocityYRef.current = 0;
+    knockbackVXRef.current = 0;
+    onPlatformIdRef.current = null;
     lastTimeRef.current = 0;
     fallingInHoleRef.current = false;
 
@@ -104,6 +118,7 @@ export function useJumpPhysics(
       let xChanged = false;
 
       const gMult = gravityMultiplierRef.current;
+      const curPlatforms = platformsRef.current;
 
       // Handle jump request (blocked during challenges)
       if (jumpRequestedRef.current && isGroundedRef.current && !challengeActiveRef.current) {
@@ -130,8 +145,8 @@ export function useJumpPhysics(
 
         // Check platform landings (only when falling)
         let landed = false;
-        if (velocityYRef.current > 0 && platforms) {
-          for (const plat of platforms) {
+        if (velocityYRef.current > 0 && curPlatforms) {
+          for (const plat of curPlatforms) {
             // Player must be above platform and falling through it
             const onPlatformX = playerXRef.current >= plat.x && playerXRef.current <= plat.x + plat.width;
             const crossingPlatform = playerYRef.current <= plat.y && newY >= plat.y;
@@ -163,9 +178,9 @@ export function useJumpPhysics(
           }
         }
         yChanged = true;
-      } else if (isGroundedRef.current && playerYRef.current < groundY && platforms) {
+      } else if (isGroundedRef.current && playerYRef.current < groundY && curPlatforms) {
         // Check if player walked off a platform edge
-        const onAnyPlatform = platforms.some(
+        const onAnyPlatform = curPlatforms.some(
           (plat) =>
             playerXRef.current >= plat.x &&
             playerXRef.current <= plat.x + plat.width &&
@@ -254,7 +269,9 @@ export function useJumpPhysics(
         cancelAnimationFrame(animFrameRef.current);
       }
     };
-  }, [groundY, platforms, groundHoles, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]);
+  // platforms and groundHoles are accessed via refs, not as direct deps,
+  // so moving platforms don't restart the physics loop every frame
+  }, [groundY, sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, sceneDispatch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Trigger knockback from obstacle/enemy collision
   const triggerKnockback = useCallback((direction: 'left' | 'right') => {

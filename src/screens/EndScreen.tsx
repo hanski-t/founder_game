@@ -369,12 +369,14 @@ export function EndScreen() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'space-between',
           height: '100%',
-          padding: '4vh 3vw 2vh',
+          padding: '3vh 3vw 2vh',
+          overflow: 'hidden',
         }}
       >
         {/* ── TITLE ── */}
-        <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+        <div style={{ textAlign: 'center', flexShrink: 0 }}>
           {phase >= 2 && (
             <>
               <h1
@@ -411,7 +413,7 @@ export function EndScreen() {
             style={{
               height: '1px',
               background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`,
-              margin: '0.8rem 0',
+              margin: '0.5vh 0',
               animation: 'end-divider-expand 0.8s ease-out 1s both',
             }}
           />
@@ -425,7 +427,7 @@ export function EndScreen() {
               gap: 'clamp(6px, 1.2vw, 16px)',
               justifyContent: 'center',
               flexWrap: 'wrap',
-              marginBottom: '1rem',
+              marginBottom: '1vh',
               maxWidth: '750px',
             }}
           >
@@ -478,7 +480,7 @@ export function EndScreen() {
               padding: 'clamp(8px, 1.2vh, 14px) clamp(20px, 3vw, 40px)',
               background: 'rgba(26, 15, 16, 0.7)',
               border: `1px solid rgba(90, 48, 48, 0.5)`,
-              marginBottom: '1rem',
+              marginBottom: '1vh',
               maxWidth: '420px',
               animation: 'end-stat-slam 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s both',
             }}
@@ -530,7 +532,7 @@ export function EndScreen() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: 'clamp(0.6rem, 1.5vh, 1rem)',
+              gap: 'clamp(0.3rem, 1vh, 0.7rem)',
               maxWidth: '600px',
               textAlign: 'center',
             }}
@@ -559,7 +561,7 @@ export function EndScreen() {
             {/* Tagline */}
             <div
               style={{
-                marginTop: '0.5rem',
+                marginTop: '0.5vh',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
@@ -590,7 +592,7 @@ export function EndScreen() {
             style={{
               flexShrink: 0,
               textAlign: 'center',
-              marginTop: '1rem',
+              marginTop: '1vh',
               animation: 'end-cta-enter 0.8s ease-out forwards',
             }}
           >
@@ -631,7 +633,7 @@ export function EndScreen() {
             </div>
             <div
               style={{
-                marginTop: '1.5rem',
+                marginTop: '1vh',
                 fontFamily: "'Cinzel', Georgia, serif",
                 fontSize: '0.6rem',
                 color: '#e8d5b5',

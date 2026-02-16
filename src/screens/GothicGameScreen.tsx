@@ -18,9 +18,10 @@ import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
 import { ChallengeOverlay } from '../components/challenges/ChallengeOverlay';
 import { FallNotification } from '../components/scene/FallNotification';
 import { getNodeById } from '../data/decisions';
-import { getSceneById, NODE_TO_SCENE_MAP, scenes } from '../data/scenes';
+import { getSceneById, NODE_TO_SCENE_MAP, NODE_LEVEL_NUMBER, scenes } from '../data/scenes';
 import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
 import { setCurrentObstacles } from '../utils/obstacleBlocker';
+import { DEV_LOCK_LEVEL } from '../devConfig';
 import type { Choice } from '../types/game';
 import type { GamePhase } from '../types/game';
 import { PHASES } from '../types/game';
@@ -45,8 +46,12 @@ export function GothicGameScreen() {
 
   // Sync obstacle data for the movement blocker (module-level shared state).
   // Called during render (not just useEffect) so it survives HMR reloads.
+  // Include thorn-bush enemies as blocking obstacles so the player can't walk through them.
   if (currentScene) {
-    setCurrentObstacles(currentScene.obstacles ?? [], currentScene.groundY);
+    const thornBushObstacles = (currentScene.enemies ?? [])
+      .filter(e => e.type === 'thorn-bush')
+      .map(e => ({ id: e.id, type: 'bush' as const, x: e.patrolStart, width: e.width, height: e.height }));
+    setCurrentObstacles([...(currentScene.obstacles ?? []), ...thornBushObstacles], currentScene.groundY);
   }
 
   // Animate moving platforms (returns resolved positions + deltas)
@@ -213,14 +218,28 @@ export function GothicGameScreen() {
   const handleContinue = useCallback(() => {
     sceneDispatch({ type: 'HIDE_OUTCOME_PANEL' });
     const node = getNodeById(state.currentNodeId);
-    // Find the choice that was just made to get nextNodeId
     const lastHistoryEntry = state.decisionHistory[state.decisionHistory.length - 1];
-    if (lastHistoryEntry && node) {
-      const choice = node.choices.find(c => c.id === lastHistoryEntry.choiceId);
-      continueFromOutcome(choice?.nextNodeId);
-    } else {
-      continueFromOutcome();
+    const nextNodeId = lastHistoryEntry && node
+      ? node.choices.find(c => c.id === lastHistoryEntry.choiceId)?.nextNodeId
+      : undefined;
+
+    // DEV MODE: play through the level normally, but when the decision
+    // would advance to a different level, reset back to the locked level.
+    if (DEV_LOCK_LEVEL) {
+      const lockedScene = NODE_TO_SCENE_MAP[DEV_LOCK_LEVEL];
+      const nextScene = nextNodeId ? NODE_TO_SCENE_MAP[nextNodeId] : undefined;
+      const leavingLevel = !nextScene || (nextScene !== lockedScene && nextScene !== 'CURRENT_SCENE');
+
+      if (leavingLevel) {
+        // Reset game state to locked node, then force a scene transition
+        // so the player restarts at the beginning of the level.
+        continueFromOutcome(DEV_LOCK_LEVEL);
+        sceneDispatch({ type: 'START_SCENE_TRANSITION', targetSceneId: lockedScene });
+        return;
+      }
     }
+
+    continueFromOutcome(nextNodeId);
   }, [state.currentNodeId, state.decisionHistory, continueFromOutcome, sceneDispatch]);
 
   // Scene transition midpoint: swap the scene
@@ -265,7 +284,7 @@ export function GothicGameScreen() {
       <SceneRenderer scene={currentScene} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} resolvedPlatforms={resolvedPlatforms} />
 
       {/* Resource HUD */}
-      <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} />
+      <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} levelNumber={NODE_LEVEL_NUMBER[state.currentNodeId] ?? 1} />
 
       {/* Collection Sidebar */}
       <CollectionSidebar />
@@ -302,7 +321,7 @@ export function GothicGameScreen() {
       {/* Mini-game */}
       {state.screen === 'minigame' && (
         <div className="gothic-overlay">
-          <div className="gothic-panel" style={{ maxWidth: 900, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div className="gothic-panel" style={{ maxWidth: 900, height: 'calc(100vh - 76px)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <PitchDeckMiniGame />
           </div>
         </div>

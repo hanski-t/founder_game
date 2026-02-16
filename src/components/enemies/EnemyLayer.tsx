@@ -9,14 +9,16 @@ import type { EnemyDefinition } from '../../types/platformer';
 import ghostSheet from '@assets/characters/enemies/ghost-spritesheet.png';
 import skeletonImg from '@assets/characters/enemies/skeleton.png';
 import batSheet from '@assets/characters/enemies/bat.png';
+import thornBushImg from '@assets/objects/obstacles/bush.png';
 
 const ENEMY_SPRITE_CONFIG: Record<string, { sheet: string; config: { frameWidth: number; frameHeight: number; frameCount: number; frameDuration: number }; scale?: number }> = {
   ghost: { sheet: ghostSheet, config: { frameWidth: 31, frameHeight: 44, frameCount: 4, frameDuration: 150 } },
   bat: { sheet: batSheet, config: { frameWidth: 12, frameHeight: 16, frameCount: 4, frameDuration: 120 }, scale: 3.5 },
 };
 
-const ENEMY_STATIC_IMG: Record<string, string> = {
-  skeleton: skeletonImg,
+const ENEMY_STATIC_IMG: Record<string, { src: string; width: number; height: number; scale: number }> = {
+  skeleton: { src: skeletonImg, width: 44, height: 52, scale: 2 },
+  'thorn-bush': { src: thornBushImg, width: 76, height: 65, scale: 2 },
 };
 
 interface EnemyState {
@@ -166,9 +168,44 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
       {enemies.map((def, i) => {
         const state = enemyStates[i];
         if (!state) return null;
-        const isFlying = def.y < groundY - 3;
+        const isStatic = def.type === 'thorn-bush';
+        const isFlying = !isStatic && def.y < groundY - 3;
         const spriteData = ENEMY_SPRITE_CONFIG[def.type];
         const staticImg = ENEMY_STATIC_IMG[def.type];
+
+        // Static enemies (thorn-bush) use percentage-based sizing like obstacles
+        if (isStatic) {
+          return (
+            <div
+              key={def.id}
+              className="enemy"
+              style={{
+                position: 'absolute',
+                left: `${def.patrolStart}%`,
+                top: `${def.y}%`,
+                width: `${def.width}%`,
+                height: `${def.height}%`,
+                transform: 'translateX(-50%) translateY(-100%)',
+                zIndex: 5,
+                userSelect: 'none',
+              }}
+            >
+              {staticImg && (
+                <img
+                  src={staticImg.src}
+                  alt={def.type}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    imageRendering: 'pixelated',
+                    filter: 'drop-shadow(0 0 6px rgba(200,50,50,0.7)) brightness(1.2) hue-rotate(-30deg)',
+                  }}
+                  draggable={false}
+                />
+              )}
+            </div>
+          );
+        }
 
         return (
           <div
@@ -178,7 +215,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
               position: 'absolute',
               left: `${state.x}%`,
               top: `${def.y}%`,
-              transform: `translateX(-50%) translateY(-100%) ${state.direction === 'right' ? 'scaleX(-1)' : ''}`,
+              transform: `translateX(-50%) translateY(-100%)${state.direction === 'right' ? ' scaleX(-1)' : ''}`,
               zIndex: 5,
               userSelect: 'none',
               filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))',
@@ -192,11 +229,11 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
               />
             ) : staticImg ? (
               <img
-                src={staticImg}
+                src={staticImg.src}
                 alt={def.type}
                 style={{
-                  width: 44 * 2,
-                  height: 52 * 2,
+                  width: staticImg.width * staticImg.scale,
+                  height: staticImg.height * staticImg.scale,
                   imageRendering: 'pixelated',
                 }}
                 draggable={false}

@@ -7,6 +7,7 @@ import { HourglassIcon, CoinIcon, FlameIcon, PeopleIcon } from './ResourceIcons'
 interface ResourceHUDProps {
   resources: Resources;
   currentPhase: string;
+  levelNumber: number;
 }
 
 interface ResourceItemProps {
@@ -118,7 +119,7 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
   );
 }
 
-export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
+export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHUDProps) {
   const phaseConfig = PHASE_ATMOSPHERE[currentPhase as GamePhase];
   const phaseLabel =
     currentPhase === 'university' ? 'Phase 1' :
@@ -180,7 +181,7 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
           format={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)}
         />
 
-        {/* Phase indicator */}
+        {/* Phase & level indicator */}
         <div style={{
           fontFamily: 'var(--font-gothic)',
           fontSize: '0.6rem',
@@ -190,8 +191,15 @@ export function ResourceHUD({ resources, currentPhase }: ResourceHUDProps) {
           opacity: 0.7,
           marginLeft: 4,
           whiteSpace: 'nowrap',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 2,
         }}>
-          {phaseLabel}
+          <span>{phaseLabel}</span>
+          <span style={{ fontSize: '0.5rem', opacity: 0.8 }}>
+            Level {levelNumber}
+          </span>
         </div>
       </div>
     </div>

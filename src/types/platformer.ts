@@ -12,7 +12,7 @@ export interface ObstacleDefinition {
 // Enemy types for Phase 2
 export interface EnemyDefinition {
   id: string;
-  type: 'ghost' | 'skeleton' | 'bat' | 'rat';
+  type: 'ghost' | 'skeleton' | 'bat' | 'rat' | 'thorn-bush';
   visual: string; // emoji
   patrolStart: number; // X percentage
   patrolEnd: number; // X percentage

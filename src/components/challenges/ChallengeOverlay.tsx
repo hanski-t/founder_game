@@ -17,6 +17,38 @@ function getChallengeReward(score: number, total: number, threshold: number): nu
   return -200;                                      // Failure
 }
 
+/** Unique result messages per challenge */
+const RESULT_MESSAGES: Record<string, { perfect: string; success: string; fail: string }> = {
+  'qte-social-gathering': {
+    perfect: 'A masterful display of charm! They adore you.',
+    success: 'You proved your mettle. Onward!',
+    fail: 'An awkward start, but the journey continues.',
+  },
+  'falling-market-noise': {
+    perfect: 'Every signal caught, every distraction dodged!',
+    success: 'You cut through the noise like a pro.',
+    fail: 'The market is unforgiving, but so are you.',
+  },
+  'qte-investor-pitch': {
+    perfect: 'The investor is speechless. Legendary pitch!',
+    success: 'A compelling pitch. The investor nods approvingly.',
+    fail: 'Not every pitch lands, but persistence pays off.',
+  },
+};
+
+const DEFAULT_MESSAGES = {
+  perfect: 'Flawless performance! Maximum reward.',
+  success: 'You proved your mettle. Onward!',
+  fail: 'The journey continues regardless.',
+};
+
+function getResultMessage(challengeId: string, score: number, total: number, threshold: number): string {
+  const msgs = RESULT_MESSAGES[challengeId] ?? DEFAULT_MESSAGES;
+  if (total > 0 && score >= total) return msgs.perfect;
+  if (score >= threshold) return msgs.success;
+  return msgs.fail;
+}
+
 export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
   const { varietyState, setChallengePhase, completeChallenge } = useVariety();
   const { sceneState, sceneDispatch } = useScene();
@@ -183,11 +215,7 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
             fontSize: '0.8rem',
             opacity: 0.7,
           }}>
-            {challengeTotal > 0 && challengeScore >= challengeTotal
-              ? 'Flawless performance! Maximum reward.'
-              : succeeded
-                ? 'You proved your mettle. Onward!'
-                : 'The journey continues regardless.'}
+            {getResultMessage(challenge.id, challengeScore, challengeTotal, challenge.successThreshold)}
           </p>
           <div style={{
             borderTop: '1px solid var(--color-gothic-border)',

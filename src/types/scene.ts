@@ -52,7 +52,7 @@ export interface SceneDefinition {
   obstacles?: ObstacleDefinition[];
   enemies?: EnemyDefinition[];
   platforms?: PlatformDefinition[];
-  groundBiome?: 'cemetery' | 'swamp' | 'town' | 'church';
+  groundBiome?: 'cemetery' | 'swamp' | 'town' | 'church' | 'hall';
   groundHoles?: GroundHole[];
 }
 
