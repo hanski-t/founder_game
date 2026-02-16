@@ -13,6 +13,8 @@ export function useCamera() {
   levelWidthRef.current = sceneState.levelWidth;
 
   useEffect(() => {
+    const LERP_SPEED = 0.08; // Smooth follow (0 = frozen, 1 = instant snap)
+
     const update = () => {
       const playerX = playerXRef.current;
       const levelWidth = levelWidthRef.current;
@@ -30,10 +32,15 @@ export function useCamera() {
       // Center camera on player, clamped to level bounds
       const targetCameraX = Math.max(0, Math.min(playerX - 50, levelWidth - 100));
 
+      // Smoothly interpolate toward target (lerp)
+      const current = lastCameraXRef.current;
+      const diff = targetCameraX - current;
+      const smoothed = Math.abs(diff) < 0.05 ? targetCameraX : current + diff * LERP_SPEED;
+
       // Only dispatch if changed meaningfully (avoid unnecessary re-renders)
-      if (Math.abs(targetCameraX - lastCameraXRef.current) > 0.1) {
-        lastCameraXRef.current = targetCameraX;
-        sceneDispatch({ type: 'UPDATE_CAMERA', cameraX: targetCameraX });
+      if (Math.abs(smoothed - lastCameraXRef.current) > 0.01) {
+        lastCameraXRef.current = smoothed;
+        sceneDispatch({ type: 'UPDATE_CAMERA', cameraX: smoothed });
       }
 
       animFrameRef.current = requestAnimationFrame(update);

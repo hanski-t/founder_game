@@ -4,6 +4,7 @@ import { useVariety } from '../context/VarietyContext';
 import { usePhaseConfig } from './usePhaseConfig';
 import type { PlatformDefinition } from '../types/platformer';
 import type { GroundHole } from '../types/scene';
+import { getBlockedX } from '../utils/obstacleBlocker';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
@@ -215,14 +216,23 @@ export function useJumpPhysics(
 
       // Apply knockback
       if (Math.abs(knockbackVXRef.current) > KNOCKBACK_THRESHOLD) {
-        const newX = playerXRef.current + knockbackVXRef.current * delta;
-        playerXRef.current = Math.max(2, Math.min(levelWidthRef.current - 2, newX));
-        knockbackVXRef.current *= Math.exp(-KNOCKBACK_DECAY * delta);
+        const oldX = playerXRef.current;
+        const rawX = playerXRef.current + knockbackVXRef.current * delta;
+        const clampedX = Math.max(2, Math.min(levelWidthRef.current - 2, rawX));
+        const blockedX = getBlockedX(clampedX, playerYRef.current, oldX);
+        playerXRef.current = blockedX;
         xChanged = true;
 
-        if (Math.abs(knockbackVXRef.current) <= KNOCKBACK_THRESHOLD) {
+        // If obstacle blocked the knockback, stop it immediately
+        if (blockedX !== clampedX) {
           knockbackVXRef.current = 0;
           sceneDispatch({ type: 'CLEAR_KNOCKBACK' });
+        } else {
+          knockbackVXRef.current *= Math.exp(-KNOCKBACK_DECAY * delta);
+          if (Math.abs(knockbackVXRef.current) <= KNOCKBACK_THRESHOLD) {
+            knockbackVXRef.current = 0;
+            sceneDispatch({ type: 'CLEAR_KNOCKBACK' });
+          }
         }
       }
 
@@ -254,8 +264,11 @@ export function useJumpPhysics(
     invincibleUntilRef.current = now + INVINCIBILITY_DURATION;
 
     // Instant teleport away from obstacle to prevent overlapping
+    const oldX = playerXRef.current;
     const teleportDir = direction === 'left' ? -KNOCKBACK_TELEPORT : KNOCKBACK_TELEPORT;
-    playerXRef.current = Math.max(2, Math.min(levelWidthRef.current - 2, playerXRef.current + teleportDir));
+    let teleportX = Math.max(2, Math.min(levelWidthRef.current - 2, playerXRef.current + teleportDir));
+    teleportX = getBlockedX(teleportX, playerYRef.current, oldX);
+    playerXRef.current = teleportX;
     sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: playerXRef.current });
 
     // Then apply velocity-based knockback on top

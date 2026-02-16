@@ -43,12 +43,11 @@ export function GothicGameScreen() {
   // Get current scene
   const currentScene = getSceneById(sceneState.currentSceneId);
 
-  // Sync obstacle data for the movement blocker (module-level shared state)
-  useEffect(() => {
-    if (currentScene) {
-      setCurrentObstacles(currentScene.obstacles ?? [], currentScene.groundY);
-    }
-  }, [currentScene]);
+  // Sync obstacle data for the movement blocker (module-level shared state).
+  // Called during render (not just useEffect) so it survives HMR reloads.
+  if (currentScene) {
+    setCurrentObstacles(currentScene.obstacles ?? [], currentScene.groundY);
+  }
 
   // Animate moving platforms (returns resolved positions + deltas)
   const { resolvedPlatforms, platformDeltas } = useMovingPlatforms(currentScene?.platforms ?? []);

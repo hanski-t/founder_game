@@ -115,12 +115,15 @@ export const scenes: Record<string, SceneDefinition> = {
     obstacles: [
       { id: 'tc-rock-1', type: 'rock', x: 35, width: 6, height: 9 },
       { id: 'tc-crate-1', type: 'crate', x: 85, width: 6, height: 11 },
+      { id: 'tc-crate-short', type: 'crate', x: 108, width: 6, height: 11 },
+      { id: 'tc-crate-tall', type: 'barrel', x: 115, width: 6, height: 20 },
     ],
     enemies: [
-      { id: 'tc-ghost-1', type: 'ghost', visual: '', patrolStart: 45, patrolEnd: 70, y: 78, speed: 8, width: 5, height: 10 },
+      { id: 'tc-ghost-1', type: 'ghost', visual: '', patrolStart: 38, patrolEnd: 82, y: 78, speed: 11, width: 5, height: 10 },
     ],
     platforms: [
       { id: 'tc-plat-1', x: 50, y: 64, width: 16, visual: 'stone' },
+      { id: 'tc-plat-cover', x: 116, y: 58, width: 14, visual: 'wood' },
     ],
   },
 

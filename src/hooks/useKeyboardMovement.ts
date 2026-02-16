@@ -61,12 +61,8 @@ export function useKeyboardMovement() {
 
       playerXRef.current = newX; // update ref immediately for next interval tick
       sceneDispatch({ type: 'SET_PLAYER_FACING', facing: dx > 0 ? 'right' : 'left' });
-      // Don't override jump animation while airborne
-      if (isGroundedRef.current) {
-        sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'walk' });
-      }
+      sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'walk' });
       sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: newX });
-      sceneDispatch({ type: 'SET_PLAYER_TARGET', x: newX });
     }
   }, [sceneDispatch]);
 
@@ -91,10 +87,7 @@ export function useKeyboardMovement() {
           clearInterval(intervalRef.current);
           intervalRef.current = 0;
         }
-        // Don't override jump animation while airborne
-        if (isGroundedRef.current) {
-          sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'idle' });
-        }
+        sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: isGroundedRef.current ? 'idle' : 'jump' });
       }
     };
 

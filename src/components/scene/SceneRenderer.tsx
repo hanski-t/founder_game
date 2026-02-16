@@ -69,11 +69,14 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
         className="scene-world"
         style={{
           position: 'absolute',
-          left: `${-sceneState.cameraX}%`,
+          left: 0,
           top: 0,
           width: '100%',
           height: '100%',
           overflow: 'visible',
+          transform: `translateX(${-sceneState.cameraX}vw)`,
+          willChange: 'transform',
+          zIndex: 3,
         }}
       >
         {/* Ground surface layer — always visible, scrolls with world */}
@@ -121,12 +124,13 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
         <div
           style={{
             position: 'absolute',
-            left: `${-sceneState.cameraX}%`,
+            left: 0,
             top: 0,
             width: '100%',
             height: '100%',
             pointerEvents: 'none',
             zIndex: 50,
+            transform: `translateX(${-sceneState.cameraX}vw)`,
           }}
         >
           <PickupAnimation

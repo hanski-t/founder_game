@@ -18,7 +18,7 @@ export function setCurrentObstacles(obstacles: ObstacleDefinition[], groundY: nu
  * Returns the clamped X position (pushed to obstacle edge if blocked).
  * If the player is airborne above the obstacle, movement is not blocked.
  */
-export function getBlockedX(newX: number, playerY: number): number {
+export function getBlockedX(newX: number, playerY: number, oldX?: number): number {
   for (const obs of currentObstacles) {
     // If player's feet are above the obstacle top, they can pass freely
     const obsTop = currentGroundY - obs.height;
@@ -29,11 +29,28 @@ export function getBlockedX(newX: number, playerY: number): number {
 
     // Check if player would overlap this obstacle horizontally
     if (newX + PLAYER_HALF_W > obsLeft && newX - PLAYER_HALF_W < obsRight) {
-      // Push to nearest edge
-      if (newX < obs.x) {
+      // Use previous position to determine which side to push back to
+      const refX = oldX !== undefined ? oldX : newX;
+      if (refX < obs.x) {
         newX = obsLeft - PLAYER_HALF_W;
       } else {
         newX = obsRight + PLAYER_HALF_W;
+      }
+    } else if (oldX !== undefined) {
+      // Check if the player teleported completely THROUGH the obstacle
+      // (start was on one side, end is on the other, but no overlap at destination)
+      const wasLeft = oldX + PLAYER_HALF_W <= obsLeft;
+      const wasRight = oldX - PLAYER_HALF_W >= obsRight;
+      const nowRight = newX - PLAYER_HALF_W >= obsRight;
+      const nowLeft = newX + PLAYER_HALF_W <= obsLeft;
+
+      if ((wasLeft && nowRight) || (wasRight && nowLeft)) {
+        // Crossed through — push back to original side
+        if (wasLeft) {
+          newX = obsLeft - PLAYER_HALF_W;
+        } else {
+          newX = obsRight + PLAYER_HALF_W;
+        }
       }
     }
   }

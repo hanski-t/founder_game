@@ -28,32 +28,28 @@ export function ObstacleLayer({ obstacles, groundY }: ObstacleLayerProps) {
         return (
           <div
             key={obs.id}
-            className="obstacle"
             style={{
               position: 'absolute',
               left: `${obs.x}%`,
               top: `${groundY}%`,
+              width: `${obs.width}%`,
               height: `${obs.height}%`,
               transform: 'translateX(-50%) translateY(-100%)',
               zIndex: 4,
               userSelect: 'none',
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
             }}
           >
-            {spriteSrc ? (
-              <img
-                src={spriteSrc}
-                alt={obs.type}
-                style={{
-                  height: '100%',
-                  width: 'auto',
-                  imageRendering: 'pixelated',
-                }}
-                draggable={false}
-              />
-            ) : (
-              <span style={{ fontSize: '2rem' }}>?</span>
-            )}
+            <img
+              src={spriteSrc}
+              alt={obs.type}
+              style={{
+                width: '100%',
+                height: '100%',
+                imageRendering: 'pixelated',
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+              }}
+              draggable={false}
+            />
           </div>
         );
       })}

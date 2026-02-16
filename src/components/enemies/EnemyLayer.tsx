@@ -178,7 +178,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
               position: 'absolute',
               left: `${state.x}%`,
               top: `${def.y}%`,
-              transform: `translateX(-50%) translateY(-100%) ${state.direction === 'left' ? 'scaleX(-1)' : ''}`,
+              transform: `translateX(-50%) translateY(-100%) ${state.direction === 'right' ? 'scaleX(-1)' : ''}`,
               zIndex: 5,
               userSelect: 'none',
               filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))',
