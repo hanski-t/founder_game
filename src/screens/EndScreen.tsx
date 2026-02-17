@@ -21,50 +21,66 @@ function getFounderArchetype(history: DecisionHistoryEntry[]): Archetype {
   let hustle = 0;
   let caution = 0;
 
-  // University major
+  // Phase 1: University
   if (choices.has('cs'))          hustle += 1;
   if (choices.has('business'))    social += 1;
   if (choices.has('engineering')) caution += 1;
-
-  // Clubs
   if (choices.has('entrepreneur_club')) social += 1;
   if (choices.has('hackathon_team'))    hustle += 1;
   if (choices.has('skip_clubs'))        caution += 1;
-
-  // Co-founder event
   if (choices.has('deep_dive'))      risk += 1;
   if (choices.has('exchange_info'))   social += 1;
   if (choices.has('polite_decline'))  caution += 1;
-
-  // Final semester
   if (choices.has('side_project'))    risk += 2;
   if (choices.has('alumni_network'))  social += 2;
   if (choices.has('grades'))          caution += 2;
 
-  // Startup validation
+  // Phase 2: First Startup
   if (choices.has('build_mvp'))          risk += 2;
   if (choices.has('customer_discovery')) caution += 1;
   if (choices.has('pitch_deck'))         social += 1;
-
-  // Competitor response
-  if (choices.has('double_down')) { risk += 1; hustle += 1; }
-  if (choices.has('pivot'))       caution += 1;
-  if (choices.has('ignore'))      caution += 1;
-
-  // Co-founder decision
   if (choices.has('full_time'))         risk += 1;
   if (choices.has('part_time'))         caution += 1;
   if (choices.has('decline_cofounder')) hustle += 1;
-
-  // Funding
   if (choices.has('bootstrap'))    hustle += 2;
   if (choices.has('raise'))        social += 2;
   if (choices.has('accelerator'))  { social += 1; risk += 1; }
 
-  // Final move
-  if (choices.has('launch_public'))     risk += 1;
-  if (choices.has('enterprise_pivot'))  caution += 1;
-  if (choices.has('growth_experiment')) hustle += 1;
+  // Phase 3: Growth
+  if (choices.has('hire_senior'))     caution += 1;
+  if (choices.has('hire_junior'))     risk += 1;
+  if (choices.has('hire_contractor')) hustle += 1;
+  if (choices.has('build_customer_feature')) social += 1;
+  if (choices.has('stay_on_vision'))        hustle += 1;
+  if (choices.has('build_both'))            risk += 1;
+  if (choices.has('full_press'))    risk += 1;
+  if (choices.has('delay_press'))   caution += 1;
+  if (choices.has('stealth_mode'))  caution += 1;
+  if (choices.has('aggressive_spend')) risk += 1;
+  if (choices.has('organic_growth'))   caution += 1;
+  if (choices.has('product_led'))      hustle += 1;
+
+  // Phase 4: Scaling
+  if (choices.has('delegate_product')) social += 1;
+  if (choices.has('delegate_ops'))     caution += 1;
+  if (choices.has('keep_control'))     hustle += 1;
+  if (choices.has('go_international')) risk += 1;
+  if (choices.has('domestic_focus'))   caution += 1;
+  if (choices.has('remote_first'))     hustle += 1;
+  if (choices.has('compromise_hybrid')) social += 1;
+  if (choices.has('assert_vision'))     hustle += 1;
+  if (choices.has('let_alex_lead'))     social += 1;
+
+  // Phase 5: Exit
+  if (choices.has('negotiate_higher')) hustle += 1;
+  if (choices.has('decline_offer'))    risk += 2;
+  if (choices.has('explore_options'))  caution += 1;
+  if (choices.has('generous_packages')) social += 2;
+  if (choices.has('standard_terms'))    caution += 1;
+  if (choices.has('fight_for_team'))    social += 1;
+  if (choices.has('sell_and_rest'))   caution += 1;
+  if (choices.has('keep_building'))   risk += 2;
+  if (choices.has('start_again'))     { risk += 1; hustle += 1; }
 
   // Pick dominant trait
   const scores = { risk, social, hustle, caution };
@@ -93,6 +109,26 @@ function getFounderArchetype(history: DecisionHistoryEntry[]): Archetype {
         description: 'You measure twice and cut once — calculated moves over blind leaps.',
       };
   }
+}
+
+function getReputationTitle(rep: number): string {
+  if (rep >= 400) return 'Legendary';
+  if (rep >= 300) return 'Industry Leader';
+  if (rep >= 200) return 'Influential';
+  if (rep >= 100) return 'Recognized';
+  if (rep >= 50) return 'Emerging';
+  return 'Unknown';
+}
+
+function getPhaseName(phase: string): string {
+  const names: Record<string, string> = {
+    university: 'University',
+    firstStartup: 'Startup',
+    growth: 'Growth',
+    scaling: 'Scaling',
+    exit: 'Exit',
+  };
+  return names[phase] || 'Unknown';
 }
 
 /* ── Animated counter hook ── */
@@ -220,6 +256,7 @@ export function EndScreen() {
   const isSuccess = state.endReason === 'success';
   const isMomentumOut = state.endReason === 'momentum';
   const isMoneyOut = state.endReason === 'money';
+  const isEnergyOut = state.endReason === 'energy';
 
   const bgImage = isSuccess ? townBg : cemeteryBg;
   const bgImage2 = isSuccess ? undefined : cemeteryMountains;
@@ -231,6 +268,7 @@ export function EndScreen() {
     if (isSuccess) return 'QUEST COMPLETE';
     if (isMomentumOut) return 'MOMENTUM LOST';
     if (isMoneyOut) return 'FUNDS DEPLETED';
+    if (isEnergyOut) return 'BURNOUT';
     return 'JOURNEY ENDED';
   };
 
@@ -242,10 +280,10 @@ export function EndScreen() {
   const getEndingLines = (): { text: string; emphasis?: boolean }[] => {
     if (isSuccess) {
       return [
-        { text: 'Against all odds, you carved your path from student to startup survivor.' },
-        { text: 'Scaling. Funding rounds. Hiring. Product-market fit...', emphasis: true },
-        { text: 'The real challenges still lie ahead.' },
-        { text: 'But that is a story for another day.', emphasis: true },
+        { text: 'From university dreamer to startup founder — you did it.' },
+        { text: 'Hiring. Scaling. The exit. Every phase tested you differently.', emphasis: true },
+        { text: 'Not everyone makes it this far. You shaped a company, a team, and yourself.' },
+        { text: 'Your founder\'s journey is complete.', emphasis: true },
       ];
     }
     if (isMomentumOut) {
@@ -264,6 +302,14 @@ export function EndScreen() {
         { text: 'Will you rise again?', emphasis: true },
       ];
     }
+    if (isEnergyOut) {
+      return [
+        { text: 'Your body gave out before your ambition did.' },
+        { text: 'Burnout is the silent killer of startups.', emphasis: true },
+        { text: 'Rest is not weakness — it\'s strategy.' },
+        { text: 'Come back stronger.', emphasis: true },
+      ];
+    }
     return [{ text: 'Your journey has come to an end.' }];
   };
 
@@ -272,7 +318,7 @@ export function EndScreen() {
   const momentum = useCountUp(state.resources.momentum, 800, 2700);
   const money = useCountUp(state.resources.money, 1000, 2900);
   const energy = useCountUp(state.resources.energy, 800, 3100);
-  const reputation = useCountUp(state.resources.reputation, 800, 3300);
+
 
   const archetype = useMemo(() => getFounderArchetype(state.decisionHistory), [state.decisionHistory]);
 
@@ -282,10 +328,10 @@ export function EndScreen() {
     { label: 'MOMENTUM', value: `${momentum}%`, icon: <HourglassIcon color="#60a5fa" size={iconSize} /> },
     { label: 'BALANCE', value: `$${money.toLocaleString()}`, icon: <CoinIcon color="#4ade80" size={iconSize} /> },
     { label: 'ENERGY', value: `${energy}%`, icon: <FlameIcon color="#fbbf24" size={iconSize} /> },
-    { label: 'REPUTATION', value: `${reputation}`, icon: <PeopleIcon color="#a78bfa" size={iconSize} /> },
+    { label: 'REPUTATION', value: getReputationTitle(state.resources.reputation), icon: <PeopleIcon color="#a78bfa" size={iconSize} /> },
     {
       label: 'PHASE',
-      value: state.currentPhase === 'university' ? 'University' : 'Startup',
+      value: getPhaseName(state.currentPhase),
       icon: <CastleIcon color="#d4a853" size={iconSize} />,
     },
   ];
@@ -642,7 +688,7 @@ export function EndScreen() {
                 lineHeight: 1.6,
               }}
             >
-              This is a demo version — more stages coming soon.
+              Every choice shaped your story. Try again for a different path.
             </div>
           </div>
         )}

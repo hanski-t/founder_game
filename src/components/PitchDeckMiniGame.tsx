@@ -97,7 +97,7 @@ export function PitchDeckMiniGame() {
       success,
       { money: reward.money, momentum: reward.momentum, reputation: reward.reputation },
       outcomeLines.join('\n'),
-      'startup_competitor'
+      'startup_cofounder'
     );
   }, [score, reward, completeMiniGame]);
 

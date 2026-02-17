@@ -106,7 +106,7 @@ export function GothicGameScreen() {
   // DEV MODE: sync scene on mount when starting at a non-default level
   useEffect(() => {
     const targetSceneId = NODE_TO_SCENE_MAP[state.currentNodeId];
-    if (targetSceneId && targetSceneId !== 'CURRENT_SCENE' && targetSceneId !== sceneState.currentSceneId) {
+    if (targetSceneId && targetSceneId !== sceneState.currentSceneId) {
       const scene = getSceneById(targetSceneId);
       if (scene) {
         sceneDispatch({ type: 'RESET_SCENE', sceneId: targetSceneId, playerStartX: scene.playerStartX, groundY: scene.groundY, levelWidth: scene.levelWidth });
@@ -125,13 +125,7 @@ export function GothicGameScreen() {
     prevPhaseRef.current = newPhase;
 
     const targetSceneId = NODE_TO_SCENE_MAP[newNodeId];
-    if (!targetSceneId || targetSceneId === 'CURRENT_SCENE') {
-      // Random event - show decision panel in current scene
-      if (state.screen === 'game') {
-        sceneDispatch({ type: 'SHOW_DECISION_PANEL' });
-      }
-      return;
-    }
+    if (!targetSceneId) return;
 
     if (targetSceneId === sceneState.currentSceneId) {
       // Same scene, just show the decision

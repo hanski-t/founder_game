@@ -102,15 +102,15 @@ export const scenes: Record<string, SceneDefinition> = {
         height: 64,
         spriteSheet: womanIdle,
         spriteConfig: NPC_SPRITE_CONFIG.woman,
-        label: 'Student Activities Lead',
-        triggerNodeId: 'uni_clubs',
+        label: 'Senior Student',
+        triggerNodeId: 'uni_cofounder',
         proximityRange: 2,
         interactionType: 'decision',
       },
     ],
     collectibles: [
       { id: 'tc-coffee-1', visual: 'coffee', x: 58, y: 61, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"Fuel for the grind."' },
-      { id: 'tc-doc-1', visual: 'document', x: 140, label: 'Club Flyer', flavorText: '"Join the Entrepreneur Club!"' },
+      { id: 'tc-doc-1', visual: 'document', x: 140, label: 'Campus Note', flavorText: '"Network early, network often."' },
     ],
     obstacles: [
       { id: 'tc-rock-1', type: 'rock', x: 35, width: 6, height: 9 },
@@ -135,7 +135,7 @@ export const scenes: Record<string, SceneDefinition> = {
   'dark-castle-interior': {
     id: 'dark-castle-interior',
     name: 'The Social Gathering',
-    phase: 'university',
+    phase: 'firstStartup',
     backgroundLayers: [
       { src: churchBg, scrollFactor: 0 },
     ],
@@ -156,8 +156,8 @@ export const scenes: Record<string, SceneDefinition> = {
         height: 64,
         spriteSheet: beardedIdle,
         spriteConfig: NPC_SPRITE_CONFIG.bearded,
-        label: 'Interesting Stranger',
-        triggerNodeId: 'uni_event_cofounder',
+        label: 'Co-Founder Alex',
+        triggerNodeId: 'startup_idea',
         proximityRange: 2,
         interactionType: 'decision',
       },
@@ -207,7 +207,7 @@ export const scenes: Record<string, SceneDefinition> = {
   'castle-gate': {
     id: 'castle-gate',
     name: 'Graduation Hall',
-    phase: 'university',
+    phase: 'growth',
     backgroundLayers: [
       { src: cemeteryBg, scrollFactor: 0 },
       { src: cemeteryMountains, scrollFactor: 0.2 },
@@ -231,8 +231,8 @@ export const scenes: Record<string, SceneDefinition> = {
         height: 64,
         spriteSheet: oldmanIdle,
         spriteConfig: NPC_SPRITE_CONFIG.oldman,
-        label: 'Career Advisor',
-        triggerNodeId: 'uni_final',
+        label: 'First Employee',
+        triggerNodeId: 'growth_hiring',
         proximityRange: 2,
         interactionType: 'decision',
       },
@@ -267,7 +267,7 @@ export const scenes: Record<string, SceneDefinition> = {
   'swamp-garage': {
     id: 'swamp-garage',
     name: 'The Garage',
-    phase: 'firstStartup',
+    phase: 'growth',
     backgroundLayers: [
       { src: swampBg, scrollFactor: 0 },
       { src: swampMid1, scrollFactor: 0.3 },
@@ -290,8 +290,8 @@ export const scenes: Record<string, SceneDefinition> = {
         width: 48,
         height: 48,
         staticImage: signImg,
-        label: 'Business Plan Board',
-        triggerNodeId: 'startup_idea',
+        label: 'Growth Dashboard',
+        triggerNodeId: 'growth_marketing',
         proximityRange: 2,
         interactionType: 'decision',
       },
@@ -326,7 +326,7 @@ export const scenes: Record<string, SceneDefinition> = {
   'swamp-deep': {
     id: 'swamp-deep',
     name: 'Competitive Landscape',
-    phase: 'firstStartup',
+    phase: 'scaling',
     backgroundLayers: [
       { src: swampBg, scrollFactor: 0 },
       { src: swampMid1, scrollFactor: 0.2 },
@@ -356,8 +356,8 @@ export const scenes: Record<string, SceneDefinition> = {
         height: 64,
         spriteSheet: hatManIdle,
         spriteConfig: NPC_SPRITE_CONFIG.hatMan,
-        label: 'Market Analyst',
-        triggerNodeId: 'startup_competitor',
+        label: 'Board Advisor',
+        triggerNodeId: 'scaling_control',
         proximityRange: 2,
         interactionType: 'decision',
       },
@@ -417,7 +417,7 @@ export const scenes: Record<string, SceneDefinition> = {
   'church-meeting': {
     id: 'church-meeting',
     name: 'The Meeting Room',
-    phase: 'firstStartup',
+    phase: 'exit',
     backgroundLayers: [
       { src: churchBg, scrollFactor: 0 },
     ],
@@ -439,8 +439,8 @@ export const scenes: Record<string, SceneDefinition> = {
         height: 64,
         spriteSheet: beardedIdle,
         spriteConfig: NPC_SPRITE_CONFIG.bearded,
-        label: 'Alex (Co-Founder)',
-        triggerNodeId: 'startup_cofounder',
+        label: 'Investment Banker',
+        triggerNodeId: 'exit_legacy',
         proximityRange: 2,
         interactionType: 'decision',
       },
@@ -478,7 +478,7 @@ export const scenes: Record<string, SceneDefinition> = {
   'castle-hall': {
     id: 'castle-hall',
     name: 'Investor Boardroom',
-    phase: 'firstStartup',
+    phase: 'exit',
     backgroundLayers: [
       { src: cemeteryBg, scrollFactor: 0 },
       { src: cemeteryMountains, scrollFactor: 0.2 },
@@ -509,8 +509,8 @@ export const scenes: Record<string, SceneDefinition> = {
         height: 64,
         spriteSheet: womanIdle,
         spriteConfig: NPC_SPRITE_CONFIG.woman,
-        label: 'Lead Investor',
-        triggerNodeId: 'startup_funding',
+        label: 'The Mentor',
+        triggerNodeId: 'exit_final',
         proximityRange: 2,
         interactionType: 'decision',
       },
@@ -567,160 +567,61 @@ export const scenes: Record<string, SceneDefinition> = {
     },
   },
 
-  // ============================================================
-  // LEVEL 9: The Final Push — Hardest Level (3 screens, ~45s)
-  // Dense obstacles, 5 enemies (including flying bat), 2 moving platforms.
-  // Overlapping patrol zones create tight windows. NPC far right.
-  // ============================================================
-  'cemetery-launch': {
-    id: 'cemetery-launch',
-    name: 'The Final Push',
-    phase: 'firstStartup',
-    backgroundLayers: [
-      { src: cemeteryBg, scrollFactor: 0 },
-      { src: cemeteryGraveyard, scrollFactor: 0.3 },
-    ],
-    groundBiome: 'cemetery',
-    groundY: 80,
-    levelWidth: 300,
-    playerStartX: 6,
-    groundHoles: [
-      { id: 'cl-hole-1', startX: 48, endX: 53 },
-      { id: 'cl-hole-2', startX: 118, endX: 124 },
-      { id: 'cl-hole-3', startX: 205, endX: 211 },
-    ],
-    interactables: [
-      {
-        id: 'launch-npc',
-        type: 'npc',
-        x: 265,
-        y: 80,
-        width: 64,
-        height: 64,
-        spriteSheet: hatManIdle,
-        spriteConfig: NPC_SPRITE_CONFIG.hatMan,
-        label: 'Launch Coordinator',
-        triggerNodeId: 'startup_final',
-        proximityRange: 2,
-        interactionType: 'decision',
-      },
-    ],
-    collectibles: [
-      { id: 'cl-scroll-1', visual: 'scroll', x: 65, y: 62, label: 'Launch Checklist', flavorText: '"Ship it before it\'s perfect."' },
-      { id: 'cl-usb-1', visual: 'usb', x: 285, label: '+20 Rep', resourceBonus: { reputation: 20 }, flavorText: '"Press coverage incoming."' },
-      { id: 'cl-coffee-1', visual: 'coffee', x: 195, y: 59, label: '+5 Energy', resourceBonus: { energy: 5 }, flavorText: '"One last push."' },
-    ],
-    obstacles: [
-      { id: 'cl-crate-1', type: 'crate', x: 28, width: 6, height: 11 },
-      { id: 'cl-barrel-1', type: 'barrel', x: 55, width: 5, height: 10 },
-      { id: 'cl-rock-1', type: 'rock', x: 85, width: 6, height: 9 },
-      { id: 'cl-grave-1', type: 'grave', x: 130, width: 5, height: 10 },
-      { id: 'cl-bush-1', type: 'bush', x: 170, width: 5, height: 8 },
-    ],
-    enemies: [
-      { id: 'cl-skeleton-1', type: 'skeleton', visual: '', patrolStart: 35, patrolEnd: 65, y: 80, speed: 10, width: 4, height: 7 },
-      { id: 'cl-ghost-1', type: 'ghost', visual: '', patrolStart: 75, patrolEnd: 110, y: 80, speed: 12, width: 5, height: 10 },
-      { id: 'cl-bat-1', type: 'bat', visual: '', patrolStart: 95, patrolEnd: 145, y: 60, speed: 15, width: 4, height: 5 },
-      { id: 'cl-skeleton-2', type: 'skeleton', visual: '', patrolStart: 155, patrolEnd: 200, y: 80, speed: 13, width: 4, height: 7 },
-      { id: 'cl-ghost-2', type: 'ghost', visual: '', patrolStart: 210, patrolEnd: 250, y: 80, speed: 11, width: 5, height: 10 },
-    ],
-    platforms: [
-      { id: 'cl-plat-1', x: 58, y: 65, width: 14, visual: 'stone' },
-      { id: 'cl-plat-move1', x: 100, y: 68, width: 12, visual: 'stone', moveAxis: 'vertical', moveRange: 10, moveSpeed: 0.4 },
-      { id: 'cl-plat-move2', x: 185, y: 62, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 20, moveSpeed: 0.5 },
-      { id: 'cl-plat-2', x: 225, y: 66, width: 14, visual: 'wood' },
-    ],
-  },
-
-  // ============================================================
-  // LEVEL 10: The Summit — Victory Ascent (2 screens, ~30s)
-  // Ascending platform staircase to the summit. No enemies.
-  // Gems reward the climb. NPC mentor waits at the highest point.
-  // A celebration of all the skills learned throughout the game.
-  // ============================================================
-  'castle-throne': {
-    id: 'castle-throne',
-    name: 'The Summit',
-    phase: 'firstStartup',
-    backgroundLayers: [
-      { src: cemeteryBg, scrollFactor: 0 },
-      { src: cemeteryMountains, scrollFactor: 0.2 },
-      { src: cemeteryGraveyard, scrollFactor: 0.3 },
-    ],
-    groundBiome: 'cemetery',
-    groundY: 76,
-    levelWidth: 200,
-    playerStartX: 10,
-    groundHoles: [
-      { id: 'ct-hole-1', startX: 27, endX: 32 },
-    ],
-    interactables: [
-      {
-        id: 'success-npc',
-        type: 'npc',
-        x: 130,
-        y: 44,
-        width: 64,
-        height: 64,
-        spriteSheet: oldmanIdle,
-        spriteConfig: NPC_SPRITE_CONFIG.oldman,
-        label: 'Your Mentor',
-        triggerNodeId: 'game_success',
-        proximityRange: 2,
-        interactionType: 'decision',
-      },
-    ],
-    collectibles: [
-      { id: 'ct-gem-1', visual: 'gem', x: 44, y: 67, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"The first step is always the hardest."' },
-      { id: 'ct-gem-2', visual: 'gem', x: 62, y: 60, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Momentum builds with every leap."' },
-      { id: 'ct-gem-3', visual: 'gem', x: 82, y: 53, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Higher ground, clearer vision."' },
-      { id: 'ct-gem-4', visual: 'gem', x: 102, y: 47, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"Almost there — don\'t look down."' },
-      { id: 'ct-gem-5', visual: 'gem', x: 180, label: '+$2000', resourceBonus: { money: 2000 }, flavorText: '"You made it. The threshold awaits."' },
-    ],
-    platforms: [
-      { id: 'ct-plat-1', x: 35, y: 70, width: 14, visual: 'wood' },
-      { id: 'ct-plat-2', x: 55, y: 63, width: 12, visual: 'stone' },
-      { id: 'ct-plat-3', x: 75, y: 56, width: 12, visual: 'metal' },
-      { id: 'ct-plat-4', x: 95, y: 50, width: 14, visual: 'stone' },
-      { id: 'ct-plat-5', x: 115, y: 44, width: 16, visual: 'metal' },
-      { id: 'ct-plat-move', x: 145, y: 40, width: 12, visual: 'metal', moveAxis: 'horizontal', moveRange: 10, moveSpeed: 0.3 },
-    ],
-  },
 };
 
-// Maps decision node IDs to scene IDs
+// Maps decision node IDs to scene IDs (many-to-one: multiple nodes per scene)
 export const NODE_TO_SCENE_MAP: Record<string, string> = {
+  // Phase 1: University (Levels 1-2)
   'uni_intro': 'town-square',
-  'uni_clubs': 'town-clubs',
-  'uni_event_cofounder': 'dark-castle-interior',
-  'uni_final': 'castle-gate',
-  'startup_idea': 'swamp-garage',
-  'startup_competitor': 'swamp-deep',
-  'startup_cofounder': 'church-meeting',
-  'startup_funding': 'castle-hall',
-  'startup_final': 'cemetery-launch',
-  'game_success': 'castle-throne',
-  // Random events stay in current scene
-  'random_viral': 'CURRENT_SCENE',
-  'random_mentor': 'CURRENT_SCENE',
+  'uni_clubs': 'town-square',
+  'uni_cofounder': 'town-clubs',
+  'uni_final': 'town-clubs',
+  // Phase 2: First Startup (Level 3)
+  'startup_idea': 'dark-castle-interior',
+  'startup_cofounder': 'dark-castle-interior',
+  'startup_funding': 'dark-castle-interior',
+  // Phase 3: Growth (Levels 4-5)
+  'growth_hiring': 'castle-gate',
+  'growth_product': 'castle-gate',
+  'growth_marketing': 'swamp-garage',
+  'growth_spending': 'swamp-garage',
+  // Phase 4: Scaling (Level 6)
+  'scaling_control': 'swamp-deep',
+  'scaling_expansion': 'swamp-deep',
+  'scaling_cofounder': 'swamp-deep',
+  // Phase 5: Exit (Levels 7-8)
+  'exit_legacy': 'church-meeting',
+  'exit_deal': 'church-meeting',
+  'exit_final': 'castle-hall',
+  'exit_endgame': 'castle-hall',
+  'game_success': 'castle-hall',
 };
 
 export const NODE_LEVEL_NUMBER: Record<string, number> = {
   'uni_intro': 1,
-  'uni_clubs': 2,
-  'uni_event_cofounder': 3,
-  'uni_final': 4,
-  'startup_idea': 5,
-  'startup_competitor': 6,
-  'startup_cofounder': 7,
-  'startup_funding': 8,
-  'startup_final': 9,
-  'game_success': 10,
+  'uni_clubs': 1,
+  'uni_cofounder': 2,
+  'uni_final': 2,
+  'startup_idea': 3,
+  'startup_cofounder': 3,
+  'startup_funding': 3,
+  'growth_hiring': 4,
+  'growth_product': 4,
+  'growth_marketing': 5,
+  'growth_spending': 5,
+  'scaling_control': 6,
+  'scaling_expansion': 6,
+  'scaling_cofounder': 6,
+  'exit_legacy': 7,
+  'exit_deal': 7,
+  'exit_final': 8,
+  'exit_endgame': 8,
+  'game_success': 8,
 };
 
 export function getSceneForNode(nodeId: string): SceneDefinition | null {
   const sceneId = NODE_TO_SCENE_MAP[nodeId];
-  if (!sceneId || sceneId === 'CURRENT_SCENE') return null;
+  if (!sceneId) return null;
   return scenes[sceneId] || null;
 }
 

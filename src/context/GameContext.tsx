@@ -11,7 +11,7 @@ import type {
   DecisionHistoryEntry,
   GamePhase,
 } from '../types/game';
-import { getNodeById, getRandomEvent } from '../data/decisions';
+import { getNodeById } from '../data/decisions';
 
 
 type GameAction =
@@ -21,8 +21,7 @@ type GameAction =
   | { type: 'CONTINUE_FROM_OUTCOME'; nextNodeId?: string }
   | { type: 'START_MINIGAME' }
   | { type: 'COMPLETE_MINIGAME'; success: boolean; resourceChanges: ResourceChange; outcome: string; nextNodeId?: string }
-  | { type: 'TRIGGER_RANDOM_EVENT'; eventId: string }
-  | { type: 'END_GAME'; reason: 'momentum' | 'money' | 'success' }
+  | { type: 'END_GAME'; reason: 'momentum' | 'money' | 'energy' | 'success' }
   | { type: 'RESTART_GAME' }
   | { type: 'ADD_EVENT_LOG'; message: string }
   | { type: 'APPLY_BONUS'; resourceChanges: ResourceChange };
@@ -37,7 +36,6 @@ const initialState: GameState = {
   miniGameResult: null,
   endReason: null,
   eventLog: [],
-  returnToNodeId: null,
 };
 
 function clampResource(value: number, resource: keyof Resources): number {
@@ -54,9 +52,10 @@ function applyResourceChanges(resources: Resources, changes: ResourceChange): Re
   };
 }
 
-function checkGameEnd(resources: Resources): 'momentum' | 'money' | null {
+function checkGameEnd(resources: Resources): 'momentum' | 'money' | 'energy' | null {
   if (resources.momentum <= 0) return 'momentum';
   if (resources.money <= 0) return 'money';
+  if (resources.energy <= 0) return 'energy';
   return null;
 }
 
@@ -97,7 +96,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           decisionHistory: [...state.decisionHistory, historyEntry],
           screen: 'end',
           endReason,
-          eventLog: [...state.eventLog, `> Choice made: ${action.choiceText}`, `> GAME OVER: ${endReason === 'momentum' ? 'Lost all momentum!' : 'Out of money!'}`],
+          eventLog: [...state.eventLog, `> Choice made: ${action.choiceText}`, `> GAME OVER: ${endReason === 'momentum' ? 'Lost all momentum!' : endReason === 'money' ? 'Out of money!' : 'Burned out!'}`],
         };
       }
 
@@ -112,49 +111,18 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CONTINUE_FROM_OUTCOME': {
-      let nextNodeId = action.nextNodeId;
-
-      // Handle return from random event
-      if (nextNodeId === 'RETURN_TO_STORY') {
-        nextNodeId = state.returnToNodeId || state.currentNodeId;
-        return {
-          ...state,
-          screen: 'game',
-          currentNodeId: nextNodeId,
-          currentPhase: getPhaseFromNodeId(nextNodeId),
-          pendingOutcome: null,
-          returnToNodeId: null,
-          eventLog: [...state.eventLog, '> Returning to main story...'],
-        };
-      }
+      const nextNodeId = action.nextNodeId;
 
       if (nextNodeId === 'end') {
         return {
           ...state,
           screen: 'end',
           endReason: 'success',
-          eventLog: [...state.eventLog, '> CONGRATULATIONS: Prototype complete!'],
+          eventLog: [...state.eventLog, '> CONGRATULATIONS: Journey complete!'],
         };
       }
 
-      // 20% chance of random event (only in firstStartup phase, and not when we just came from one)
-      const shouldTriggerEvent = Math.random() < 0.2;
       const currentPhase = getPhaseFromNodeId(nextNodeId || state.currentNodeId);
-
-      if (shouldTriggerEvent && currentPhase === 'firstStartup' && !state.returnToNodeId) {
-        const randomEvent = getRandomEvent(currentPhase);
-        if (randomEvent) {
-          return {
-            ...state,
-            screen: 'game',
-            currentNodeId: randomEvent.id,
-            currentPhase,
-            pendingOutcome: null,
-            returnToNodeId: nextNodeId || state.currentNodeId, // Store where to return
-            eventLog: [...state.eventLog, '> ALERT: Random event triggered!'],
-          };
-        }
-      }
 
       return {
         ...state,
@@ -162,7 +130,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         currentNodeId: nextNodeId || state.currentNodeId,
         currentPhase,
         pendingOutcome: null,
-        returnToNodeId: null,
         eventLog: [...state.eventLog, `> Proceeding to next decision...`],
       };
     }
@@ -187,7 +154,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           miniGameResult: action.success ? 'success' : 'failure',
           eventLog: [...state.eventLog,
             `> Mini-game ${action.success ? 'SUCCESS' : 'FAILURE'}`,
-            `> GAME OVER: ${endReason === 'momentum' ? 'Lost all momentum!' : 'Out of money!'}`
+            `> GAME OVER: ${endReason === 'momentum' ? 'Lost all momentum!' : endReason === 'money' ? 'Out of money!' : 'Burned out!'}`
           ],
         };
       }

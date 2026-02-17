@@ -64,9 +64,8 @@ export interface GameState {
   decisionHistory: DecisionHistoryEntry[];
   pendingOutcome: string | null;
   miniGameResult: 'success' | 'failure' | null;
-  endReason: 'momentum' | 'money' | 'success' | null;
+  endReason: 'momentum' | 'money' | 'energy' | 'success' | null;
   eventLog: string[];
-  returnToNodeId: string | null; // For returning after random events
 }
 
 export const INITIAL_RESOURCES: Resources = {
@@ -78,7 +77,7 @@ export const INITIAL_RESOURCES: Resources = {
 
 export const RESOURCE_LIMITS = {
   momentum: { min: 0, max: 100 },
-  money: { min: 0, max: 1000000 },
+  money: { min: 0, max: 100000000 },
   energy: { min: 0, max: 100 },
   reputation: { min: 0, max: 500 },
 };

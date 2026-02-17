@@ -1,5 +1,4 @@
 import beardedIdle from '@assets/characters/npcs/bearded-idle.png';
-import oldmanIdle from '@assets/characters/npcs/oldman-idle.png';
 
 export interface MilestoneDefinition {
   id: string;
@@ -74,7 +73,7 @@ export const MILESTONES: MilestoneDefinition[] = [
   // ── Met Alex ──
   {
     id: 'met_alex',
-    nodeId: 'uni_event_cofounder',
+    nodeId: 'uni_cofounder',
     choiceIds: ['exchange_info', 'deep_dive'],
     category: 'person',
     icon: '🤝',
@@ -167,45 +166,90 @@ export const MILESTONES: MilestoneDefinition[] = [
     description: 'Investor-ready deck',
   },
 
-  // ── Launch Strategy ──
+  // ── Phase 3: Growth ──
   {
-    id: 'launch_public',
-    nodeId: 'startup_final',
-    choiceIds: ['launch_public'],
-    category: 'achievement',
-    icon: '🏆',
-    label: 'Product Hunt #4',
-    description: '500 signups',
+    id: 'hired_senior',
+    nodeId: 'growth_hiring',
+    choiceIds: ['hire_senior'],
+    category: 'person',
+    icon: '👨‍💻',
+    label: 'Senior Engineer',
+    description: 'Experience pays off',
   },
   {
-    id: 'launch_enterprise',
-    nodeId: 'startup_final',
-    choiceIds: ['enterprise_pivot'],
-    category: 'achievement',
-    icon: '🏢',
-    label: 'Enterprise Deal',
-    description: '$15k/yr contract',
+    id: 'hired_juniors',
+    nodeId: 'growth_hiring',
+    choiceIds: ['hire_junior'],
+    category: 'person',
+    icon: '👥',
+    label: 'Junior Team',
+    description: 'Two eager juniors',
   },
   {
-    id: 'launch_growth',
-    nodeId: 'startup_final',
-    choiceIds: ['growth_experiment'],
+    id: 'press_coverage',
+    nodeId: 'growth_marketing',
+    choiceIds: ['full_press'],
     category: 'achievement',
-    icon: '📈',
-    label: 'Growth Engine',
-    description: 'Referral program works',
+    icon: '📰',
+    label: 'Press Coverage',
+    description: 'TechCrunch feature',
+  },
+  {
+    id: 'product_led_growth',
+    nodeId: 'growth_spending',
+    choiceIds: ['product_led'],
+    category: 'achievement',
+    icon: '🔄',
+    label: 'Viral Loop',
+    description: 'Product-led growth',
   },
 
-  // ── Mentor (random event) ──
+  // ── Phase 4: Scaling ──
   {
-    id: 'mentor_met',
-    nodeId: 'random_mentor',
-    choiceIds: ['take_meeting'],
+    id: 'vp_product',
+    nodeId: 'scaling_control',
+    choiceIds: ['delegate_product'],
     category: 'person',
-    icon: '⭐',
-    label: 'Mentor',
-    description: '$50M founder connection',
-    sprite: { src: oldmanIdle, frameWidth: 34, frameHeight: 42 },
+    icon: '📋',
+    label: 'VP Product',
+    description: 'Delegated decisions',
   },
-  // reschedule → no milestone
+  {
+    id: 'international',
+    nodeId: 'scaling_expansion',
+    choiceIds: ['go_international'],
+    category: 'achievement',
+    icon: '🌍',
+    label: 'International',
+    description: 'European expansion',
+  },
+
+  // ── Phase 5: Exit ──
+  {
+    id: 'negotiated_deal',
+    nodeId: 'exit_legacy',
+    choiceIds: ['negotiate_higher'],
+    category: 'achievement',
+    icon: '💎',
+    label: 'Negotiator',
+    description: 'Countered the offer',
+  },
+  {
+    id: 'team_first',
+    nodeId: 'exit_deal',
+    choiceIds: ['generous_packages'],
+    category: 'achievement',
+    icon: '❤️',
+    label: 'Team First',
+    description: 'Generous packages',
+  },
+  {
+    id: 'serial_founder',
+    nodeId: 'exit_final',
+    choiceIds: ['start_again'],
+    category: 'achievement',
+    icon: '🔁',
+    label: 'Serial Founder',
+    description: 'Starting again',
+  },
 ];
