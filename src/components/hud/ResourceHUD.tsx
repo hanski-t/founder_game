@@ -153,9 +153,15 @@ export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHU
           maxValue={RESOURCE_LIMITS.money.max}
           color="#4ade80"
           format={(v) => {
-            if (v >= 1000) {
-              const k = v / 1000;
-              return `$${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
+            const abs = Math.abs(v);
+            const sign = v < 0 ? '-' : '';
+            if (abs >= 1_000_000) {
+              const m = abs / 1_000_000;
+              return `${sign}$${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
+            }
+            if (abs >= 1000) {
+              const k = abs / 1000;
+              return `${sign}$${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
             }
             return `$${v}`;
           }}
