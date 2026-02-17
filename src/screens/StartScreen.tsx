@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useGame } from '../context/GameContext';
+import { soundManager } from '../audio/SoundManager';
+import { musicManager } from '../audio/MusicManager';
+import gameplayMusic from '@assets/audio/Gothamlicious.mp3';
 import townBg from '@assets/backgrounds/town/background.png';
 import townMid from '@assets/backgrounds/town/middleground.png';
 
@@ -7,6 +10,14 @@ export function StartScreen() {
   const { startGame } = useGame();
   const [showContent, setShowContent] = useState(false);
   const [showButton, setShowButton] = useState(false);
+
+  // Initialize audio on first user gesture, then start game
+  const handleStartGame = useCallback(() => {
+    soundManager.init();
+    soundManager.play('gameStart');
+    musicManager.play(gameplayMusic);
+    startGame();
+  }, [startGame]);
 
   useEffect(() => {
     const t1 = setTimeout(() => setShowContent(true), 400);
@@ -20,12 +31,12 @@ export function StartScreen() {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        startGame();
+        handleStartGame();
       }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [showButton, startGame]);
+  }, [showButton, handleStartGame]);
 
   return (
     <div
@@ -239,7 +250,7 @@ export function StartScreen() {
 
         {/* Start Button */}
         <button
-          onClick={startGame}
+          onClick={handleStartGame}
           style={{
             marginTop: 'clamp(1rem, 3vh, 2.5rem)',
             padding: '14px 48px',

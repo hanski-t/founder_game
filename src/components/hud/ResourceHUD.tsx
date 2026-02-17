@@ -3,6 +3,8 @@ import type { Resources, GamePhase } from '../../types/game';
 import { RESOURCE_LIMITS } from '../../types/game';
 import { PHASE_ATMOSPHERE } from '../../data/phaseConfig';
 import { HourglassIcon, CoinIcon, FlameIcon, PeopleIcon } from './ResourceIcons';
+import { soundManager } from '../../audio/SoundManager';
+import { musicManager } from '../../audio/MusicManager';
 
 interface ResourceHUDProps {
   resources: Resources;
@@ -122,6 +124,8 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
 export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHUDProps) {
   const phaseConfig = PHASE_ATMOSPHERE[currentPhase as GamePhase];
   // Level number is already linear 1-10 across all phases
+  const [sfxMuted, setSfxMuted] = useState(soundManager.muted);
+  const [musicMuted, setMusicMuted] = useState(musicManager.muted);
 
   const energyColor = resources.energy > 25 ? '#fbbf24' : '#f87171';
 
@@ -196,6 +200,41 @@ export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHU
         }}>
           Level {levelNumber}
         </div>
+
+        {/* SFX mute toggle */}
+        <button
+          onClick={() => setSfxMuted(soundManager.toggleMute())}
+          style={{
+            background: 'none',
+            border: '1px solid rgba(90, 48, 48, 0.4)',
+            borderRadius: 3,
+            padding: '2px 6px',
+            cursor: 'pointer',
+            fontSize: '0.75rem',
+            color: sfxMuted ? '#f87171' : '#e8d5b5',
+            opacity: 0.6,
+            marginLeft: 2,
+          }}
+          title={sfxMuted ? 'Unmute sounds' : 'Mute sounds'}
+        >
+          {sfxMuted ? '\u{1F507}' : '\u{1F509}'}
+        </button>
+        <button
+          onClick={() => setMusicMuted(musicManager.toggleMute())}
+          style={{
+            background: 'none',
+            border: '1px solid rgba(90, 48, 48, 0.4)',
+            borderRadius: 3,
+            padding: '2px 6px',
+            cursor: 'pointer',
+            fontSize: '0.75rem',
+            color: musicMuted ? '#f87171' : '#e8d5b5',
+            opacity: 0.6,
+          }}
+          title={musicMuted ? 'Unmute music' : 'Mute music'}
+        >
+          {musicMuted ? '\u{1F3B5}' : '\u{1F3B6}'}
+        </button>
       </div>
     </div>
   );

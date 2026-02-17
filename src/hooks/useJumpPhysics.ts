@@ -6,6 +6,7 @@ import type { PlatformDefinition } from '../types/platformer';
 import type { GroundHole, GroundSegment } from '../types/scene';
 import { getBlockedX } from '../utils/obstacleBlocker';
 import { getGroundYAtX } from '../utils/groundHeight';
+import { soundManager } from '../audio/SoundManager';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
@@ -135,6 +136,7 @@ export function useJumpPhysics(
         sceneDispatch({ type: 'SET_GROUNDED', grounded: false });
         sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
         jumpRequestedRef.current = false;
+        soundManager.play('jump');
       }
 
       // Apply gravity when airborne (scaled by phase multiplier)
@@ -145,6 +147,7 @@ export function useJumpPhysics(
         // Check if player fell into a hole and passed the death threshold
         if (newY > groundY + FALL_DEATH_THRESHOLD && !fallingInHoleRef.current) {
           fallingInHoleRef.current = true;
+          soundManager.play('fallInHole');
           onFallInHoleRef.current?.();
           animFrameRef.current = requestAnimationFrame(update);
           return;
@@ -315,6 +318,7 @@ export function useJumpPhysics(
     knockbackVXRef.current = direction === 'right' ? KNOCKBACK_IMPULSE : -KNOCKBACK_IMPULSE;
     sceneDispatch({ type: 'TRIGGER_KNOCKBACK', velocityX: knockbackVXRef.current });
     sceneDispatch({ type: 'TRIGGER_SCREEN_SHAKE' });
+    soundManager.play('enemyHit');
 
     // Auto-clear screen shake
     setTimeout(() => {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { DecisionNode, Choice, ResourceChange } from '../../types/game';
 import type { Resources } from '../../types/game';
 import { RESOURCE_ICON_MAP } from '../hud/ResourceIcons';
+import { soundManager } from '../../audio/SoundManager';
 
 interface GothicDecisionPanelProps {
   node: DecisionNode;
@@ -88,6 +89,7 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
         setHighlightedIndex(i => (i - 1 + choiceCount) % choiceCount);
       } else if (e.key === 'Enter') {
         e.preventDefault();
+        soundManager.play('decisionMade');
         onChoice(visibleChoices[highlightedIndex]);
       } else {
         // A/B/C highlight (not select) — Enter confirms
@@ -169,7 +171,7 @@ export function GothicDecisionPanel({ node, onChoice, isFirstDecision, miniGameP
             <div
               key={choice.id}
               className="gothic-choice-card"
-              onClick={() => onChoice(choice)}
+              onClick={() => { soundManager.play('decisionMade'); onChoice(choice); }}
               onMouseEnter={() => setHighlightedIndex(index)}
               style={index === highlightedIndex ? {
                 borderColor: 'var(--phase-accent, var(--color-gothic-gold))',

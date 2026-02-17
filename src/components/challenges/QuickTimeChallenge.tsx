@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { QuickTimeConfig } from '../../types/variety';
 import { useVariety } from '../../context/VarietyContext';
+import { soundManager } from '../../audio/SoundManager';
 
 interface QuickTimeChallengeProps {
   config: QuickTimeConfig;
@@ -83,6 +84,7 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
           varietyDispatch({ type: 'INCREMENT_SCORE' });
           setPromptStatus('success');
           setShowFeedback(true);
+          soundManager.play('qteSuccess');
           advanceOrComplete();
         } else {
           // Move to next key in combo
@@ -93,6 +95,7 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
         if (timerRef.current) clearTimeout(timerRef.current);
         setPromptStatus('fail');
         setShowFeedback(true);
+        soundManager.play('qteFail');
         advanceOrComplete();
       }
     };

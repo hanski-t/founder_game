@@ -5,6 +5,7 @@ import cemeteryBg from '@assets/backgrounds/cemetery/background.png';
 import cemeteryMountains from '@assets/backgrounds/cemetery/mountains.png';
 import townBg from '@assets/backgrounds/town/background.png';
 import type { DecisionHistoryEntry } from '../types/game';
+import { musicManager } from '../audio/MusicManager';
 
 /* ── Founder archetype based on decisions ── */
 interface Archetype {
@@ -224,6 +225,11 @@ function LightRays({ color }: { color: string }) {
 export function EndScreen() {
   const { state, restartGame } = useGame();
   const [phase, setPhase] = useState(0); // 0=black, 1=bg, 2=title, 3=stats, 4=message, 5=cta
+
+  // Stop music on game end
+  useEffect(() => {
+    musicManager.stop();
+  }, []);
 
   // Phased reveal timeline
   useEffect(() => {

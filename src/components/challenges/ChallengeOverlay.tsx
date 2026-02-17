@@ -5,6 +5,7 @@ import { useScene } from '../../context/SceneContext';
 import { useGame } from '../../context/GameContext';
 import { QuickTimeChallenge } from './QuickTimeChallenge';
 import { FallingCatchChallenge } from './FallingCatchChallenge';
+import { soundManager } from '../../audio/SoundManager';
 
 interface ChallengeOverlayProps {
   challenge: ChallengeDefinition;
@@ -68,6 +69,7 @@ export function ChallengeOverlay({ challenge }: ChallengeOverlayProps) {
     sceneDispatch({ type: 'UPDATE_PLAYER_POSITION', x: 50 });
     sceneDispatch({ type: 'SET_PLAYER_TARGET', x: 50 });
     setChallengePhase('active');
+    soundManager.play('challengeStart');
   }, [setChallengePhase, sceneState.playerX, sceneDispatch]);
 
   const handleComplete = useCallback(() => {

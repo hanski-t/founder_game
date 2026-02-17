@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
+import { soundManager } from '../audio/SoundManager';
 
 interface Slide {
   id: string;
@@ -65,6 +66,7 @@ export function PitchDeckMiniGame() {
     const finalScore = calculateScore();
     setScore(finalScore);
     setIsSubmitted(true);
+    soundManager.play('uiClick');
   }, [calculateScore]);
 
   const reward = isSubmitted ? getReward(score) : null;

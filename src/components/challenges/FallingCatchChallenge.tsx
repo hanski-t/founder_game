@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { FallingCatchConfig } from '../../types/variety';
 import { useVariety } from '../../context/VarietyContext';
 import { useScene } from '../../context/SceneContext';
+import { soundManager } from '../../audio/SoundManager';
 
 interface FallingCatchChallengeProps {
   config: FallingCatchConfig;
@@ -160,6 +161,7 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
                 setStreak(streakRef.current);
                 const streakText = streakRef.current >= 3 ? ` x${streakRef.current}!` : '';
                 pushFeedback(item.x, newY, 'good', `+1${streakText}`);
+                soundManager.play('catchGood');
               } else {
                 varietyDispatchRef.current({ type: 'DECREMENT_SCORE' });
                 scoreRef.current = Math.max(0, scoreRef.current - 1);
@@ -167,6 +169,7 @@ export function FallingCatchChallenge({ config, onComplete }: FallingCatchChalle
                 setScore(scoreRef.current);
                 setStreak(0);
                 pushFeedback(item.x, newY, 'bad', '-1');
+                soundManager.play('catchBad');
               }
             }
             return { ...item, y: newY, caught: true, caughtAt: now };

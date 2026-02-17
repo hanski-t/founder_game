@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { soundManager } from '../../audio/SoundManager';
 
 interface SceneTransitionProps {
   isActive: boolean;
@@ -17,6 +18,7 @@ export function SceneTransition({ isActive, onMidpoint, onComplete }: SceneTrans
 
   useEffect(() => {
     if (phase === 'fade-in') {
+      soundManager.play('sceneTransition');
       const timer = setTimeout(() => {
         onMidpoint();
         setPhase('hold');

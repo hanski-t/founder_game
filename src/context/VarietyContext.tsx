@@ -7,6 +7,7 @@ import type {
   ChallengePhase,
 } from '../types/variety';
 import { useGame } from './GameContext';
+import { soundManager } from '../audio/SoundManager';
 
 const initialState: VarietyState = {
   collectedIds: [],
@@ -97,6 +98,7 @@ export function VarietyProvider({ children }: { children: ReactNode }) {
 
   const collectItem = useCallback((item: CollectibleDefinition) => {
     varietyDispatch({ type: 'COLLECT_ITEM', item });
+    soundManager.play('collectible');
     // Apply resource bonus to actual game state
     if (item.resourceBonus) {
       gameDispatch({ type: 'APPLY_BONUS', resourceChanges: item.resourceBonus });
