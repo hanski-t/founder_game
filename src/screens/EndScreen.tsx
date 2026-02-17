@@ -6,6 +6,8 @@ import cemeteryMountains from '@assets/backgrounds/cemetery/mountains.png';
 import townBg from '@assets/backgrounds/town/background.png';
 import type { DecisionHistoryEntry } from '../types/game';
 import { musicManager } from '../audio/MusicManager';
+import { calculateScore, saveHighScore } from '../utils/highScores';
+import { deleteSave } from '../utils/saveGame';
 
 /* ── Founder archetype based on decisions ── */
 interface Archetype {
@@ -226,10 +228,24 @@ export function EndScreen() {
   const { state, restartGame } = useGame();
   const [phase, setPhase] = useState(0); // 0=black, 1=bg, 2=title, 3=stats, 4=message, 5=cta
 
-  // Stop music on game end
+  const [isNewHighScore, setIsNewHighScore] = useState(false);
+  const finalScore = useMemo(() => calculateScore(state), [state]);
+
+  // Stop music, delete save, save high score on game end
   useEffect(() => {
     musicManager.stop();
-  }, []);
+    deleteSave();
+    const archetype = getFounderArchetype(state.decisionHistory);
+    const madeTop = saveHighScore({
+      score: finalScore,
+      phase: state.currentPhase,
+      endReason: state.endReason ?? 'unknown',
+      archetype: archetype.title,
+      decisionsCount: state.decisionHistory.length,
+      date: new Date().toISOString(),
+    });
+    setIsNewHighScore(madeTop);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Phased reveal timeline
   useEffect(() => {
@@ -328,8 +344,11 @@ export function EndScreen() {
 
   const archetype = useMemo(() => getFounderArchetype(state.decisionHistory), [state.decisionHistory]);
 
+  const scoreAnimated = useCountUp(finalScore, 1200, 2400);
+
   const iconSize = 20;
   const stats: { label: string; value: string; icon: ReactNode }[] = [
+    { label: 'SCORE', value: `${scoreAnimated.toLocaleString()}`, icon: <SwordIcon color="#fbbf24" size={iconSize} /> },
     { label: 'DECISIONS', value: `${decisionCount}`, icon: <SwordIcon color="#d4a853" size={iconSize} /> },
     { label: 'MOMENTUM', value: `${momentum}%`, icon: <HourglassIcon color="#60a5fa" size={iconSize} /> },
     { label: 'BALANCE', value: `$${money.toLocaleString()}`, icon: <CoinIcon color="#4ade80" size={iconSize} /> },
@@ -469,6 +488,23 @@ export function EndScreen() {
               animation: 'end-divider-expand 0.8s ease-out 1s both',
             }}
           />
+        )}
+
+        {/* ── NEW HIGH SCORE FLASH ── */}
+        {phase >= 3 && isNewHighScore && (
+          <div
+            style={{
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontSize: 'clamp(0.8rem, 1.4vw, 1rem)',
+              color: '#fbbf24',
+              letterSpacing: '0.2em',
+              textShadow: '0 0 20px rgba(251, 191, 36, 0.5)',
+              animation: 'end-stat-value-glow 1.5s ease-in-out infinite',
+              marginBottom: '0.5vh',
+            }}
+          >
+            NEW HIGH SCORE!
+          </div>
         )}
 
         {/* ── STATS ROW ── */}

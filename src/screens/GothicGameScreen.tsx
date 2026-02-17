@@ -20,6 +20,7 @@ import { FallNotification } from '../components/scene/FallNotification';
 import { PauseMenu } from '../components/overlay/PauseMenu';
 import { setGamePaused } from '../utils/pauseState';
 import { musicManager } from '../audio/MusicManager';
+import { saveGame } from '../utils/saveGame';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, NODE_LEVEL_NUMBER, scenes } from '../data/scenes';
 import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
@@ -70,6 +71,14 @@ export function GothicGameScreen() {
     musicManager.stop();
     dispatch({ type: 'RESTART_GAME' });
   }, [dispatch]);
+
+  const handleSaveAndQuit = useCallback(() => {
+    saveGame(state, varietyState.collectedIds, varietyState.completedChallengeIds);
+    setIsPaused(false);
+    setGamePaused(false);
+    musicManager.stop();
+    dispatch({ type: 'RESTART_GAME' });
+  }, [state, varietyState.collectedIds, varietyState.completedChallengeIds, dispatch]);
 
   // Set phase accent CSS custom properties on :root for global UI theming
   useEffect(() => {
@@ -258,7 +267,7 @@ export function GothicGameScreen() {
     }
   }, [state.currentNodeId, makeChoice, startMiniGame, sceneDispatch]);
 
-  // Handle continue from outcome
+  // Handle continue from outcome — also auto-saves progress
   const handleContinue = useCallback(() => {
     sceneDispatch({ type: 'HIDE_OUTCOME_PANEL' });
     const node = getNodeById(state.currentNodeId);
@@ -267,8 +276,11 @@ export function GothicGameScreen() {
       ? node.choices.find(c => c.id === lastHistoryEntry.choiceId)?.nextNodeId
       : undefined;
 
+    // Auto-save after each decision
+    saveGame(state, varietyState.collectedIds, varietyState.completedChallengeIds);
+
     continueFromOutcome(nextNodeId);
-  }, [state.currentNodeId, state.decisionHistory, continueFromOutcome, sceneDispatch]);
+  }, [state, varietyState.collectedIds, varietyState.completedChallengeIds, continueFromOutcome, sceneDispatch]);
 
   // Scene transition midpoint: swap the scene
   const handleTransitionMidpoint = useCallback(() => {
@@ -373,7 +385,7 @@ export function GothicGameScreen() {
 
       {/* Pause Menu */}
       {isPaused && (
-        <PauseMenu onResume={handleResume} onQuit={handleQuit} />
+        <PauseMenu onResume={handleResume} onQuit={handleQuit} onSaveAndQuit={handleSaveAndQuit} />
       )}
     </>
   );

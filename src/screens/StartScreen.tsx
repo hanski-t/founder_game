@@ -1,15 +1,32 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useGame } from '../context/GameContext';
+import { useVariety } from '../context/VarietyContext';
 import { soundManager } from '../audio/SoundManager';
 import { musicManager } from '../audio/MusicManager';
+import { getHighScores } from '../utils/highScores';
+import { loadGame, hasSave } from '../utils/saveGame';
 import gameplayMusic from '@assets/audio/Gothamlicious.mp3';
 import townBg from '@assets/backgrounds/town/background.png';
 import townMid from '@assets/backgrounds/town/middleground.png';
 
+function getPhaseName(phase: string): string {
+  const names: Record<string, string> = {
+    university: 'University',
+    firstStartup: 'Startup',
+    growth: 'Growth',
+    scaling: 'Scaling',
+    exit: 'Exit',
+  };
+  return names[phase] || phase;
+}
+
 export function StartScreen() {
-  const { startGame } = useGame();
+  const { startGame, dispatch } = useGame();
+  const { varietyDispatch } = useVariety();
   const [showContent, setShowContent] = useState(false);
   const [showButton, setShowButton] = useState(false);
+  const savedGame = useMemo(() => hasSave(), []);
+  const highScores = useMemo(() => getHighScores(), []);
 
   // Initialize audio on first user gesture, then start game
   const handleStartGame = useCallback(() => {
@@ -18,6 +35,21 @@ export function StartScreen() {
     musicManager.play(gameplayMusic);
     startGame();
   }, [startGame]);
+
+  // Continue from saved game
+  const handleContinue = useCallback(() => {
+    const save = loadGame();
+    if (!save) return;
+    soundManager.init();
+    soundManager.play('gameStart');
+    musicManager.play(gameplayMusic);
+    dispatch({ type: 'LOAD_GAME', state: save.gameState });
+    varietyDispatch({
+      type: 'LOAD_VARIETY',
+      collectedIds: save.varietyState.collectedIds,
+      completedChallengeIds: save.varietyState.completedChallengeIds,
+    });
+  }, [dispatch, varietyDispatch]);
 
   useEffect(() => {
     const t1 = setTimeout(() => setShowContent(true), 400);
@@ -248,6 +280,39 @@ export function StartScreen() {
           ))}
         </div>
 
+        {/* Continue Button (only if save exists) */}
+        {savedGame && (
+          <button
+            onClick={handleContinue}
+            style={{
+              marginTop: 'clamp(0.5rem, 1.5vh, 1rem)',
+              padding: '12px 40px',
+              background: 'linear-gradient(180deg, rgba(74, 100, 48, 0.6) 0%, rgba(26, 30, 16, 0.8) 100%)',
+              border: '2px solid #4a6430',
+              color: '#4ade80',
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontSize: '1rem',
+              fontWeight: 600,
+              letterSpacing: '0.15em',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              opacity: showButton ? 1 : 0,
+              transform: showButton ? 'translateY(0)' : 'translateY(10px)',
+              textShadow: '0 0 15px rgba(74, 222, 128, 0.3)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#4ade80';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(74, 222, 128, 0.3), inset 0 0 20px rgba(74, 222, 128, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#4a6430';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            CONTINUE
+          </button>
+        )}
+
         {/* Start Button */}
         <button
           onClick={handleStartGame}
@@ -290,6 +355,61 @@ export function StartScreen() {
         >
           press Enter
         </div>
+
+        {/* High Scores */}
+        {highScores.length > 0 && (
+          <div
+            style={{
+              marginTop: 'clamp(0.5rem, 1.5vh, 1rem)',
+              opacity: showButton ? 0.7 : 0,
+              transition: 'opacity 0.8s ease-out 0.6s',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontSize: '0.6rem',
+              color: '#e8d5b5',
+              opacity: 0.5,
+              letterSpacing: '0.2em',
+              marginBottom: '6px',
+            }}>
+              YOUR BEST RUNS
+            </div>
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}>
+              {highScores.slice(0, 3).map((entry, i) => (
+                <div key={i} style={{
+                  padding: '4px 12px',
+                  background: 'rgba(26, 15, 16, 0.6)',
+                  border: '1px solid rgba(90, 48, 48, 0.4)',
+                  minWidth: '80px',
+                }}>
+                  <div style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: i === 0 ? '#d4a853' : '#e8d5b5',
+                  }}>
+                    {entry.score.toLocaleString()}
+                  </div>
+                  <div style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: '0.5rem',
+                    color: '#e8d5b5',
+                    opacity: 0.5,
+                  }}>
+                    {entry.archetype} · {getPhaseName(entry.phase)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Footer hint */}
         <div

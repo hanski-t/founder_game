@@ -5,9 +5,10 @@ import { musicManager } from '../../audio/MusicManager';
 interface PauseMenuProps {
   onResume: () => void;
   onQuit: () => void;
+  onSaveAndQuit?: () => void;
 }
 
-export function PauseMenu({ onResume, onQuit }: PauseMenuProps) {
+export function PauseMenu({ onResume, onQuit, onSaveAndQuit }: PauseMenuProps) {
   const [sfxMuted, setSfxMuted] = useState(soundManager.muted);
   const [musicMuted, setMusicMuted] = useState(musicManager.muted);
 
@@ -91,6 +92,27 @@ export function PauseMenu({ onResume, onQuit }: PauseMenuProps) {
               RESUME
             </span>
           </button>
+
+          {onSaveAndQuit && (
+            <button
+              onClick={onSaveAndQuit}
+              className="gothic-choice-card"
+              style={{
+                cursor: 'pointer',
+                textAlign: 'center',
+                padding: '12px 20px',
+              }}
+            >
+              <span style={{
+                fontFamily: 'var(--font-gothic)',
+                fontSize: '1rem',
+                color: '#4ade80',
+                letterSpacing: '0.1em',
+              }}>
+                SAVE & QUIT
+              </span>
+            </button>
+          )}
 
           <button
             onClick={onQuit}

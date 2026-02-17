@@ -74,6 +74,13 @@ function varietyReducer(state: VarietyState, action: VarietyAction): VarietyStat
     case 'RESET_VARIETY':
       return initialState;
 
+    case 'LOAD_VARIETY':
+      return {
+        ...initialState,
+        collectedIds: action.collectedIds,
+        completedChallengeIds: action.completedChallengeIds,
+      };
+
     default:
       return state;
   }

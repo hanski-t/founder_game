@@ -24,7 +24,8 @@ type GameAction =
   | { type: 'END_GAME'; reason: 'momentum' | 'money' | 'energy' | 'success' }
   | { type: 'RESTART_GAME' }
   | { type: 'ADD_EVENT_LOG'; message: string }
-  | { type: 'APPLY_BONUS'; resourceChanges: ResourceChange };
+  | { type: 'APPLY_BONUS'; resourceChanges: ResourceChange }
+  | { type: 'LOAD_GAME'; state: Partial<GameState> };
 
 const initialState: GameState = {
   screen: 'start',
@@ -180,6 +181,15 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...initialState,
         screen: 'start',
+      };
+
+    case 'LOAD_GAME':
+      return {
+        ...initialState,
+        ...action.state,
+        screen: 'game',
+        endReason: null,
+        miniGameResult: null,
       };
 
     case 'ADD_EVENT_LOG':

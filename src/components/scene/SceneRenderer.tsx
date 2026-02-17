@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { SceneDefinition } from '../../types/scene';
 import type { PlatformDefinition } from '../../types/platformer';
+import { randomizeCollectibles } from '../../utils/randomizeCollectibles';
 import { ParallaxBackground } from './ParallaxBackground';
 import { PlayerCharacter } from '../character/PlayerCharacter';
 import { Interactable } from '../interactables/Interactable';
@@ -26,6 +27,12 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
   const { sceneDispatch, sceneState } = useScene();
   const { varietyState, varietyDispatch } = useVariety();
   const phaseConfig = usePhaseConfig();
+  // Randomize collectible positions once per scene load
+  const randomizedCollectibles = useMemo(
+    () => scene.collectibles ? randomizeCollectibles(scene.collectibles, scene.levelWidth, scene.groundHoles) : [],
+    [scene.id], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
   const isFirstScene = scene.id === 'town-square';
   const [showHint, setShowHint] = useState(isFirstScene);
 
@@ -99,8 +106,8 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
               />
             ))}
 
-            {scene.collectibles && scene.collectibles.length > 0 && (
-              <CollectibleLayer collectibles={scene.collectibles} groundY={scene.groundY} />
+            {randomizedCollectibles.length > 0 && (
+              <CollectibleLayer collectibles={randomizedCollectibles} groundY={scene.groundY} />
             )}
 
             {(resolvedPlatforms || scene.platforms) && (resolvedPlatforms || scene.platforms)!.length > 0 && (

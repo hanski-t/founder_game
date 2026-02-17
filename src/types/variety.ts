@@ -82,4 +82,5 @@ export type VarietyAction =
   | { type: 'SET_CHALLENGE_TOTAL'; total: number }
   | { type: 'INCREMENT_TOTAL' }
   | { type: 'COMPLETE_CHALLENGE'; challengeId: string }
-  | { type: 'RESET_VARIETY' };
+  | { type: 'RESET_VARIETY' }
+  | { type: 'LOAD_VARIETY'; collectedIds: string[]; completedChallengeIds: string[] };
