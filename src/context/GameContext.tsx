@@ -13,6 +13,7 @@ import type {
 } from '../types/game';
 import { getNodeById, getRandomEvent } from '../data/decisions';
 
+
 type GameAction =
   | { type: 'START_GAME' }
   | { type: 'MAKE_CHOICE'; nodeId: string; choiceId: string; nodeTitle: string; choiceText: string; resourceChanges: ResourceChange; outcome: string; nextNodeId?: string }
@@ -66,12 +67,15 @@ function getPhaseFromNodeId(nodeId: string): GamePhase {
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-    case 'START_GAME':
+    case 'START_GAME': {
       return {
         ...initialState,
         screen: 'game',
-        eventLog: ['> FOUNDER.EXE initialized', '> Starting Phase 1: University...'],
+        currentNodeId: initialState.currentNodeId,
+        currentPhase: initialState.currentPhase,
+        eventLog: ['> FOUNDER.EXE initialized', `> Starting ${initialState.currentPhase}...`],
       };
+    }
 
     case 'MAKE_CHOICE': {
       const newResources = applyResourceChanges(state.resources, action.resourceChanges);

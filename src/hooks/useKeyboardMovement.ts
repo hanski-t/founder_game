@@ -55,10 +55,11 @@ export function useKeyboardMovement() {
       // (items spawn at 10-90% viewport, camera is at 0) so catching works.
       const minX = challengeGameplayRef.current ? 5 : 2;
       const maxX = challengeGameplayRef.current ? 95 : levelWidthRef.current - 2;
-      let newX = Math.max(minX, Math.min(maxX, playerXRef.current + dx));
-      // Block movement into obstacles (only when at ground level, skip during minigame)
+      const oldX = playerXRef.current;
+      let newX = Math.max(minX, Math.min(maxX, oldX + dx));
+      // Block movement into obstacles and ledges (only when at ground level, skip during minigame)
       if (!challengeGameplayRef.current) {
-        newX = getBlockedX(newX, playerYRef.current);
+        newX = getBlockedX(newX, playerYRef.current, oldX);
       }
       newX = Math.max(minX, Math.min(maxX, newX));
 

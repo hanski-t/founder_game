@@ -21,7 +21,7 @@ import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, NODE_LEVEL_NUMBER, scenes } from '../data/scenes';
 import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
 import { setCurrentObstacles } from '../utils/obstacleBlocker';
-import { DEV_LOCK_LEVEL } from '../devConfig';
+
 import type { Choice } from '../types/game';
 import type { GamePhase } from '../types/game';
 import { PHASES } from '../types/game';
@@ -51,7 +51,7 @@ export function GothicGameScreen() {
     const thornBushObstacles = (currentScene.enemies ?? [])
       .filter(e => e.type === 'thorn-bush')
       .map(e => ({ id: e.id, type: 'bush' as const, x: e.patrolStart, width: e.width, height: e.height }));
-    setCurrentObstacles([...(currentScene.obstacles ?? []), ...thornBushObstacles], currentScene.groundY);
+    setCurrentObstacles([...(currentScene.obstacles ?? []), ...thornBushObstacles], currentScene.groundY, currentScene.groundSegments);
   }
 
   // Animate moving platforms (returns resolved positions + deltas)
@@ -96,11 +96,23 @@ export function GothicGameScreen() {
     currentScene?.groundSegments,
   );
 
-  // Wrap knockback so enemy hits also cost $100
-  const handleEnemyHit = useCallback((direction: 'left' | 'right') => {
+  // Wrap knockback so enemy hits cost money (bat=$500, others=$100)
+  const handleEnemyHit = useCallback((direction: 'left' | 'right', enemyType: string) => {
     triggerKnockback(direction);
-    dispatch({ type: 'APPLY_BONUS', resourceChanges: { money: -100 } });
+    const penalty = enemyType === 'bat' ? -500 : -100;
+    dispatch({ type: 'APPLY_BONUS', resourceChanges: { money: penalty } });
   }, [triggerKnockback, dispatch]);
+
+  // DEV MODE: sync scene on mount when starting at a non-default level
+  useEffect(() => {
+    const targetSceneId = NODE_TO_SCENE_MAP[state.currentNodeId];
+    if (targetSceneId && targetSceneId !== 'CURRENT_SCENE' && targetSceneId !== sceneState.currentSceneId) {
+      const scene = getSceneById(targetSceneId);
+      if (scene) {
+        sceneDispatch({ type: 'RESET_SCENE', sceneId: targetSceneId, playerStartX: scene.playerStartX, groundY: scene.groundY, levelWidth: scene.levelWidth });
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Watch for node changes -> trigger scene transitions
   useEffect(() => {
@@ -223,22 +235,6 @@ export function GothicGameScreen() {
     const nextNodeId = lastHistoryEntry && node
       ? node.choices.find(c => c.id === lastHistoryEntry.choiceId)?.nextNodeId
       : undefined;
-
-    // DEV MODE: play through the level normally, but when the decision
-    // would advance to a different level, reset back to the locked level.
-    if (DEV_LOCK_LEVEL) {
-      const lockedScene = NODE_TO_SCENE_MAP[DEV_LOCK_LEVEL];
-      const nextScene = nextNodeId ? NODE_TO_SCENE_MAP[nextNodeId] : undefined;
-      const leavingLevel = !nextScene || (nextScene !== lockedScene && nextScene !== 'CURRENT_SCENE');
-
-      if (leavingLevel) {
-        // Reset game state to locked node, then force a scene transition
-        // so the player restarts at the beginning of the level.
-        continueFromOutcome(DEV_LOCK_LEVEL);
-        sceneDispatch({ type: 'START_SCENE_TRANSITION', targetSceneId: lockedScene });
-        return;
-      }
-    }
 
     continueFromOutcome(nextNodeId);
   }, [state.currentNodeId, state.decisionHistory, continueFromOutcome, sceneDispatch]);

@@ -212,9 +212,13 @@ export function useJumpPhysics(
           sceneDispatch({ type: 'SET_PLAYER_ANIMATION', animation: 'jump' });
           yChanged = true;
         } else if (localGroundY < playerYRef.current - 0.5) {
-          // Ground rose (uphill) — snap player up to new ground level
-          playerYRef.current = localGroundY;
-          yChanged = true;
+          // Ground rose (uphill) — only snap up for gentle slopes (≤1.5%)
+          // Steeper ledges require jumping (X movement is blocked by obstacleBlocker)
+          const rise = playerYRef.current - localGroundY;
+          if (rise <= 1.5) {
+            playerYRef.current = localGroundY;
+            yChanged = true;
+          }
         } else if (localGroundY > playerYRef.current + 1) {
           // Ground dropped (downhill) — start falling
           isGroundedRef.current = false;

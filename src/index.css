@@ -1095,6 +1095,15 @@
   50% { margin-top: -8px; }
 }
 
+.enemy-walk-bob {
+  animation: enemy-walk-bob 0.4s steps(2) infinite;
+}
+
+@keyframes enemy-walk-bob {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -3px; }
+}
+
 /* Player knockback flash */
 .player-character.knockback {
   animation: knockback-flash 0.4s ease-out;

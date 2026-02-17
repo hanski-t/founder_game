@@ -13,7 +13,7 @@ import thornBushImg from '@assets/objects/obstacles/bush.png';
 
 const ENEMY_SPRITE_CONFIG: Record<string, { sheet: string; config: { frameWidth: number; frameHeight: number; frameCount: number; frameDuration: number }; scale?: number }> = {
   ghost: { sheet: ghostSheet, config: { frameWidth: 31, frameHeight: 44, frameCount: 4, frameDuration: 150 } },
-  bat: { sheet: batSheet, config: { frameWidth: 12, frameHeight: 16, frameCount: 4, frameDuration: 150 }, scale: 3 },
+  bat: { sheet: batSheet, config: { frameWidth: 12, frameHeight: 16, frameCount: 4, frameDuration: 250 }, scale: 4 },
 };
 
 const ENEMY_STATIC_IMG: Record<string, { src: string; width: number; height: number; scale: number }> = {
@@ -29,7 +29,7 @@ interface EnemyState {
 interface EnemyLayerProps {
   enemies: EnemyDefinition[];
   groundY: number;
-  onCollision: (direction: 'left' | 'right') => void;
+  onCollision: (direction: 'left' | 'right', enemyType: string) => void;
 }
 
 export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
@@ -89,6 +89,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
       let hasCollision = false;
       let collisionDir: 'left' | 'right' = 'left';
       let collisionId: string | null = null;
+      let collisionType = '';
 
       const newStates = currentStates.map((state, i) => {
         const def = enemies[i];
@@ -122,6 +123,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
           if (hit && lastCollisionRef.current !== def.id) {
             hasCollision = true;
             collisionId = def.id;
+            collisionType = def.type;
             collisionDir = playerXRef.current < newX ? 'left' : 'right';
           }
         }
@@ -133,7 +135,7 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
 
       if (hasCollision && collisionId) {
         lastCollisionRef.current = collisionId;
-        onCollision(collisionDir);
+        onCollision(collisionDir, collisionType);
         // Clear collision ID after invincibility window
         setTimeout(() => {
           lastCollisionRef.current = null;
@@ -207,18 +209,25 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
           );
         }
 
+        // Skeleton sprite faces right by default; others face left
+        const shouldFlip = def.type === 'skeleton'
+          ? state.direction === 'left'
+          : state.direction === 'right';
+
         return (
           <div
             key={def.id}
-            className={`enemy${isFlying ? ' enemy-flying' : ''}`}
+            className={`enemy${isFlying ? ' enemy-flying' : ''}${def.type === 'skeleton' ? ' enemy-walk-bob' : ''}`}
             style={{
               position: 'absolute',
               left: `${state.x}%`,
               top: `${def.y}%`,
-              transform: `translateX(-50%) translateY(-100%)${state.direction === 'right' ? ' scaleX(-1)' : ''}`,
+              transform: `translateX(-50%) translateY(-100%)${shouldFlip ? ' scaleX(-1)' : ''}`,
               zIndex: 5,
               userSelect: 'none',
-              filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))',
+              filter: def.type === 'skeleton'
+                ? 'drop-shadow(0 0 8px rgba(200,50,50,0.8)) brightness(1.3)'
+                : 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))',
             }}
           >
             {spriteData ? (

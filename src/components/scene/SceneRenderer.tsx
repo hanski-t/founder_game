@@ -17,7 +17,7 @@ import { usePhaseConfig } from '../../hooks/usePhaseConfig';
 
 interface SceneRendererProps {
   scene: SceneDefinition;
-  onObstacleCollision?: (direction: 'left' | 'right') => void;
+  onObstacleCollision?: (direction: 'left' | 'right', enemyType: string) => void;
   challengeActive?: boolean;
   resolvedPlatforms?: PlatformDefinition[];
 }
@@ -108,7 +108,7 @@ export function SceneRenderer({ scene, onObstacleCollision, challengeActive, res
             )}
 
             {scene.obstacles && scene.obstacles.length > 0 && (
-              <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} />
+              <ObstacleLayer obstacles={scene.obstacles} groundY={scene.groundY} groundSegments={scene.groundSegments} />
             )}
 
             {scene.enemies && scene.enemies.length > 0 && onObstacleCollision && (

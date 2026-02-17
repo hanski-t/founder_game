@@ -1,4 +1,6 @@
 import type { ObstacleDefinition } from '../../types/platformer';
+import type { GroundSegment } from '../../types/scene';
+import { getGroundYAtX } from '../../utils/groundHeight';
 
 import barrelImg from '@assets/objects/obstacles/barrel.png';
 import crateImg from '@assets/objects/obstacles/crate.png';
@@ -18,20 +20,22 @@ const OBSTACLE_SPRITES: Record<string, string> = {
 interface ObstacleLayerProps {
   obstacles: ObstacleDefinition[];
   groundY: number;
+  groundSegments?: GroundSegment[];
 }
 
-export function ObstacleLayer({ obstacles, groundY }: ObstacleLayerProps) {
+export function ObstacleLayer({ obstacles, groundY, groundSegments }: ObstacleLayerProps) {
   return (
     <>
       {obstacles.map((obs) => {
         const spriteSrc = OBSTACLE_SPRITES[obs.type];
+        const localGroundY = getGroundYAtX(obs.x, groundY, groundSegments);
         return (
           <div
             key={obs.id}
             style={{
               position: 'absolute',
               left: `${obs.x}%`,
-              top: `${groundY}%`,
+              top: `${localGroundY}%`,
               width: `${obs.width}%`,
               height: `${obs.height}%`,
               transform: 'translateX(-50%) translateY(-100%)',

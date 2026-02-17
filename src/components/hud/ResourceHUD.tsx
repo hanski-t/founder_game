@@ -121,11 +121,7 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
 
 export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHUDProps) {
   const phaseConfig = PHASE_ATMOSPHERE[currentPhase as GamePhase];
-  const phaseLabel =
-    currentPhase === 'university' ? 'Phase 1' :
-    currentPhase === 'firstStartup' ? 'Phase 2' :
-    currentPhase === 'growth' ? 'Phase 3' :
-    currentPhase === 'scaling' ? 'Phase 4' : 'Phase 5';
+  // Level number is already linear 1-10 across all phases
 
   const energyColor = resources.energy > 25 ? '#fbbf24' : '#f87171';
 
@@ -181,7 +177,7 @@ export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHU
           format={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)}
         />
 
-        {/* Phase & level indicator */}
+        {/* Level indicator */}
         <div style={{
           fontFamily: 'var(--font-gothic)',
           fontSize: '0.6rem',
@@ -191,15 +187,8 @@ export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHU
           opacity: 0.7,
           marginLeft: 4,
           whiteSpace: 'nowrap',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 2,
         }}>
-          <span>{phaseLabel}</span>
-          <span style={{ fontSize: '0.5rem', opacity: 0.8 }}>
-            Level {levelNumber}
-          </span>
+          Level {levelNumber}
         </div>
       </div>
     </div>
