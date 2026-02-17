@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { useVariety } from '../context/VarietyContext';
 import { soundManager } from '../audio/SoundManager';
@@ -8,6 +8,106 @@ import { loadGame, hasSave } from '../utils/saveGame';
 import gameplayMusic from '@assets/audio/Gothamlicious.mp3';
 import townBg from '@assets/backgrounds/town/background.png';
 import townMid from '@assets/backgrounds/town/middleground.png';
+
+// Module-level flag — intro only plays once per browser session
+let introShown = false;
+
+const INTRO_LINES = [
+  { text: 'In the age of venture capital and broken dreams...', emphasis: false },
+  { text: 'Where fortunes rise and fall like shadows in the night...', emphasis: false },
+  { text: 'One student dares to walk the founder\'s path.', emphasis: true },
+  { text: 'From lecture halls to boardrooms,', emphasis: false },
+  { text: 'from hackathons to hostile takeovers.', emphasis: false },
+  { text: 'Every choice will shape your destiny.', emphasis: true },
+];
+
+function IntroSequence({ onComplete }: { onComplete: () => void }) {
+  const [visibleLines, setVisibleLines] = useState(0);
+  const [fadeOut, setFadeOut] = useState(false);
+  const completedRef = useRef(false);
+
+  const finish = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    setFadeOut(true);
+    setTimeout(onComplete, 800);
+  }, [onComplete]);
+
+  // Reveal lines one by one
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    INTRO_LINES.forEach((_, i) => {
+      timers.push(setTimeout(() => setVisibleLines(i + 1), 800 + i * 1200));
+    });
+    // Auto-advance after all lines shown
+    timers.push(setTimeout(finish, 800 + INTRO_LINES.length * 1200 + 2000));
+    return () => timers.forEach(clearTimeout);
+  }, [finish]);
+
+  // Skip with Enter/Space/click
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        finish();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [finish]);
+
+  return (
+    <div
+      onClick={finish}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 100,
+        background: '#0a0607',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        opacity: fadeOut ? 0 : 1,
+        transition: 'opacity 0.8s ease-out',
+      }}
+    >
+      <div style={{ maxWidth: '550px', textAlign: 'center', padding: '2rem' }}>
+        {INTRO_LINES.map((line, i) => (
+          <p
+            key={i}
+            style={{
+              fontFamily: line.emphasis ? "'Cinzel', Georgia, serif" : "'JetBrains Mono', monospace",
+              fontSize: line.emphasis ? 'clamp(0.9rem, 1.4vw, 1.1rem)' : 'clamp(0.75rem, 1.1vw, 0.9rem)',
+              fontWeight: line.emphasis ? 600 : 400,
+              color: line.emphasis ? '#d4a853' : '#e8d5b5',
+              lineHeight: 1.8,
+              margin: '0.4rem 0',
+              opacity: i < visibleLines ? 0.8 : 0,
+              transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
+              transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+              textShadow: line.emphasis ? '0 0 20px rgba(212, 168, 83, 0.3)' : 'none',
+            }}
+          >
+            {line.text}
+          </p>
+        ))}
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        bottom: '3vh',
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: '0.6rem',
+        color: '#e8d5b5',
+        opacity: 0.25,
+      }}>
+        press Enter to skip
+      </div>
+    </div>
+  );
+}
 
 function getPhaseName(phase: string): string {
   const names: Record<string, string> = {
@@ -23,6 +123,7 @@ function getPhaseName(phase: string): string {
 export function StartScreen() {
   const { startGame, dispatch } = useGame();
   const { varietyDispatch } = useVariety();
+  const [showIntro, setShowIntro] = useState(!introShown);
   const [showContent, setShowContent] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const savedGame = useMemo(() => hasSave(), []);
@@ -51,7 +152,14 @@ export function StartScreen() {
     });
   }, [dispatch, varietyDispatch]);
 
+  const handleIntroComplete = useCallback(() => {
+    introShown = true;
+    setShowIntro(false);
+  }, []);
+
   useEffect(() => {
+    // Delay content reveal until intro is done
+    if (showIntro) return;
     const t1 = setTimeout(() => setShowContent(true), 400);
     const t2 = setTimeout(() => setShowButton(true), 1200);
     // Resume music on start screen if audio was already initialized (e.g., after restart)
@@ -59,7 +167,7 @@ export function StartScreen() {
       musicManager.play(gameplayMusic);
     }
     return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
+  }, [showIntro]);
 
   // Enter key to start game
   useEffect(() => {
@@ -111,6 +219,9 @@ export function StartScreen() {
           opacity: 0.3,
         }}
       />
+
+      {/* Intro sequence (first load only) */}
+      {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
 
       {/* Dark overlay gradient */}
       <div
