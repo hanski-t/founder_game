@@ -3,6 +3,7 @@ import { useScene } from '../context/SceneContext';
 import { useVariety } from '../context/VarietyContext';
 import { usePhaseConfig } from './usePhaseConfig';
 import { getBlockedX } from '../utils/obstacleBlocker';
+import { isGamePaused } from '../utils/pauseState';
 
 const GROUND_STEP = 1.5; // percentage per keypress update on ground
 const AIR_STEP = 0.5; // percentage per keypress update while airborne (much slower)
@@ -42,6 +43,7 @@ export function useKeyboardMovement() {
   const updatePosition = useCallback(() => {
     if (showDecisionRef.current || showOutcomeRef.current) return;
     if (challengeModalRef.current) return; // freeze during challenge intro/result modals
+    if (isGamePaused()) return;
 
     const baseStep = isGroundedRef.current ? GROUND_STEP : AIR_STEP;
     const step = baseStep * speedMultiplierRef.current;

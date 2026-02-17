@@ -17,6 +17,9 @@ import { PhaseTitle } from '../components/transitions/PhaseTitle';
 import { PitchDeckMiniGame } from '../components/PitchDeckMiniGame';
 import { ChallengeOverlay } from '../components/challenges/ChallengeOverlay';
 import { FallNotification } from '../components/scene/FallNotification';
+import { PauseMenu } from '../components/overlay/PauseMenu';
+import { setGamePaused } from '../utils/pauseState';
+import { musicManager } from '../audio/MusicManager';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, NODE_LEVEL_NUMBER, scenes } from '../data/scenes';
 import { PHASE_ATMOSPHERE } from '../data/phaseConfig';
@@ -33,6 +36,40 @@ export function GothicGameScreen() {
   const prevNodeIdRef = useRef(state.currentNodeId);
   const prevPhaseRef = useRef<GamePhase>(state.currentPhase);
   const [showFallNotification, setShowFallNotification] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Escape key to toggle pause (only when no modal/challenge active)
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        // Don't pause during panels/transitions/challenges
+        if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
+        if (varietyState.challengePhase !== 'not-started') return;
+        if (state.screen === 'minigame') return;
+
+        setIsPaused(prev => {
+          const next = !prev;
+          setGamePaused(next);
+          return next;
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [sceneState.showDecisionPanel, sceneState.showOutcomePanel, sceneState.isTransitioning, varietyState.challengePhase, state.screen]);
+
+  const handleResume = useCallback(() => {
+    setIsPaused(false);
+    setGamePaused(false);
+  }, []);
+
+  const handleQuit = useCallback(() => {
+    setIsPaused(false);
+    setGamePaused(false);
+    musicManager.stop();
+    dispatch({ type: 'RESTART_GAME' });
+  }, [dispatch]);
 
   // Set phase accent CSS custom properties on :root for global UI theming
   useEffect(() => {
@@ -332,6 +369,11 @@ export function GothicGameScreen() {
           phase={state.currentPhase}
           onComplete={handlePhaseTitleComplete}
         />
+      )}
+
+      {/* Pause Menu */}
+      {isPaused && (
+        <PauseMenu onResume={handleResume} onQuit={handleQuit} />
       )}
     </>
   );

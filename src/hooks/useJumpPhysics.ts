@@ -7,6 +7,7 @@ import type { GroundHole, GroundSegment } from '../types/scene';
 import { getBlockedX } from '../utils/obstacleBlocker';
 import { getGroundYAtX } from '../utils/groundHeight';
 import { soundManager } from '../audio/SoundManager';
+import { isGamePaused } from '../utils/pauseState';
 
 // Physics constants (all in percentage units)
 const GRAVITY = 120; // % per second squared
@@ -77,8 +78,8 @@ export function useJumpPhysics(
     if (sceneState.showDecisionPanel || sceneState.showOutcomePanel || sceneState.isTransitioning) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Freeze jumping during challenges
-      if (challengeActiveRef.current) return;
+      // Freeze jumping during challenges or pause
+      if (challengeActiveRef.current || isGamePaused()) return;
 
       if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') {
         // Only jump when grounded
