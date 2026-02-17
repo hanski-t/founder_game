@@ -10,6 +10,7 @@ interface ResourceHUDProps {
   resources: Resources;
   currentPhase: string;
   levelNumber: number;
+  onPause?: () => void;
 }
 
 interface ResourceItemProps {
@@ -121,7 +122,7 @@ function ResourceItem({ icon, label, value, maxValue, color, format }: ResourceI
   );
 }
 
-export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHUDProps) {
+export function ResourceHUD({ resources, currentPhase, levelNumber, onPause }: ResourceHUDProps) {
   const phaseConfig = PHASE_ATMOSPHERE[currentPhase as GamePhase];
   // Level number is already linear 1-10 across all phases
   const [sfxMuted, setSfxMuted] = useState(soundManager.muted);
@@ -235,6 +236,29 @@ export function ResourceHUD({ resources, currentPhase, levelNumber }: ResourceHU
         >
           {musicMuted ? '\u{1F3B5}' : '\u{1F3B6}'}
         </button>
+        {onPause && (
+          <button
+            onClick={onPause}
+            style={{
+              background: 'none',
+              border: '1px solid rgba(90, 48, 48, 0.3)',
+              borderRadius: 3,
+              padding: '2px 6px',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              color: '#e8d5b5',
+              opacity: 0.35,
+              marginLeft: 2,
+              transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.35'; }}
+            title="Menu (Esc)"
+          >
+            II
+          </button>
+        )}
       </div>
     </div>
   );

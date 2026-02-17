@@ -20,6 +20,7 @@ import { FallNotification } from '../components/scene/FallNotification';
 import { PauseMenu } from '../components/overlay/PauseMenu';
 import { setGamePaused } from '../utils/pauseState';
 import { musicManager } from '../audio/MusicManager';
+import { soundManager } from '../audio/SoundManager';
 import { saveGame } from '../utils/saveGame';
 import { getNodeById } from '../data/decisions';
 import { getSceneById, NODE_TO_SCENE_MAP, NODE_LEVEL_NUMBER, scenes } from '../data/scenes';
@@ -185,6 +186,7 @@ export function GothicGameScreen() {
     if (oldPhase !== newPhase) {
       const phaseInfo = PHASES.find(p => p.id === newPhase);
       if (phaseInfo) {
+        soundManager.play('phaseStart');
         sceneDispatch({ type: 'SHOW_PHASE_TITLE', title: phaseInfo.displayName });
         // Scene transition will happen after phase title
         sceneDispatch({ type: 'START_SCENE_TRANSITION', targetSceneId });
@@ -233,6 +235,7 @@ export function GothicGameScreen() {
       // Player must be near ground level (within 5% of NPC's Y) to trigger
       const distY = Math.abs(sceneState.playerY - interactable.y);
       if (distX < interactable.proximityRange && distY < 5) {
+        soundManager.play('npcInteract');
         sceneDispatch({ type: 'SET_PENDING_INTERACTABLE', id: null });
         if (interactable.interactionType === 'decision' && interactable.triggerNodeId) {
           sceneDispatch({ type: 'SHOW_DECISION_PANEL' });
@@ -324,7 +327,7 @@ export function GothicGameScreen() {
       <SceneRenderer scene={currentScene} onObstacleCollision={handleEnemyHit} challengeActive={varietyState.challengePhase === 'active'} resolvedPlatforms={resolvedPlatforms} />
 
       {/* Resource HUD */}
-      <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} levelNumber={NODE_LEVEL_NUMBER[state.currentNodeId] ?? 1} />
+      <ResourceHUD resources={state.resources} currentPhase={state.currentPhase} levelNumber={NODE_LEVEL_NUMBER[state.currentNodeId] ?? 1} onPause={() => { setIsPaused(true); setGamePaused(true); }} />
 
       {/* Collection Sidebar */}
       <CollectionSidebar />

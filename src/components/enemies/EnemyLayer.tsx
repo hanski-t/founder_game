@@ -3,6 +3,7 @@ import { useScene } from '../../context/SceneContext';
 import { useVariety } from '../../context/VarietyContext';
 import { usePhaseConfig } from '../../hooks/usePhaseConfig';
 import { checkPlayerCollision } from '../../utils/collision';
+import { isGamePaused } from '../../utils/pauseState';
 import { SpriteAnimator } from '../character/SpriteAnimator';
 import type { EnemyDefinition } from '../../types/platformer';
 
@@ -84,6 +85,12 @@ export function EnemyLayer({ enemies, groundY, onCollision }: EnemyLayerProps) {
 
       const delta = Math.min((timestamp - lastTimeRef.current) / 1000, 0.05);
       lastTimeRef.current = timestamp;
+
+      // Freeze enemies during pause
+      if (isGamePaused()) {
+        animFrameRef.current = requestAnimationFrame(update);
+        return;
+      }
 
       const currentStates = enemyStatesRef.current;
       let hasCollision = false;

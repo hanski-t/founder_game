@@ -5,7 +5,6 @@ import cemeteryBg from '@assets/backgrounds/cemetery/background.png';
 import cemeteryMountains from '@assets/backgrounds/cemetery/mountains.png';
 import townBg from '@assets/backgrounds/town/background.png';
 import type { DecisionHistoryEntry } from '../types/game';
-import { musicManager } from '../audio/MusicManager';
 import { calculateScore, saveHighScore } from '../utils/highScores';
 import { deleteSave } from '../utils/saveGame';
 
@@ -231,9 +230,8 @@ export function EndScreen() {
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const finalScore = useMemo(() => calculateScore(state), [state]);
 
-  // Stop music, delete save, save high score on game end
+  // Delete save, save high score on game end (music keeps playing)
   useEffect(() => {
-    musicManager.stop();
     deleteSave();
     const archetype = getFounderArchetype(state.decisionHistory);
     const madeTop = saveHighScore({

@@ -54,6 +54,10 @@ export function StartScreen() {
   useEffect(() => {
     const t1 = setTimeout(() => setShowContent(true), 400);
     const t2 = setTimeout(() => setShowButton(true), 1200);
+    // Resume music on start screen if audio was already initialized (e.g., after restart)
+    if (soundManager.initialized && !musicManager.playing) {
+      musicManager.play(gameplayMusic);
+    }
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 

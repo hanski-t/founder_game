@@ -15,12 +15,14 @@ type SoundName =
   | 'fallInHole'
   | 'sceneTransition'
   | 'gameStart'
-  | 'uiClick';
+  | 'uiClick'
+  | 'npcInteract'
+  | 'phaseStart';
 
 // Each entry: [preset, volume multiplier]
 // We generate from presets for simplicity; custom params can be added via sfxr.me
 const SOUND_PRESETS: Record<SoundName, { preset: string; volume: number }> = {
-  jump:            { preset: 'jump',       volume: 0.3 },
+  jump:            { preset: 'jump',       volume: 0.15 },
   enemyHit:        { preset: 'hitHurt',    volume: 0.4 },
   collectible:     { preset: 'pickupCoin', volume: 0.3 },
   decisionMade:    { preset: 'blipSelect', volume: 0.25 },
@@ -32,7 +34,9 @@ const SOUND_PRESETS: Record<SoundName, { preset: string; volume: number }> = {
   fallInHole:      { preset: 'explosion',  volume: 0.3 },
   sceneTransition: { preset: 'synth',      volume: 0.15 },
   gameStart:       { preset: 'powerUp',    volume: 0.3 },
-  uiClick:         { preset: 'click',      volume: 0.2 },
+  uiClick:         { preset: 'click',      volume: 0.12 },
+  npcInteract:     { preset: 'blipSelect', volume: 0.2 },
+  phaseStart:      { preset: 'synth',      volume: 0.25 },
 };
 
 class SoundManager {
