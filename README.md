@@ -8,7 +8,7 @@ A gothic-themed startup simulation game combining narrative decisions, resource 
 
 ## About
 
-Founder's Journey is a course project for Game Development at GMIT (Spring 2026). The player takes on the role of a university student navigating the path from campus life to building a startup — making strategic decisions that affect four key resources: Momentum, Energy, Money, and Reputation.
+Founder's Journey is a course project for Game Development Project course at LUT University (Spring 2026). The player takes on the role of a university student navigating the path from campus life to building a startup — making strategic decisions that affect four key resources: Momentum, Energy, Money, and Reputation.
 
 The game features 8 levels across 5 phases, with branching narrative choices, mini-challenges (quick-time events and falling-catch games), collectibles, enemies, and multiple endings. A full playthrough takes 15–30 minutes.
 
