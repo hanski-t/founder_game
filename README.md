@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# Founder's Journey
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Founder's Journey](public/og-image.png)
 
-Currently, two official plugins are available:
+A gothic-themed startup simulation game combining narrative decisions, resource management, and 2D platformer gameplay.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**[Play the game](https://hannestayronen.com/foundergame)**
 
-## React Compiler
+## About
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Founder's Journey is a course project for Game Development at GMIT (Spring 2026). The player takes on the role of a university student navigating the path from campus life to building a startup — making strategic decisions that affect four key resources: Momentum, Energy, Money, and Reputation.
 
-## Expanding the ESLint configuration
+The game features 8 levels across 5 phases, with branching narrative choices, mini-challenges (quick-time events and falling-catch games), collectibles, enemies, and multiple endings. A full playthrough takes 15–30 minutes.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+See [GAME_DESIGN_DOCUMENT.md](GAME_DESIGN_DOCUMENT.md) for the full game design specification.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## AI Attribution
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+The source code for this project was **mostly generated using [Claude Code](https://docs.anthropic.com/en/docs/claude-code)**, an AI pair programming tool by Anthropic.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**All game design, narrative, mechanics, creative direction, and decision-making were done by Hannes Täyrönen.** The Game Design Document ([GAME_DESIGN_DOCUMENT.md](GAME_DESIGN_DOCUMENT.md)) was written entirely by the author and served as the authoritative specification throughout development. Claude Code was used as an implementation tool — translating design decisions into working code.
+
+## Tech Stack
+
+- **Framework:** React 19 + TypeScript
+- **Build:** Vite 7
+- **Styling:** Tailwind CSS v4
+- **State Management:** React Context + useReducer (3 contexts: game logic, visual/scene, variety system)
+- **Sound Effects:** jsfxr
+- **Music:** Royalty-free (Kevin MacLeod)
+- **Deployment:** Vercel
+
+## Running Locally
+
+```bash
+git clone https://github.com/hanski-t/founder_game.git
+cd founder_game
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Other commands:
+- `npm run build` — production build
+- `npm run lint` — run ESLint
+- `npm run preview` — preview production build locally
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── screens/          # Main game screens (start, game, end)
+├── components/       # UI components organized by function
+│   ├── character/    # Player sprite and animation
+│   ├── scene/        # Parallax backgrounds, ground, atmosphere
+│   ├── overlay/      # Decision panels, outcome panels, pause menu
+│   ├── hud/          # Resource display, collection sidebar
+│   ├── collectibles/ # Pickup items and animations
+│   ├── challenges/   # QTE and falling-catch mini-games
+│   ├── enemies/      # Enemy sprites and behavior
+│   ├── obstacles/    # Static obstacle rendering
+│   ├── platforms/    # Moving platforms
+│   └── transitions/  # Scene transitions, phase titles
+├── context/          # React Context providers (game, scene, variety)
+├── hooks/            # Custom hooks (movement, physics, camera)
+├── data/             # Game data (decisions, scenes, configs)
+├── types/            # TypeScript type definitions
+├── utils/            # Utility functions (collision, save/load, scores)
+├── audio/            # Sound and music managers
+└── assets/used/      # Game assets (sprites, tilesets, backgrounds)
+```
+
+## Controls
+
+| Input | Action |
+|-------|--------|
+| WASD / Arrow Keys | Move left/right |
+| Space | Jump |
+| Enter / Click | Interact with NPCs, select choices |
+| Escape | Pause menu |
+
+## Assets & Credits
+
+- **Pixel Art:** [Gothicvania Patreon Collection](https://ansimuz.itch.io/gothicvania-patreon-collection) by Ansimuz
+- **Music:** Kevin MacLeod (incompetech.com) — royalty-free
+- **Sound Effects:** Generated with [jsfxr](https://github.com/AmbientRun/jsfxr)
+
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
