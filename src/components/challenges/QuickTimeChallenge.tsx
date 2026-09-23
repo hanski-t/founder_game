@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { QuickTimeConfig } from '../../types/variety';
 import { useVariety } from '../../context/VarietyContext';
 import { soundManager } from '../../audio/SoundManager';
@@ -28,9 +28,9 @@ export function QuickTimeChallenge({ config, onComplete }: QuickTimeChallengePro
   const isLastPrompt = currentIndex >= config.prompts.length - 1;
 
   // Build the full key sequence for the current prompt
-  const keySequence = currentPrompt?.combo
+  const keySequence = useMemo(() => currentPrompt?.combo
     ? [{ key: currentPrompt.key, displayKey: currentPrompt.displayKey }, ...currentPrompt.combo]
-    : [{ key: currentPrompt?.key, displayKey: currentPrompt?.displayKey }];
+    : [{ key: currentPrompt?.key, displayKey: currentPrompt?.displayKey }], [currentPrompt]);
 
   const isCombo = keySequence.length > 1;
 

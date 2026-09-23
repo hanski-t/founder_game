@@ -1,4 +1,5 @@
 import type { GameState, Resources, GamePhase, DecisionHistoryEntry } from '../types/game';
+import { NODE_TO_SCENE_MAP } from '../data/scenes';
 
 const SAVE_KEY = 'founders-journey-save';
 
@@ -58,19 +59,28 @@ export function loadGame(): SaveData | null {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw) as SaveData;
-    if (data.version !== 1) return null;
-    // Basic validation
-    if (!data.gameState?.currentNodeId || !data.gameState?.resources) return null;
+    if (data?.version !== 1) return null;
+    // Basic validation — reject corrupted or outdated saves instead of loading a broken game
+    const gs = data.gameState;
+    if (!gs?.currentNodeId || !NODE_TO_SCENE_MAP[gs.currentNodeId]) return null;
+    if (!gs.resources || typeof gs.resources !== 'object') return null;
+    if (!Array.isArray(gs.decisionHistory) || !Array.isArray(gs.eventLog)) return null;
+    if (!Array.isArray(data.varietyState?.collectedIds) || !Array.isArray(data.varietyState?.completedChallengeIds)) return null;
     return data;
   } catch {
     return null;
   }
 }
 
+// localStorage can throw when storage is blocked (privacy settings, some private modes)
 export function deleteSave(): void {
-  localStorage.removeItem(SAVE_KEY);
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch {
+    // Silently ignore storage errors
+  }
 }
 
 export function hasSave(): boolean {
-  return localStorage.getItem(SAVE_KEY) !== null;
+  return loadGame() !== null;
 }

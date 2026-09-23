@@ -36,7 +36,13 @@ export function getHighScores(): HighScoreEntry[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as HighScoreEntry[];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    // Drop corrupted entries so the start screen can't crash rendering them
+    return parsed.filter(
+      (e): e is HighScoreEntry =>
+        typeof e?.score === 'number' && Number.isFinite(e.score) && typeof e.date === 'string',
+    );
   } catch {
     return [];
   }
@@ -47,7 +53,11 @@ export function saveHighScore(entry: HighScoreEntry): boolean {
   scores.push(entry);
   scores.sort((a, b) => b.score - a.score);
   const trimmed = scores.slice(0, MAX_SCORES);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+  } catch {
+    // Storage blocked or full — the score just isn't persisted
+  }
   // Return true if this entry made it into the top scores
   return trimmed.some(s => s.score === entry.score && s.date === entry.date);
 }
